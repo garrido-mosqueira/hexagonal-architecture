@@ -16,12 +16,10 @@ public class TaskService {
 
     private final ProjectGenerationTaskRepository projectGenerationTaskRepository;
 
-    private final FileService fileService;
+    private FileService fileService;
     
-    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository,
-                       FileService fileService) {
+    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository) {
         this.projectGenerationTaskRepository = projectGenerationTaskRepository;
-        this.fileService = fileService;
     }
 
     public List<ProjectGenerationTask> listTasks() {
@@ -65,4 +63,9 @@ public class TaskService {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
         return projectGenerationTask.orElseThrow(NotFoundException::new);
     }
+
+    void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
 }

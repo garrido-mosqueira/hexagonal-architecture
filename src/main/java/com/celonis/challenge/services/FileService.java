@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.URL;
 
@@ -25,6 +26,11 @@ public class FileService {
                        ProjectGenerationTaskRepository projectGenerationTaskRepository) {
         this.taskService = taskService;
         this.projectGenerationTaskRepository = projectGenerationTaskRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        taskService.setFileService(this);
     }
 
     public ResponseEntity<FileSystemResource> getTaskResult(String taskId) {
@@ -53,4 +59,5 @@ public class FileService {
             IOUtils.copy(is, os);
         }
     }
+
 }
