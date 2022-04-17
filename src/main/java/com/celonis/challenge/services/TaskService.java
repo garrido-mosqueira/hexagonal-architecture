@@ -4,6 +4,7 @@ import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.exceptions.NotFoundException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.model.ProjectGenerationTaskRepository;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -15,11 +16,14 @@ import java.util.Optional;
 public class TaskService {
 
     private final ProjectGenerationTaskRepository projectGenerationTaskRepository;
+    private final TimerService timerService;
 
     private FileService fileService;
-    
-    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository) {
+
+    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository,
+                       TimerService timerService) {
         this.projectGenerationTaskRepository = projectGenerationTaskRepository;
+        this.timerService = timerService;
     }
 
     public List<ProjectGenerationTask> listTasks() {
@@ -48,15 +52,28 @@ public class TaskService {
     }
 
     public void executeTask(String taskId) {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
-        if (url == null) {
-            throw new InternalException("Zip file not found");
+
+        Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
+        ProjectGenerationTask projectGenerationTask1 = projectGenerationTask.orElseThrow(NotFoundException::new);
+
+        if (projectGenerationTask1.getType().equals("time")) {
+            try {
+                timerService.runTimerJob(projectGenerationTask1);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        } else {
+            URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
+            if (url == null) {
+                throw new InternalException("Zip file not found");
+            }
+            try {
+                fileService.storeResult(taskId, url);
+            } catch (Exception e) {
+                throw new InternalException(e);
+            }
         }
-        try {
-            fileService.storeResult(taskId, url);
-        } catch (Exception e) {
-            throw new InternalException(e);
-        }
+
     }
 
     private ProjectGenerationTask get(String taskId) {
