@@ -3,6 +3,7 @@ package com.celonis.challenge.controllers;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.services.FileService;
 import com.celonis.challenge.services.TaskService;
+import com.celonis.challenge.services.TimerService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,14 @@ public class TaskController {
 
     private final FileService fileService;
 
+    private final TimerService service;
+
     public TaskController(TaskService taskService,
-                          FileService fileService) {
+                          FileService fileService,
+                          TimerService service) {
         this.taskService = taskService;
         this.fileService = fileService;
+        this.service = service;
     }
 
     @GetMapping("/")
@@ -61,6 +66,21 @@ public class TaskController {
     @GetMapping("/{taskId}/result")
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
         return fileService.getTaskResult(taskId);
+    }
+
+    @GetMapping("/running")
+    public List<ProjectGenerationTask> getAllRunningTimers() {
+        return service.getAllRunningTimers();
+    }
+
+    @GetMapping("/{timerId}/progress")
+    public ProjectGenerationTask getRunningTimer(@PathVariable String timerId) {
+        return service.getRunningTimer(timerId);
+    }
+
+    @DeleteMapping("/{timerId}")
+    public Boolean cancelTask(@PathVariable String timerId) {
+        return service.cancelTimer(timerId);
     }
 
 }
