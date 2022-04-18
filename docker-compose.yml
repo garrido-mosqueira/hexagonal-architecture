@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  challenge-java:
+    image: "challenge-java"
+    ports:
+      - "8080:8080"
+    container_name: challenge-java
+  prometheus:
+    image: "prom/prometheus"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    container_name: prometheus
+  grafana:
+    image: "grafana/grafana"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - grafana-data:/var/lib/grafana
+    container_name: grafana
+
+volumes:
+  prometheus-data:
+  grafana-data:
