@@ -65,3 +65,13 @@ Canceling a task that is being executed should be possible, in which case the ex
 
 The API can be used to create tasks, but the user is not required to execute those tasks.
 The tasks that are not executed after an extended period (e.g. a week) should be periodically cleaned up (deleted).
+
+
+### Run Application
+
+## Creating Docker image 
+``` docker build -t challenge-java . ```
+
+## Running application
+``` docker-compose up ```
+
