@@ -1,7 +1,7 @@
 package com.celonis.challenge.api.controllers;
 
 import com.celonis.challenge.api.exceptions.NotAuthorizedException;
-import com.celonis.challenge.api.exceptions.NotFoundException;
+import com.celonis.challenge.domain.exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

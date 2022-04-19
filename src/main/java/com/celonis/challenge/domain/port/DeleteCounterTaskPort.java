@@ -1,6 +1,6 @@
 package com.celonis.challenge.domain.port;
 
-public interface DeleteTaskPort {
+public interface DeleteCounterTaskPort {
 
     void deleteTask(String taskId);
 

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectGenerationTaskDTO {
+public class ProjectGenerationTask {
 
     String id;
     String name;
