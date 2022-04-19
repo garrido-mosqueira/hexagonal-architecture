@@ -1,9 +1,9 @@
 package com.celonis.challenge.persistence.adapter;
 
-import com.celonis.challenge.api.exceptions.NotFoundException;
+import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.CounterTask;
 import com.celonis.challenge.domain.port.CreateCounterTaskPort;
-import com.celonis.challenge.domain.port.DeleteTaskPort;
+import com.celonis.challenge.domain.port.DeleteCounterTaskPort;
 import com.celonis.challenge.domain.port.ReadCounterTaskPort;
 import com.celonis.challenge.domain.port.UpdateCounterTaskPort;
 import com.celonis.challenge.persistence.entities.CounterEntity;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCounterTaskPort, DeleteTaskPort, UpdateCounterTaskPort {
+public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCounterTaskPort, DeleteCounterTaskPort, UpdateCounterTaskPort {
 
     private final CounterRepository repository;
     private final CounterEntityMapper mapper;
@@ -56,11 +56,11 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
         return mapper.toDomain(repository.save(entity));
     }
 
-    public CounterTask updateExecution(String taskId) {
+    public void updateExecution(String taskId) {
         CounterTask existing = getTask(taskId);
         existing.setLastExecution(LocalDateTime.now());
         CounterEntity entity = mapper.toEntity(existing);
-        return mapper.toDomain(repository.save(entity));
+        mapper.toDomain(repository.save(entity));
     }
 
 }

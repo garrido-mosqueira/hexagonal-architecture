@@ -1,17 +1,17 @@
 package com.celonis.challenge.api.controllers;
 
-import com.celonis.challenge.api.dto.ProjectGenerationTaskDTO;
-import com.celonis.challenge.api.mapper.ProjectTaskMapper;
-import com.celonis.challenge.domain.model.CounterTask;
-import com.celonis.challenge.tasks.counter.adapter.CounterTaskAdapter;
-import com.celonis.challenge.tasks.files.FileService;
+import com.celonis.challenge.api.dto.ProjectGenerationTask;
+import com.celonis.challenge.api.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -19,58 +19,58 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    private final CounterTaskAdapter counterTaskAdapter;
-    private final FileService fileService;
-    private final ProjectTaskMapper mapper;
+    private final TaskService service;
 
     @PostMapping("/")
-    public ProjectGenerationTaskDTO createTask(@RequestBody @Valid ProjectGenerationTaskDTO projectGenerationTaskDTO) {
-        CounterTask counterCounterTaskJob = mapper.toDomain(projectGenerationTaskDTO);
-        return mapper.toDTO(counterTaskAdapter.createTask(counterCounterTaskJob));
+    public ProjectGenerationTask createTask(@RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
+        return service.createTask(projectGenerationTask);
     }
 
     @GetMapping("/")
-    public List<ProjectGenerationTaskDTO> listTasks() {
-        return mapper.toDomain(counterTaskAdapter.getTasks());
+    public List<ProjectGenerationTask> listTasks() {
+        return service.listTasks();
     }
 
     @GetMapping("/{taskId}")
-    public ProjectGenerationTaskDTO getTask(@PathVariable String taskId) {
-        return mapper.toDTO(counterTaskAdapter.getTask(taskId));
+    public ProjectGenerationTask getTask(@PathVariable String taskId) {
+        return service.getTask(taskId);
     }
 
     @PutMapping("/{taskId}")
-    public ProjectGenerationTaskDTO updateTask(@PathVariable String taskId,
-                                               @RequestBody @Valid ProjectGenerationTaskDTO projectGenerationTaskDTO) {
-        CounterTask counterTask = mapper.toDomain(projectGenerationTaskDTO);
-        return mapper.toDTO(counterTaskAdapter.updateTask(taskId, counterTask));
+    public ProjectGenerationTask updateTask(@PathVariable String taskId,
+                                            @RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
+        return service.updateTask(taskId, projectGenerationTask);
     }
 
     @DeleteMapping("/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable String taskId) {
-        counterTaskAdapter.cancelTask(taskId);
+        service.deleteTask(taskId);
     }
 
     @PostMapping("/{taskId}/execute")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
-        counterTaskAdapter.executeTask(taskId);
+        service.executeTask(taskId);
     }
 
     @GetMapping("/{taskId}/result")
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
-        return fileService.getTaskResult(taskId);
+        HttpHeaders respHeaders = new HttpHeaders();
+        respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        respHeaders.setContentDispositionFormData("attachment", "challenge.zip");
+        File fileResult = service.getResult(taskId);
+        return new ResponseEntity<>(new FileSystemResource(fileResult), respHeaders, HttpStatus.OK);
     }
 
     @GetMapping("/running")
-    public List<ProjectGenerationTaskDTO> getAllRunningCounters() {
-        return mapper.toDomain(counterTaskAdapter.getAllRunningCounters());
+    public List<ProjectGenerationTask> getAllRunningCounters() {
+        return service.getAllRunningCounters();
     }
 
     @GetMapping("/{counterId}/progress")
-    public ProjectGenerationTaskDTO getRunningCounter(@PathVariable String counterId) {
-        return mapper.toDTO(counterTaskAdapter.getRunningCounter(counterId));
+    public ProjectGenerationTask getRunningCounter(@PathVariable String counterId) {
+        return service.getRunningCounter(counterId);
     }
 
 }

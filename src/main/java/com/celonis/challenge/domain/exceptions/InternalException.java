@@ -1,4 +1,4 @@
-package com.celonis.challenge.api.exceptions;
+package com.celonis.challenge.domain.exceptions;
 
 public class InternalException extends RuntimeException {
 

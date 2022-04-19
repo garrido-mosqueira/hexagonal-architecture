@@ -1,10 +1,7 @@
 package com.celonis.challenge.tasks.counter.adapter;
 
 import com.celonis.challenge.domain.model.CounterTask;
-import com.celonis.challenge.domain.port.CancelCounterTaskPort;
-import com.celonis.challenge.domain.port.CreateCounterTaskPort;
-import com.celonis.challenge.domain.port.ReadCounterTaskPort;
-import com.celonis.challenge.domain.port.UpdateCounterTaskPort;
+import com.celonis.challenge.domain.port.*;
 import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
 import com.celonis.challenge.tasks.counter.mapper.CounterMapper;
 import com.celonis.challenge.tasks.counter.model.Counter;
@@ -17,7 +14,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CounterTaskAdapter implements ReadCounterTaskPort, CreateCounterTaskPort, UpdateCounterTaskPort, CancelCounterTaskPort {
+public class CounterTaskAdapter
+        implements ReadCounterTaskPort, CreateCounterTaskPort, UpdateCounterTaskPort, CancelCounterTaskPort, ExecuteCounterTaskPort {
 
     private final CounterPersistenceAdapter persistenceAdapter;
     private final CounterService counterService;
@@ -50,6 +48,7 @@ public class CounterTaskAdapter implements ReadCounterTaskPort, CreateCounterTas
     }
 
     @SneakyThrows
+    @Override
     public void executeTask(String taskId) {
         CounterTask task = persistenceAdapter.getTask(taskId);
         Counter counter = mapper.toCounter(task);
