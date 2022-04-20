@@ -9,10 +9,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProjectTaskMapper {
 
-    ProjectGenerationTask toDTOFromCounter(Task task);
+    ProjectGenerationTask toDTO(Task task);
 
-    Task toDomainCounter(ProjectGenerationTask projectGenerationTask);
+    Task toDomain(ProjectGenerationTask projectGenerationTask);
 
-    List<ProjectGenerationTask> toDTOFromCounter(List<Task> task);
+    List<ProjectGenerationTask> toDTO(List<Task> task);
 
 }

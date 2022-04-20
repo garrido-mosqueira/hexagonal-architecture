@@ -2,12 +2,12 @@ package com.celonis.challenge.persistence.adapter;
 
 import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.Task;
-import com.celonis.challenge.domain.port.CreateCounterTaskPort;
-import com.celonis.challenge.domain.port.DeleteCounterTaskPort;
-import com.celonis.challenge.domain.port.ReadCounterTaskPort;
-import com.celonis.challenge.domain.port.UpdateCounterTaskPort;
-import com.celonis.challenge.persistence.entities.CounterEntity;
-import com.celonis.challenge.persistence.mapper.CounterEntityMapper;
+import com.celonis.challenge.domain.port.CreateTaskPort;
+import com.celonis.challenge.domain.port.DeleteTaskPort;
+import com.celonis.challenge.domain.port.ReadTaskPort;
+import com.celonis.challenge.domain.port.UpdateTaskPort;
+import com.celonis.challenge.persistence.entities.TaskEntity;
+import com.celonis.challenge.persistence.mapper.TaskEntityMapper;
 import com.celonis.challenge.persistence.repository.CounterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,17 +19,17 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCounterTaskPort, DeleteCounterTaskPort, UpdateCounterTaskPort {
+public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteTaskPort, UpdateTaskPort {
 
     private final CounterRepository repository;
-    private final CounterEntityMapper mapper;
+    private final TaskEntityMapper mapper;
 
     @Override
     public Task createTask(Task task) {
         task.setId(null);
         task.setCreationDate(LocalDate.now());
         task.setLastExecution(LocalDateTime.MIN);
-        CounterEntity entity = mapper.toEntity(task);
+        TaskEntity entity = mapper.toEntity(task);
         return mapper.toDomain(repository.save(entity));
     }
 
@@ -56,13 +56,13 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
         existing.setBegin(taskUpdate.getBegin());
         existing.setFinish(taskUpdate.getFinish());
         existing.setName(taskUpdate.getName());
-        CounterEntity entity = mapper.toEntity(existing);
+        TaskEntity entity = mapper.toEntity(existing);
         return mapper.toDomain(repository.save(entity));
     }
 
     public void updateExecution(Task task) {
         task.setLastExecution(LocalDateTime.now());
-        CounterEntity entity = mapper.toEntity(task);
+        TaskEntity entity = mapper.toEntity(task);
         mapper.toDomain(repository.save(entity));
     }
 

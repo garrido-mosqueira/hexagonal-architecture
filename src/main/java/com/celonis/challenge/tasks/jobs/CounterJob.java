@@ -1,6 +1,6 @@
-package com.celonis.challenge.tasks.counter.jobs;
+package com.celonis.challenge.tasks.jobs;
 
-import com.celonis.challenge.tasks.counter.model.Counter;
+import com.celonis.challenge.tasks.model.Counter;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

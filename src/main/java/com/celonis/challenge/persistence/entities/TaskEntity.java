@@ -13,16 +13,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-public class CounterEntity {
+public class TaskEntity {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
     private String name;
-    private Integer begin;
-    private Integer finish;
     private LocalDate creationDate;
     private LocalDateTime lastExecution;
+    private Integer begin;
+    private Integer finish;
+    private String storageLocation;
 
 }
