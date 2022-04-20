@@ -1,7 +1,7 @@
 package com.celonis.challenge.tasks.counter.mapper;
 
 
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.tasks.counter.model.Counter;
 import org.mapstruct.Mapper;
 
@@ -10,9 +10,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CounterMapper {
 
-    Counter toCounter(CounterTask counterTask);
+    Counter toCounter(Task task);
 
-    CounterTask toDomain(Counter counter);
+    Task toDomain(Counter counter);
 
-    List<CounterTask> toDomain(List<Counter> counter);
+    List<Task> toDomain(List<Counter> counter);
 }

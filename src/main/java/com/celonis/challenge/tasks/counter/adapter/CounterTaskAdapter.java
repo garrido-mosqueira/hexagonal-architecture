@@ -2,7 +2,7 @@ package com.celonis.challenge.tasks.counter.adapter;
 
 import com.celonis.challenge.domain.exceptions.InternalException;
 import com.celonis.challenge.domain.exceptions.NotFoundException;
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.domain.port.*;
 import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
 import com.celonis.challenge.tasks.counter.mapper.CounterMapper;
@@ -29,23 +29,23 @@ public class CounterTaskAdapter
     private final CounterMapper mapper;
 
     @Override
-    public CounterTask createTask(CounterTask counterTask) {
-        return persistenceAdapter.createTask(counterTask);
+    public Task createTask(Task task) {
+        return persistenceAdapter.createTask(task);
     }
 
     @Override
-    public List<CounterTask> getTasks() {
+    public List<Task> getTasks() {
         return persistenceAdapter.getTasks();
     }
 
     @Override
-    public Optional<CounterTask> getTask(String taskId) {
+    public Optional<Task> getTask(String taskId) {
         return persistenceAdapter.getTask(taskId);
     }
 
     @Override
-    public CounterTask updateTask(String taskId, CounterTask counterTaskUpdate) {
-        return persistenceAdapter.updateTask(taskId, counterTaskUpdate);
+    public Task updateTask(String taskId, Task taskUpdate) {
+        return persistenceAdapter.updateTask(taskId, taskUpdate);
     }
 
     @Override
@@ -58,18 +58,18 @@ public class CounterTaskAdapter
         counterService.cancelCounter(taskId);
     }
 
-    public List<CounterTask> getAllRunningCounters() {
+    public List<Task> getAllRunningCounters() {
         return mapper.toDomain(counterService.getAllRunningCounters());
     }
 
     @SneakyThrows
-    public CounterTask getRunningCounter(final String counterId) {
+    public Task getRunningCounter(final String counterId) {
         return mapper.toDomain(counterService.getRunningCounter(counterId));
     }
 
     @SneakyThrows
     @Override
-    public void executeTask(CounterTask fileTask) {
+    public void executeTask(Task fileTask) {
         if (fileTask.getStorageLocation() != null) {
             executeFileTask(fileTask);
         } else {
@@ -77,7 +77,7 @@ public class CounterTaskAdapter
         }
     }
 
-    public void executeFileTask(CounterTask fileTask) {
+    public void executeFileTask(Task fileTask) {
         URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
         if (url == null) {
             throw new InternalException("Zip file not found");
@@ -89,14 +89,15 @@ public class CounterTaskAdapter
         }
     }
 
-    public void executeCounterTask(CounterTask task) throws SchedulerException {
+    public void executeCounterTask(Task task) throws SchedulerException {
         Counter counter = mapper.toCounter(task);
         counterService.runCounterJob(counter);
         persistenceAdapter.updateExecution(task);
     }
 
     public File getTaskResult(String taskId) {
-        CounterTask task = persistenceAdapter.getTask(taskId).orElseThrow(NotFoundException::new);
+        Task task = persistenceAdapter.getTask(taskId).orElseThrow(NotFoundException::new);
+        //TODO validate storage
         File inputFile = new File(task.getStorageLocation());
 
         if (!inputFile.exists()) {
@@ -105,7 +106,7 @@ public class CounterTaskAdapter
         return inputFile;
     }
 
-    public void storeResult(CounterTask task, URL url) throws IOException {
+    public void storeResult(Task task, URL url) throws IOException {
         File outputFile = File.createTempFile(task.getId(), ".zip");
         outputFile.deleteOnExit();
         task.setStorageLocation(outputFile.getAbsolutePath());

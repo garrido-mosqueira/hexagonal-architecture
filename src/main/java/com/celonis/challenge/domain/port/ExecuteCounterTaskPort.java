@@ -1,8 +1,8 @@
 package com.celonis.challenge.domain.port;
 
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 
 public interface ExecuteCounterTaskPort {
 
-    void executeTask(CounterTask task);
+    void executeTask(Task task);
 }

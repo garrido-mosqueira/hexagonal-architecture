@@ -1,9 +1,9 @@
 package com.celonis.challenge.domain.port;
 
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 
 public interface UpdateCounterTaskPort {
 
-    CounterTask updateTask(String taskId, CounterTask counterTaskUpdate);
+    Task updateTask(String taskId, Task taskUpdate);
 
 }

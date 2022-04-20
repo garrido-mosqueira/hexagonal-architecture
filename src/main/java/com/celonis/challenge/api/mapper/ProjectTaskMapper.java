@@ -1,7 +1,7 @@
 package com.celonis.challenge.api.mapper;
 
 import com.celonis.challenge.api.dto.ProjectGenerationTask;
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,10 +11,10 @@ import java.util.List;
 public interface ProjectTaskMapper {
 
     @Mapping(target = "type" , constant = "counter")
-    ProjectGenerationTask toDTOFromCounter(CounterTask counterTask);
+    ProjectGenerationTask toDTOFromCounter(Task task);
 
-    CounterTask toDomainCounter(ProjectGenerationTask projectGenerationTask);
+    Task toDomainCounter(ProjectGenerationTask projectGenerationTask);
 
-    List<ProjectGenerationTask> toDTOFromCounter(List<CounterTask> counterTask);
+    List<ProjectGenerationTask> toDTOFromCounter(List<Task> task);
 
 }
