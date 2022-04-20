@@ -41,6 +41,10 @@ public class TaskService {
     }
 
     public void deleteTask(String taskId) {
+        counterTaskAdapter.deleteTask(taskId);
+    }
+
+    public void cancelTask(String taskId) {
         counterTaskAdapter.cancelTask(taskId);
     }
 
