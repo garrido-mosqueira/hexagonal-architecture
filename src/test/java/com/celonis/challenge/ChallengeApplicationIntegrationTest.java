@@ -52,9 +52,9 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .isEqualTo(HttpStatus.OK);
 
         var taskIdCreatedFromAPI = requireNonNull(result.getBody()).getId();
-        var newTaskCreated = repository.findById(taskIdCreatedFromAPI);
+        var newTaskCreatedFromRepo = repository.findById(taskIdCreatedFromAPI);
 
-        assertThat(newTaskCreated.map(TaskDocument::getName).orElse("notId"))
+        assertThat(newTaskCreatedFromRepo.map(TaskDocument::getName).orElse("notId"))
                 .isEqualTo(taskToCreate.getName());
     }
 
@@ -99,7 +99,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .begin(1).finish(10)
                 .build();
         repository.deleteAll();
-        var savedTaskDocument = repository.save(taskToSaveThenGet);
+        var savedTaskFromRepo = repository.save(taskToSaveThenGet);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Celonis-Auth", "totally_secret");
@@ -115,7 +115,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .isEqualTo(HttpStatus.OK);
 
         assertThat(requireNonNull(taskFromAPI.getBody()).getId())
-                .isEqualTo(savedTaskDocument.getId());
+                .isEqualTo(savedTaskFromRepo.getId());
     }
 
     @Test
