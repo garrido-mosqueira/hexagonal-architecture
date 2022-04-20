@@ -1,10 +1,22 @@
 version: '3.9'
 services:
   challenge-java:
+    build:
+      context: ./
+      dockerfile: Dockerfile
     image: "challenge-java"
     ports:
       - "8080:8080"
+    depends_on:
+      - mongodb-challenge
     container_name: challenge-java
+
+  mongodb-challenge:
+    image: mongo:latest
+    container_name: "mongodb-challenge"
+    ports:
+      - "27017:27017"
+
   prometheus:
     image: "prom/prometheus"
     ports:
@@ -13,6 +25,7 @@ services:
       - ./monitoring/prometheus:/etc/prometheus
       - prometheus-data:/prometheus
     container_name: prometheus
+
   grafana:
     image: "grafana/grafana"
     ports:

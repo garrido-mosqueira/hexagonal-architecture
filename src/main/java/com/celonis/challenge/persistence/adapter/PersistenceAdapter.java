@@ -6,9 +6,9 @@ import com.celonis.challenge.domain.port.CreateTaskPort;
 import com.celonis.challenge.domain.port.DeleteTaskPort;
 import com.celonis.challenge.domain.port.ReadTaskPort;
 import com.celonis.challenge.domain.port.UpdateTaskPort;
-import com.celonis.challenge.persistence.entities.TaskEntity;
-import com.celonis.challenge.persistence.mapper.TaskEntityMapper;
-import com.celonis.challenge.persistence.repository.CounterRepository;
+import com.celonis.challenge.persistence.entities.TaskDocument;
+import com.celonis.challenge.persistence.mapper.TaskDocumentMapper;
+import com.celonis.challenge.persistence.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +21,15 @@ import java.util.Optional;
 @Component
 public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteTaskPort, UpdateTaskPort {
 
-    private final CounterRepository repository;
-    private final TaskEntityMapper mapper;
+    private final TaskRepository repository;
+    private final TaskDocumentMapper mapper;
 
     @Override
     public Task createTask(Task task) {
         task.setId(null);
         task.setCreationDate(LocalDate.now());
         task.setLastExecution(LocalDateTime.MIN);
-        TaskEntity entity = mapper.toEntity(task);
+        TaskDocument entity = mapper.toEntity(task);
         return mapper.toDomain(repository.save(entity));
     }
 
@@ -56,13 +56,13 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
         existing.setBegin(taskUpdate.getBegin());
         existing.setFinish(taskUpdate.getFinish());
         existing.setName(taskUpdate.getName());
-        TaskEntity entity = mapper.toEntity(existing);
+        TaskDocument entity = mapper.toEntity(existing);
         return mapper.toDomain(repository.save(entity));
     }
 
     public void updateExecution(Task task) {
         task.setLastExecution(LocalDateTime.now());
-        TaskEntity entity = mapper.toEntity(task);
+        TaskDocument entity = mapper.toEntity(task);
         mapper.toDomain(repository.save(entity));
     }
 
