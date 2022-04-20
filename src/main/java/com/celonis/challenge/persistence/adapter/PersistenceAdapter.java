@@ -55,6 +55,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
         existing.setBegin(taskUpdate.getBegin());
         existing.setFinish(taskUpdate.getFinish());
         existing.setName(taskUpdate.getName());
+        existing.setStorageLocation(taskUpdate.getStorageLocation());
         TaskDocument entity = mapper.toEntity(existing);
         return mapper.toDomain(repository.save(entity));
     }

@@ -70,10 +70,11 @@ public class TaskAdapter
     @SneakyThrows
     @Override
     public void executeTask(Task fileTask) {
-        if (fileTask.getStorageLocation() != null) {
-            executeFileTask(fileTask);
-        } else {
+        //TODO (fgarrido) find a better way to decide between task
+        if (fileTask.getBegin() != null) {
             executeCounterTask(fileTask);
+        } else {
+            executeFileTask(fileTask);
         }
     }
 
@@ -97,9 +98,7 @@ public class TaskAdapter
 
     public File getTaskResult(String taskId) {
         Task task = persistenceAdapter.getTask(taskId).orElseThrow(NotFoundException::new);
-        //TODO validate storage
         File inputFile = new File(task.getStorageLocation());
-
         if (!inputFile.exists()) {
             throw new InternalException("File not generated yet");
         }
@@ -110,7 +109,7 @@ public class TaskAdapter
         File outputFile = File.createTempFile(task.getId(), ".zip");
         outputFile.deleteOnExit();
         task.setStorageLocation(outputFile.getAbsolutePath());
-        persistenceAdapter.createTask(task);
+        persistenceAdapter.updateTask(task.getId(), task);
         try (InputStream is = url.openStream();
              OutputStream os = new FileOutputStream(outputFile)) {
             IOUtils.copy(is, os);
