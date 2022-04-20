@@ -4,7 +4,7 @@ import com.celonis.challenge.api.dto.ProjectGenerationTask;
 import com.celonis.challenge.api.mapper.ProjectTaskMapper;
 import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.Task;
-import com.celonis.challenge.tasks.counter.adapter.CounterTaskAdapter;
+import com.celonis.challenge.tasks.adapter.TaskAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,51 +17,51 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class TaskService {
 
-    private final CounterTaskAdapter counterTaskAdapter;
+    private final TaskAdapter taskAdapter;
     private final ProjectTaskMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
-        Task counterTaskJob = mapper.toDomainCounter(projectGenerationTask);
-        return mapper.toDTOFromCounter(counterTaskAdapter.createTask(counterTaskJob));
+        Task task = mapper.toDomain(projectGenerationTask);
+        return mapper.toDTO(taskAdapter.createTask(task));
     }
 
     public List<ProjectGenerationTask> listTasks() {
-        return counterTaskAdapter.getTasks().stream()
-                .map(mapper::toDTOFromCounter)
+        return taskAdapter.getTasks().stream()
+                .map(mapper::toDTO)
                 .collect(toList());
     }
 
     public ProjectGenerationTask getTask(String taskId) {
-        return counterTaskAdapter.getTask(taskId).map(mapper::toDTOFromCounter).orElseThrow(NotFoundException::new);
+        return taskAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
     }
 
     public ProjectGenerationTask updateTask(String taskId, ProjectGenerationTask projectGenerationTask) {
-        Task counterTaskJob = mapper.toDomainCounter(projectGenerationTask);
-        return mapper.toDTOFromCounter(counterTaskAdapter.updateTask(taskId, counterTaskJob));
+        Task task = mapper.toDomain(projectGenerationTask);
+        return mapper.toDTO(taskAdapter.updateTask(taskId, task));
     }
 
     public void deleteTask(String taskId) {
-        counterTaskAdapter.deleteTask(taskId);
+        taskAdapter.deleteTask(taskId);
     }
 
     public void cancelTask(String taskId) {
-        counterTaskAdapter.cancelTask(taskId);
+        taskAdapter.cancelTask(taskId);
     }
 
     public void executeTask(String taskId) {
-        counterTaskAdapter.getTask(taskId).ifPresent(counterTaskAdapter::executeTask);
+        taskAdapter.getTask(taskId).ifPresent(taskAdapter::executeTask);
     }
 
     public File getResult(String taskId) {
-        return counterTaskAdapter.getTaskResult(taskId);
+        return taskAdapter.getTaskResult(taskId);
     }
 
     public List<ProjectGenerationTask> getAllRunningCounters() {
-        return mapper.toDTOFromCounter(counterTaskAdapter.getAllRunningCounters());
+        return mapper.toDTO(taskAdapter.getAllRunningCounters());
     }
 
-    public ProjectGenerationTask getRunningCounter(String counterId) {
-        return mapper.toDTOFromCounter(counterTaskAdapter.getRunningCounter(counterId));
+    public ProjectGenerationTask getRunningCounter(String taskId) {
+        return mapper.toDTO(taskAdapter.getRunningCounter(taskId));
     }
 
 }

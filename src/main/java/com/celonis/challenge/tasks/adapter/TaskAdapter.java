@@ -1,13 +1,13 @@
-package com.celonis.challenge.tasks.counter.adapter;
+package com.celonis.challenge.tasks.adapter;
 
 import com.celonis.challenge.domain.exceptions.InternalException;
 import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.domain.port.*;
-import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
-import com.celonis.challenge.tasks.counter.mapper.CounterMapper;
-import com.celonis.challenge.tasks.counter.model.Counter;
-import com.celonis.challenge.tasks.counter.service.CounterService;
+import com.celonis.challenge.persistence.adapter.PersistenceAdapter;
+import com.celonis.challenge.tasks.mapper.CounterMapper;
+import com.celonis.challenge.tasks.model.Counter;
+import com.celonis.challenge.tasks.service.CounterService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
@@ -21,10 +21,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CounterTaskAdapter
-        implements CreateCounterTaskPort, ReadCounterTaskPort, UpdateCounterTaskPort, DeleteCounterTaskPort, CancelCounterTaskPort, ExecuteCounterTaskPort {
+public class TaskAdapter
+        implements CreateTaskPort, ReadTaskPort, UpdateTaskPort, DeleteTaskPort, ExecuteTaskPort, CancelTaskPort {
 
-    private final CounterPersistenceAdapter persistenceAdapter;
+    private final PersistenceAdapter persistenceAdapter;
     private final CounterService counterService;
     private final CounterMapper mapper;
 

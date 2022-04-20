@@ -74,9 +74,9 @@ public class TaskController {
         return service.getAllRunningCounters();
     }
 
-    @GetMapping("/{counterId}/progress")
-    public ProjectGenerationTask getRunningCounter(@PathVariable String counterId) {
-        return service.getRunningCounter(counterId);
+    @GetMapping("/{taskId}/progress")
+    public ProjectGenerationTask getRunningCounter(@PathVariable String taskId) {
+        return service.getRunningCounter(taskId);
     }
 
 }

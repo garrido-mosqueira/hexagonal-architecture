@@ -1,7 +1,7 @@
-package com.celonis.challenge.tasks.counter.service;
+package com.celonis.challenge.tasks.service;
 
-import com.celonis.challenge.tasks.counter.jobs.CounterJob;
-import com.celonis.challenge.tasks.counter.model.Counter;
+import com.celonis.challenge.tasks.jobs.CounterJob;
+import com.celonis.challenge.tasks.model.Counter;
 import lombok.RequiredArgsConstructor;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;

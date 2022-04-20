@@ -1,7 +1,7 @@
 package com.celonis.challenge.persistence.service;
 
 import com.celonis.challenge.domain.model.Task;
-import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
+import com.celonis.challenge.persistence.adapter.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,15 +15,15 @@ import java.time.LocalDateTime;
 @Service
 public class TaskCleaner {
 
-    private final CounterPersistenceAdapter counterPersistenceAdapter;
+    private final PersistenceAdapter persistenceAdapter;
 
     @Scheduled(cron = "${delete.expired.task.scheduled}")
     public void cleanExpiredTask() {
         log.info("Begin Cleaning task ... ");
-        counterPersistenceAdapter.getTasks().stream()
+        persistenceAdapter.getTasks().stream()
                 .filter(counterTask -> counterTask.getLastExecution().isBefore(LocalDateTime.now()))
                 .map(Task::getId)
-                .forEach(counterPersistenceAdapter::deleteTask);
+                .forEach(persistenceAdapter::deleteTask);
 
         log.info("Finished Cleaning task ... ");
     }

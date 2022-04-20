@@ -1,6 +1,6 @@
-package com.celonis.challenge.tasks.counter.util;
+package com.celonis.challenge.tasks.util;
 
-import com.celonis.challenge.tasks.counter.model.Counter;
+import com.celonis.challenge.tasks.model.Counter;
 import lombok.NoArgsConstructor;
 import org.quartz.*;
 

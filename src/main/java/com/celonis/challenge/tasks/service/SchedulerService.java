@@ -1,7 +1,7 @@
-package com.celonis.challenge.tasks.counter.service;
+package com.celonis.challenge.tasks.service;
 
-import com.celonis.challenge.tasks.counter.model.Counter;
-import com.celonis.challenge.tasks.counter.util.ScheduleUtils;
+import com.celonis.challenge.tasks.model.Counter;
+import com.celonis.challenge.tasks.util.ScheduleUtils;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;

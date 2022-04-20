@@ -1,4 +1,4 @@
-package com.celonis.challenge.tasks.counter.model;
+package com.celonis.challenge.tasks.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
