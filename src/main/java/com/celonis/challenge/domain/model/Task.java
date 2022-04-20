@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -16,8 +15,8 @@ public class Task {
 
     private String id;
     private String name;
-    private LocalDate creationDate;
-    private LocalDateTime lastExecution;
+    private Date creationDate;
+    private Date lastExecution;
     private Integer begin;
     private Integer finish;
     private Integer progress;

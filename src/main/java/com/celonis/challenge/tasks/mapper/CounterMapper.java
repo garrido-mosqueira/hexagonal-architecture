@@ -14,4 +14,5 @@ public interface CounterMapper {
     Task toDomain(Counter counter);
 
     List<Task> toDomain(List<Counter> counter);
+
 }

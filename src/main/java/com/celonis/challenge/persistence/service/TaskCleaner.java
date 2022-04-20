@@ -7,8 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
+import java.util.Date;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,7 +20,7 @@ public class TaskCleaner {
     public void cleanExpiredTask() {
         log.info("Begin Cleaning task ... ");
         persistenceAdapter.getTasks().stream()
-                .filter(counterTask -> counterTask.getLastExecution().isBefore(LocalDateTime.now()))
+                .filter(counterTask -> counterTask.getLastExecution().before(new Date(System.currentTimeMillis() - 180 * 1000)))
                 .map(Task::getId)
                 .forEach(persistenceAdapter::deleteTask);
 

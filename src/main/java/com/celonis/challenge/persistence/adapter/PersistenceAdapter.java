@@ -12,8 +12,7 @@ import com.celonis.challenge.persistence.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +26,8 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     @Override
     public Task createTask(Task task) {
         task.setId(null);
-        task.setCreationDate(LocalDate.now());
-        task.setLastExecution(LocalDateTime.MIN);
+        task.setCreationDate(new Date(System.currentTimeMillis()));
+        task.setLastExecution(new Date(System.currentTimeMillis()));
         TaskDocument entity = mapper.toEntity(task);
         return mapper.toDomain(repository.save(entity));
     }
@@ -61,7 +60,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     }
 
     public void updateExecution(Task task) {
-        task.setLastExecution(LocalDateTime.now());
+        task.setLastExecution(new Date(System.currentTimeMillis()));
         TaskDocument entity = mapper.toEntity(task);
         mapper.toDomain(repository.save(entity));
     }
