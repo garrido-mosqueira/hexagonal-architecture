@@ -19,10 +19,13 @@ public class ProjectGenerationTask {
     String id;
     String name;
     LocalDate creationDate;
-    Integer begin;
-    Integer finish;
+    String type;
     @JsonIgnore
     String storageLocation;
+    @JsonInclude(Include.NON_NULL)
+    Integer begin;
+    @JsonInclude(Include.NON_NULL)
+    Integer finish;
     @JsonInclude(Include.NON_NULL)
     Integer progress;
 }

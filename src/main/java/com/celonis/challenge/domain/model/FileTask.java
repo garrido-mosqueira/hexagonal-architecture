@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,5 +18,6 @@ public class FileTask {
     private String name;
     private LocalDate creationDate;
     private String storageLocation;
+    private LocalDateTime lastExecution;
 
 }
