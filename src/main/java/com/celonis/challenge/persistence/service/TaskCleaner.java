@@ -1,6 +1,6 @@
 package com.celonis.challenge.persistence.service;
 
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class TaskCleaner {
         log.info("Begin Cleaning task ... ");
         counterPersistenceAdapter.getTasks().stream()
                 .filter(counterTask -> counterTask.getLastExecution().isBefore(LocalDateTime.now()))
-                .map(CounterTask::getId)
+                .map(Task::getId)
                 .forEach(counterPersistenceAdapter::deleteTask);
 
         log.info("Finished Cleaning task ... ");

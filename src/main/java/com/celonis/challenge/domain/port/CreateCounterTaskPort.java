@@ -1,9 +1,9 @@
 package com.celonis.challenge.domain.port;
 
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 
 public interface CreateCounterTaskPort {
 
-    CounterTask createTask(CounterTask counterTask);
+    Task createTask(Task task);
 
 }

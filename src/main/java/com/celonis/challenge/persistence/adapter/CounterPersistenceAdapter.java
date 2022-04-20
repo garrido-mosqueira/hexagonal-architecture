@@ -1,7 +1,7 @@
 package com.celonis.challenge.persistence.adapter;
 
 import com.celonis.challenge.domain.exceptions.NotFoundException;
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.domain.port.CreateCounterTaskPort;
 import com.celonis.challenge.domain.port.DeleteCounterTaskPort;
 import com.celonis.challenge.domain.port.ReadCounterTaskPort;
@@ -25,21 +25,21 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
     private final CounterEntityMapper mapper;
 
     @Override
-    public CounterTask createTask(CounterTask counterTask) {
-        counterTask.setId(null);
-        counterTask.setCreationDate(LocalDate.now());
-        counterTask.setLastExecution(LocalDateTime.MIN);
-        CounterEntity entity = mapper.toEntity(counterTask);
+    public Task createTask(Task task) {
+        task.setId(null);
+        task.setCreationDate(LocalDate.now());
+        task.setLastExecution(LocalDateTime.MIN);
+        CounterEntity entity = mapper.toEntity(task);
         return mapper.toDomain(repository.save(entity));
     }
 
     @Override
-    public List<CounterTask> getTasks() {
+    public List<Task> getTasks() {
         return mapper.toDomain(repository.findAll());
     }
 
     @Override
-    public Optional<CounterTask> getTask(String taskId) {
+    public Optional<Task> getTask(String taskId) {
         return repository.findById(taskId)
                 .map(mapper::toDomain)
                 .or(Optional::empty);
@@ -51,16 +51,16 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
     }
 
     @Override
-    public CounterTask updateTask(String taskId, CounterTask counterTaskUpdate) {
-        CounterTask existing = getTask(taskId).orElseThrow(NotFoundException::new);
-        existing.setBegin(counterTaskUpdate.getBegin());
-        existing.setFinish(counterTaskUpdate.getFinish());
-        existing.setName(counterTaskUpdate.getName());
+    public Task updateTask(String taskId, Task taskUpdate) {
+        Task existing = getTask(taskId).orElseThrow(NotFoundException::new);
+        existing.setBegin(taskUpdate.getBegin());
+        existing.setFinish(taskUpdate.getFinish());
+        existing.setName(taskUpdate.getName());
         CounterEntity entity = mapper.toEntity(existing);
         return mapper.toDomain(repository.save(entity));
     }
 
-    public void updateExecution(CounterTask task) {
+    public void updateExecution(Task task) {
         task.setLastExecution(LocalDateTime.now());
         CounterEntity entity = mapper.toEntity(task);
         mapper.toDomain(repository.save(entity));

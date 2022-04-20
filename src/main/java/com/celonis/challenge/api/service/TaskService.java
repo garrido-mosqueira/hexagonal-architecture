@@ -3,7 +3,7 @@ package com.celonis.challenge.api.service;
 import com.celonis.challenge.api.dto.ProjectGenerationTask;
 import com.celonis.challenge.api.mapper.ProjectTaskMapper;
 import com.celonis.challenge.domain.exceptions.NotFoundException;
-import com.celonis.challenge.domain.model.CounterTask;
+import com.celonis.challenge.domain.model.Task;
 import com.celonis.challenge.tasks.counter.adapter.CounterTaskAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,8 +21,8 @@ public class TaskService {
     private final ProjectTaskMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
-        CounterTask counterCounterTaskJob = mapper.toDomainCounter(projectGenerationTask);
-        return mapper.toDTOFromCounter(counterTaskAdapter.createTask(counterCounterTaskJob));
+        Task counterTaskJob = mapper.toDomainCounter(projectGenerationTask);
+        return mapper.toDTOFromCounter(counterTaskAdapter.createTask(counterTaskJob));
     }
 
     public List<ProjectGenerationTask> listTasks() {
@@ -36,8 +36,8 @@ public class TaskService {
     }
 
     public ProjectGenerationTask updateTask(String taskId, ProjectGenerationTask projectGenerationTask) {
-        CounterTask counterCounterTaskJob = mapper.toDomainCounter(projectGenerationTask);
-        return mapper.toDTOFromCounter(counterTaskAdapter.updateTask(taskId, counterCounterTaskJob));
+        Task counterTaskJob = mapper.toDomainCounter(projectGenerationTask);
+        return mapper.toDTOFromCounter(counterTaskAdapter.updateTask(taskId, counterTaskJob));
     }
 
     public void deleteTask(String taskId) {
