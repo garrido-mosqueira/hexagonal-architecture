@@ -1,6 +1,5 @@
 package com.celonis.challenge.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -28,4 +28,6 @@ public class ProjectGenerationTask {
     Integer finish;
     @JsonInclude(Include.NON_NULL)
     Integer progress;
+    @JsonInclude(Include.NON_NULL)
+    LocalDateTime lastExecution;
 }
