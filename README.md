@@ -33,7 +33,7 @@ What we are looking into:
       so please ensure the API works and prepare some mocks
       (Postman, curl or any preferred HTTP/REST tools)
 
-How to understand the counter:
+How to understand the task:
   - consider the provided challenge as an application with some existing functionality,
     which was used to "generate" a file and download it
   - fix current issues to make the application runnable
@@ -48,30 +48,20 @@ Identify that problem and fix it.
 
 ### Task 2: Extend the application
 
-The counter is to extend the current functionality of the backend by
-- implementing a new counter type
-- showing the progress of the counter execution
-- implementing a counter cancellation mechanism.
+The task is to extend the current functionality of the backend by
+- implementing a new task type
+- showing the progress of the task execution
+- implementing a task cancellation mechanism.
 
-The new counter type is a simple counter which is configured with two input parameters, `x` and `y` of type `integer`.
-When the counter is executed, counter should start in the background and progress should be monitored.
+The new task type is a simple counter which is configured with two input parameters, `x` and `y` of type `integer`.
+When the task is executed, counter should start in the background and progress should be monitored.
 Counting should start from `x` and get increased by one every second.
-When counting reaches `y`, the counter should finish successfully.
+When counting reaches `y`, the task should finish successfully.
 
-The progress of the counter should be exposed via the API so that a web client can monitor it.
-Canceling a counter that is being executed should be possible, in which case the execution should stop.
+The progress of the task should be exposed via the API so that a web client can monitor it.
+Canceling a task that is being executed should be possible, in which case the execution should stop.
 
 ### Task 3: Periodically clean up the tasks
 
 The API can be used to create tasks, but the user is not required to execute those tasks.
 The tasks that are not executed after an extended period (e.g. a week) should be periodically cleaned up (deleted).
-
-
-### Run Application
-
-## Creating Docker image 
-``` docker build -t challenge-java . ```
-
-## Running application
-``` docker-compose up ```
-
