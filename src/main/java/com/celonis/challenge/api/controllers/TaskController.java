@@ -48,6 +48,12 @@ public class TaskController {
         service.deleteTask(taskId);
     }
 
+    @PostMapping("/{taskId}/cancel")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelTask(@PathVariable String taskId) {
+        service.cancelTask(taskId);
+    }
+
     @PostMapping("/{taskId}/execute")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
