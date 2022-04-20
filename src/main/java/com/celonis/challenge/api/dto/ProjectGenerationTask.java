@@ -20,7 +20,7 @@ public class ProjectGenerationTask {
     String name;
     LocalDate creationDate;
     String type;
-    @JsonIgnore
+    @JsonInclude(Include.NON_NULL)
     String storageLocation;
     @JsonInclude(Include.NON_NULL)
     Integer begin;
