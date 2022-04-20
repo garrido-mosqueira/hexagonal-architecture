@@ -16,10 +16,11 @@ public class CounterTask {
 
     private String id;
     private String name;
-    private Integer begin;
-    private Integer finish;
     private LocalDate creationDate;
     private LocalDateTime lastExecution;
+    private Integer begin;
+    private Integer finish;
     private Integer progress;
+    private String storageLocation;
 
 }
