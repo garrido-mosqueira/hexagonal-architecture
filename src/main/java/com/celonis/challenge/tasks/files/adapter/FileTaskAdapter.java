@@ -1,6 +1,7 @@
 package com.celonis.challenge.tasks.files.adapter;
 
 import com.celonis.challenge.domain.exceptions.InternalException;
+import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.FileTask;
 import com.celonis.challenge.domain.port.*;
 import com.celonis.challenge.persistence.adapter.FileTaskPersistenceAdapter;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class FileTaskAdapter implements CreateFileTaskPort, ReadFileTaskPort, DeleteFileTaskPort, UpdateFileTaskPort, ExecuteCounterTaskPort {
+public class FileTaskAdapter
+        implements CreateFileTaskPort, ReadFileTaskPort, DeleteFileTaskPort, UpdateFileTaskPort, ExecuteFileTaskPort {
 
     private final FileTaskPersistenceAdapter persistenceAdapter;
 
@@ -30,7 +33,7 @@ public class FileTaskAdapter implements CreateFileTaskPort, ReadFileTaskPort, De
     }
 
     @Override
-    public FileTask getTask(String taskId) {
+    public Optional<FileTask> getTask(String taskId) {
         return persistenceAdapter.getTask(taskId);
     }
 
@@ -46,20 +49,20 @@ public class FileTaskAdapter implements CreateFileTaskPort, ReadFileTaskPort, De
 
     @SneakyThrows
     @Override
-    public void executeTask(String taskId) {
+    public void executeTask(FileTask fileTask) {
         URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
         if (url == null) {
             throw new InternalException("Zip file not found");
         }
         try {
-            storeResult(taskId, url);
+            storeResult(fileTask, url);
         } catch (Exception e) {
             throw new InternalException(e);
         }
     }
 
     public File getTaskResult(String taskId) {
-        FileTask task = persistenceAdapter.getTask(taskId);
+        FileTask task = persistenceAdapter.getTask(taskId).orElseThrow(NotFoundException::new);
         File inputFile = new File(task.getStorageLocation());
 
         if (!inputFile.exists()) {
@@ -68,9 +71,8 @@ public class FileTaskAdapter implements CreateFileTaskPort, ReadFileTaskPort, De
         return inputFile;
     }
 
-    public void storeResult(String taskId, URL url) throws IOException {
-        FileTask task = persistenceAdapter.getTask(taskId);
-        File outputFile = File.createTempFile(taskId, ".zip");
+    public void storeResult(FileTask task, URL url) throws IOException {
+        File outputFile = File.createTempFile(task.getId(), ".zip");
         outputFile.deleteOnExit();
         task.setStorageLocation(outputFile.getAbsolutePath());
         persistenceAdapter.createTask(task);

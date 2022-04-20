@@ -1,5 +1,6 @@
 package com.celonis.challenge.tasks.counter.adapter;
 
+import com.celonis.challenge.domain.exceptions.NotFoundException;
 import com.celonis.challenge.domain.model.CounterTask;
 import com.celonis.challenge.domain.port.*;
 import com.celonis.challenge.persistence.adapter.CounterPersistenceAdapter;
@@ -11,6 +12,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class CounterTaskAdapter
     }
 
     @Override
-    public CounterTask getTask(String taskId) {
+    public Optional<CounterTask> getTask(String taskId) {
         return persistenceAdapter.getTask(taskId);
     }
 
@@ -49,11 +51,10 @@ public class CounterTaskAdapter
 
     @SneakyThrows
     @Override
-    public void executeTask(String taskId) {
-        CounterTask task = persistenceAdapter.getTask(taskId);
+    public void executeTask(CounterTask task) {
         Counter counter = mapper.toCounter(task);
         counterService.runCounterJob(counter);
-        persistenceAdapter.updateExecution(taskId);
+        persistenceAdapter.updateExecution(task);
     }
 
     public List<CounterTask> getAllRunningCounters() {

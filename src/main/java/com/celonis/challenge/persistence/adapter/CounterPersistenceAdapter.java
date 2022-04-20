@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -27,6 +28,7 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
     public CounterTask createTask(CounterTask counterTask) {
         counterTask.setId(null);
         counterTask.setCreationDate(LocalDate.now());
+        counterTask.setLastExecution(LocalDateTime.MIN);
         CounterEntity entity = mapper.toEntity(counterTask);
         return mapper.toDomain(repository.save(entity));
     }
@@ -37,8 +39,10 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
     }
 
     @Override
-    public CounterTask getTask(String taskId) {
-        return mapper.toDomain(repository.findById(taskId).orElseThrow(NotFoundException::new));
+    public Optional<CounterTask> getTask(String taskId) {
+        return repository.findById(taskId)
+                .map(mapper::toDomain)
+                .or(Optional::empty);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
 
     @Override
     public CounterTask updateTask(String taskId, CounterTask counterTaskUpdate) {
-        CounterTask existing = getTask(taskId);
+        CounterTask existing = getTask(taskId).orElseThrow(NotFoundException::new);
         existing.setBegin(counterTaskUpdate.getBegin());
         existing.setFinish(counterTaskUpdate.getFinish());
         existing.setName(counterTaskUpdate.getName());
@@ -56,10 +60,9 @@ public class CounterPersistenceAdapter implements CreateCounterTaskPort, ReadCou
         return mapper.toDomain(repository.save(entity));
     }
 
-    public void updateExecution(String taskId) {
-        CounterTask existing = getTask(taskId);
-        existing.setLastExecution(LocalDateTime.now());
-        CounterEntity entity = mapper.toEntity(existing);
+    public void updateExecution(CounterTask task) {
+        task.setLastExecution(LocalDateTime.now());
+        CounterEntity entity = mapper.toEntity(task);
         mapper.toDomain(repository.save(entity));
     }
 

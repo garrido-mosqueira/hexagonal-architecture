@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -23,10 +25,11 @@ public class FileTaskPersistenceAdapter implements CreateFileTaskPort, ReadFileT
     private final FileEntityMapper mapper;
 
     @Override
-    public FileTask createTask(FileTask counterTask) {
-        counterTask.setId(null);
-        counterTask.setCreationDate(LocalDate.now());
-        FileTaskEntity entity = mapper.toEntity(counterTask);
+    public FileTask createTask(FileTask fileTask) {
+        fileTask.setId(null);
+        fileTask.setCreationDate(LocalDate.now());
+        fileTask.setLastExecution(LocalDateTime.MIN);
+        FileTaskEntity entity = mapper.toEntity(fileTask);
         return mapper.toDomain(repository.save(entity));
     }
 
@@ -36,8 +39,10 @@ public class FileTaskPersistenceAdapter implements CreateFileTaskPort, ReadFileT
     }
 
     @Override
-    public FileTask getTask(String taskId) {
-        return mapper.toDomain(repository.findById(taskId).orElseThrow(NotFoundException::new));
+    public Optional<FileTask> getTask(String taskId) {
+        return repository.findById(taskId)
+                .map(mapper::toDomain)
+                .or(Optional::empty);
     }
 
     @Override
@@ -46,9 +51,9 @@ public class FileTaskPersistenceAdapter implements CreateFileTaskPort, ReadFileT
     }
 
     @Override
-    public FileTask updateTask(String taskId, FileTask counterTaskUpdate) {
-        FileTask existing = getTask(taskId);
-        existing.setName(counterTaskUpdate.getName());
+    public FileTask updateTask(String taskId, FileTask fileTaskUpdate) {
+        FileTask existing = getTask(taskId).orElseThrow(NotFoundException::new);
+        existing.setName(fileTaskUpdate.getName());
         FileTaskEntity entity = mapper.toEntity(existing);
         return mapper.toDomain(repository.save(entity));
     }
