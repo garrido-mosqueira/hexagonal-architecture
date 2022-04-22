@@ -20,7 +20,7 @@ public class SimpleHeaderFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // OPTIONS should always work
-        if (request.getMethod().equals("OPTIONS")) {
+        if (request.getMethod().equals("OPTIONS") || request.getRequestURI().contains("prometheus")) {
             filterChain.doFilter(request, response);
             return;
         }
