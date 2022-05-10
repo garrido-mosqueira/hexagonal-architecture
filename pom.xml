@@ -17,12 +17,13 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <spring-boot.version>2.6.6</spring-boot.version>
         <commons-io.version>2.11.0</commons-io.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <org.lombok.version>1.18.22</org.lombok.version>
-        <testcontainers.version>1.16.3</testcontainers.version>
+        <testcontainers.version>1.17.1</testcontainers.version>
+        <rest-assured.version>5.0.1</rest-assured.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,12 @@
         </dependency>
 
         <!-- test-->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>spring-mock-mvc</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>

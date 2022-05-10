@@ -18,8 +18,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static io.restassured.RestAssured.given;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
@@ -32,6 +34,22 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
 
     @LocalServerPort
     private int port;
+
+    @Test
+    public void shouldCreateTask() {
+        given()
+                .headers("Celonis-Auth", "totally_secret")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(ProjectGenerationTask.builder().name("task_get").begin(1).finish(10).build()).
+        when()
+                .post(String.format("http://localhost:%s/api/tasks/", port)).
+        then()
+                .statusCode(is(200)).
+        assertThat()
+                .body("name", is("task_get"))
+                .body("begin", is(1))
+                .body("finish", is(10));
+    }
 
     @Test
     public void createTask() throws URISyntaxException {
