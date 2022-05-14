@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.celonis</groupId>
+    <groupId>com.fran</groupId>
     <version>1.1-SNAPSHOT</version>
     <artifactId>challenge-java</artifactId>
 
