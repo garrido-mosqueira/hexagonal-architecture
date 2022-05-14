@@ -1,15 +1,15 @@
-# Celonis Programming Challenge
+#Programming Challenge
 
 Dear applicant,
 
-Congratulations, you made it to the Celonis Programming Challenge!
+Congratulations, you made it to the Programming Challenge!
 
-The challenge itself should be timeboxed to 3 hours. This means you should not work longer than that on the completion.
+The challenge itself should be time boxed to 3 hours. This means you should not work longer than that on the completion.
 If you can't make all points within the timeframe this is _not_ an issue. We will be happy to discuss any problems and ideas during the Challenge Interview.
 
 Why do we ask you to complete this challenge?
 
-First of all, we need to have some way of comparing different applicants, and we try to answer certain questions which
+First, we need to have some way of comparing different applicants, and we try to answer certain questions which
 we cannot out-right ask in an interview - also we don't want to ask too many technical questions
 in a face-to-face interview to not be personally biased in a potentially stressful situation.
 To be as transparent as possible, we want to give you some insights into what we look at and how we evaluate.
