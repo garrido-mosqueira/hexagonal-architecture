@@ -1,16 +1,15 @@
 package com.fran.challenge.tasks.service;
 
 import com.fran.challenge.tasks.model.Counter;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class SimpleTriggerListener implements TriggerListener {
 
-    private static final Logger log = LoggerFactory.getLogger(SimpleTriggerListener.class);
     private final SchedulerService schedulerService;
 
     public SimpleTriggerListener(SchedulerService schedulerService) {
