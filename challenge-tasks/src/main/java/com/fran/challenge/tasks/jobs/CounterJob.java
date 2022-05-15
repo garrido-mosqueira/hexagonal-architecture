@@ -1,16 +1,15 @@
 package com.fran.challenge.tasks.jobs;
 
 import com.fran.challenge.tasks.model.Counter;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class CounterJob implements Job {
-    private static final Logger log = LoggerFactory.getLogger(CounterJob.class);
 
     @Override
     public void execute(JobExecutionContext context) {
