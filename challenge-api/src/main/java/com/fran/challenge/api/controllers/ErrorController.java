@@ -2,6 +2,7 @@ package com.fran.challenge.api.controllers;
 
 import com.fran.challenge.api.exceptions.NotAuthorizedException;
 import com.fran.challenge.domain.exceptions.NotFoundException;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,13 @@ public class ErrorController {
     public String handleNotFound() {
         logger.warn("Entity not found");
         return "Not found";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(SchedulerException.class)
+    public String handleScheduler(SchedulerException e) {
+        logger.warn(e.getMessage());
+        return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
