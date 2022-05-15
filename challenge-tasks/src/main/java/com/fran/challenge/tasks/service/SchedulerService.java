@@ -3,10 +3,9 @@ package com.fran.challenge.tasks.service;
 import com.fran.challenge.tasks.model.Counter;
 import com.fran.challenge.tasks.util.ScheduleUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,11 +16,11 @@ import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SchedulerService {
 
-    private static final Logger log = LoggerFactory.getLogger(SchedulerService.class);
     private final Scheduler scheduler;
 
     public <T extends Job> void schedule(final Class<T> jobClass, final Counter task) throws SchedulerException {
@@ -56,8 +55,7 @@ public class SchedulerService {
     public Counter getRunningCounter(final String counterId) throws SchedulerException {
         final JobDetail jobDetail = scheduler.getJobDetail(new JobKey(counterId));
         if (jobDetail == null) {
-            log.error("Failed to find counter with ID '{}'", counterId);
-            return null;
+            throw new SchedulerException("Failed to find counter with ID " + counterId);
         }
         return (Counter) jobDetail.getJobDataMap().get(counterId);
     }
