@@ -5,7 +5,7 @@
 
     <modules>
         <module>challenge-domain</module>
-        <module>challenge-api</module>
+        <module>challenge-api-webflux</module>
         <module>challenge-persistence</module>
         <module>challenge-tasks</module>
     </modules>
