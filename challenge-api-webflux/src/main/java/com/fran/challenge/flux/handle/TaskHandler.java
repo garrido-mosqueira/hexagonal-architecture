@@ -44,9 +44,9 @@ public class TaskHandler {
         return Mono
                 .just(request.pathVariable("taskId"))
                 .map(service::getTask)
-                .flatMap(resource -> noContent()
-                        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                        .build())
+                .flatMap(generationTask -> ok()
+                        .contentType(APPLICATION_JSON)
+                        .body(Mono.just(generationTask), ProjectGenerationTask.class))
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
@@ -63,18 +63,20 @@ public class TaskHandler {
     }
 
     public Mono<ServerResponse> deleteTask(final ServerRequest request) {
-        String taskId = request.pathVariable("taskId");
-        return ok()
-                .contentType(APPLICATION_JSON).build(service.deleteTask(taskId));
+        return Mono
+                .just(request.pathVariable("taskId"))
+                .map(service::deleteTask)
+                .flatMap(resource -> noContent().build())
+                .switchIfEmpty(defer(() -> notFound()
+                        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                        .build()));
     }
 
     public Mono<ServerResponse> executeTask(final ServerRequest request) {
         return Mono
                 .just(request.pathVariable("taskId"))
                 .map(service::executeTask)
-                .flatMap(resource -> noContent()
-                        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                        .build())
+                .flatMap(resource -> noContent().build())
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
@@ -84,9 +86,7 @@ public class TaskHandler {
         return Mono
                 .just(request.pathVariable("taskId"))
                 .map(service::cancelTask)
-                .flatMap(resource -> noContent()
-                        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                        .build())
+                .flatMap(resource -> noContent().build())
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
@@ -109,9 +109,9 @@ public class TaskHandler {
         return Mono
                 .just(request.pathVariable("taskId"))
                 .map(service::getRunningCounter)
-                .flatMap(resource -> noContent()
-                        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                        .build())
+                .flatMap(generationTask -> ok()
+                        .contentType(APPLICATION_JSON)
+                        .body(Mono.just(generationTask), ProjectGenerationTask.class))
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
