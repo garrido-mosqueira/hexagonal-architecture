@@ -55,6 +55,7 @@ public class SchedulerService {
     public Counter getRunningCounter(final String counterId) throws SchedulerException {
         final JobDetail jobDetail = scheduler.getJobDetail(new JobKey(counterId));
         if (jobDetail == null) {
+            log.error("Failed to find counter with ID " + counterId);
             throw new SchedulerException("Failed to find counter with ID " + counterId);
         }
         return (Counter) jobDetail.getJobDataMap().get(counterId);
