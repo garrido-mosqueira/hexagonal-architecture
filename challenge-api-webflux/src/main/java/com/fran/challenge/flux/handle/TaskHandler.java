@@ -47,6 +47,8 @@ public class TaskHandler {
                 .flatMap(generationTask -> ok()
                         .contentType(APPLICATION_JSON)
                         .body(Mono.just(generationTask), ProjectGenerationTask.class))
+                .onErrorResume(error -> Mono.just(error)
+                        .flatMap(response -> notFound().build()))
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
@@ -112,6 +114,8 @@ public class TaskHandler {
                 .flatMap(generationTask -> ok()
                         .contentType(APPLICATION_JSON)
                         .body(Mono.just(generationTask), ProjectGenerationTask.class))
+                .onErrorResume(error -> Mono.just(error.getMessage())
+                        .flatMap(response -> notFound().build()))
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
