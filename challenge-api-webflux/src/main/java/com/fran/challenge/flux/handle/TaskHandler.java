@@ -36,7 +36,7 @@ public class TaskHandler {
     public Mono<ServerResponse> listTasks(final ServerRequest request) {
         return ok()
                 .contentType(APPLICATION_JSON)
-                .body(Flux.just(service.listTasks()), ProjectGenerationTask.class);
+                .body(Flux.fromIterable(service.listTasks()), ProjectGenerationTask.class);
 
     }
 
@@ -101,7 +101,7 @@ public class TaskHandler {
     public Mono<ServerResponse> getAllRunningCounters(final ServerRequest request) {
         return ok()
                 .contentType(APPLICATION_JSON)
-                .body(Flux.just(service.getAllRunningCounters()), ProjectGenerationTask.class);
+                .body(Flux.fromIterable(service.getAllRunningCounters()), ProjectGenerationTask.class);
 
     }
 
