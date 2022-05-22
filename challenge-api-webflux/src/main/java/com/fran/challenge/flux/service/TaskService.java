@@ -8,6 +8,7 @@ import com.fran.challenge.tasks.adapter.TaskAdapter;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.util.List;
@@ -43,17 +44,17 @@ public class TaskService {
 
     public Publisher<Void> deleteTask(String taskId) {
         taskAdapter.deleteTask(taskId);
-        return null;
+        return Mono.empty();
     }
 
     public Publisher<Void> cancelTask(String taskId) {
         taskAdapter.cancelTask(taskId);
-        return null;
+        return Mono.empty();
     }
 
     public Publisher<Void> executeTask(String taskId) {
         taskAdapter.getTask(taskId).ifPresent(taskAdapter::executeTask);
-        return null;
+        return Mono.empty();
     }
 
     public File getResult(String taskId) {
