@@ -24,13 +24,13 @@ public class TaskRoute {
                 .route()
                 .path(API_TASKS, taskBuilder ->
                         taskBuilder
+                                .GET(RUNNING, handler::getAllRunningCounters)
                                 .GET(TASK_ID, handler::getTask)
                                 .PUT(TASK_ID, handler::updateTask)
                                 .DELETE(TASK_ID, handler::deleteTask)
                                 .POST(TASK_ID + EXECUTE, handler::executeTask)
                                 .POST(TASK_ID + CANCEL, handler::cancelTask)
                                 .GET(TASK_ID + RESULT, handler::getResult)
-                                .GET(TASK_ID + RUNNING, handler::getAllRunningCounters)
                                 .GET(TASK_ID + PROGRESS, handler::getRunningCounter)
                                 .POST(handler::createTask)
                                 .GET(handler::listTasks)
