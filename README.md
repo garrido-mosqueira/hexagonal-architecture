@@ -12,10 +12,13 @@ This demo project is using:
 
 ### What this service does
 
-- It creates task with a timer
+Provides REST API to:
+- Create tasks with a timer
+- Execute a task already created
 - Show the progress of the task execution
-- It has a task cancellation mechanism
+- Cancel task execution
 - Periodically clean up the tasks
+- Also, list all tasks created or running; get, update and delete a task.
 
 The task type is a simple counter which is configured with two input parameters, `begin` and `finish` of type `integer`.
 When the task is executed, counter should start in the background and progress should be monitored.
