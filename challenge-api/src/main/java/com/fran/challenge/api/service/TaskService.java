@@ -52,10 +52,6 @@ public class TaskService {
         taskAdapter.getTask(taskId).ifPresent(taskAdapter::executeTask);
     }
 
-    public File getResult(String taskId) {
-        return taskAdapter.getTaskResult(taskId);
-    }
-
     public List<ProjectGenerationTask> getAllRunningCounters() {
         return mapper.toDTO(taskAdapter.getAllRunningCounters());
     }

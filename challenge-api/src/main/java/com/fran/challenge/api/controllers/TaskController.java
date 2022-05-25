@@ -60,15 +60,6 @@ public class TaskController {
         service.cancelTask(taskId);
     }
 
-    @GetMapping("/{taskId}/result")
-    public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
-        HttpHeaders respHeaders = new HttpHeaders();
-        respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        respHeaders.setContentDispositionFormData("attachment", "challenge.zip");
-        File fileResult = service.getResult(taskId);
-        return new ResponseEntity<>(new FileSystemResource(fileResult), respHeaders, HttpStatus.OK);
-    }
-
     @GetMapping("/running")
     public List<ProjectGenerationTask> getAllRunningCounters() {
         return service.getAllRunningCounters();
