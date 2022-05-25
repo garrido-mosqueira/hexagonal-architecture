@@ -27,6 +27,8 @@ In this case, we are exchanging the API, from Spring MVC to Spring Webflux just 
 
 ## Execution
 ### Quickstart
+First check if everything is ok running `mvn clean verify`
+
 This project is using Docker. So it will be necessary to set up a local environment. 
 
 The next command will up the Spring Boot Application, MongoDb, Prometheus and Grafana.

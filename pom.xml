@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <modules>
-        <module>challenge-domain</module>
-        <module>challenge-api-webflux</module>
-        <module>challenge-persistence</module>
-        <module>challenge-tasks</module>
+        <module>domain</module>
+        <module>api-webflux</module>
+        <module>persistence</module>
+        <module>tasks</module>
     </modules>
 
     <parent>
@@ -19,7 +19,7 @@
 
     <groupId>com.fran</groupId>
     <version>1.1-SNAPSHOT</version>
-    <artifactId>challenge-java</artifactId>
+    <artifactId>task-java</artifactId>
 
     <packaging>pom</packaging>
 
@@ -32,25 +32,25 @@
         <testcontainers.version>1.17.1</testcontainers.version>
         <rest-assured.version>5.0.1</rest-assured.version>
         <micrometer-registry-prometheus.version>1.8.4</micrometer-registry-prometheus.version>
-        <challenge-java.version>1.1-SNAPSHOT</challenge-java.version>
+        <task-java.version>1.1-SNAPSHOT</task-java.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.fran</groupId>
-                <artifactId>challenge-domain</artifactId>
-                <version>${challenge-java.version}</version>
+                <artifactId>task-domain</artifactId>
+                <version>${task-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fran</groupId>
-                <artifactId>challenge-tasks</artifactId>
-                <version>${challenge-java.version}</version>
+                <artifactId>task-tasks</artifactId>
+                <version>${task-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fran</groupId>
-                <artifactId>challenge-persistence</artifactId>
-                <version>${challenge-java.version}</version>
+                <artifactId>task-persistence</artifactId>
+                <version>${task-java.version}</version>
             </dependency>
 
             <dependency>
