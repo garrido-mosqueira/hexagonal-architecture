@@ -14,7 +14,7 @@ public class MongoDBContainerTest {
     static final MongoDBContainer container;
 
     static {
-        container = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
+        container = new MongoDBContainer(DockerImageName.parse("mongo:5.0.12"));
         container.start();
     }
 
