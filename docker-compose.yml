@@ -22,7 +22,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus:/etc/prometheus
+      - ./0-monitoring/prometheus:/etc/prometheus
       - prometheus-data:/prometheus
     container_name: prometheus
 
@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./0-monitoring/grafana/provisioning/:/etc/grafana/provisioning/
     container_name: grafana
 
 volumes:
