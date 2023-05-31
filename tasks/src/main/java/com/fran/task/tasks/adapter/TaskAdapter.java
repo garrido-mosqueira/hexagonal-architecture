@@ -38,6 +38,8 @@ public class TaskAdapter
 
     private final Sender sender;
     private final Receiver receiver;
+    private final ObjectMapper objectMapper;
+
     private static final String QUEUE =  "spring-reactive-queue";
 
     @Override
@@ -48,7 +50,6 @@ public class TaskAdapter
 
     @SneakyThrows
     private void queueTask(Task task){
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(task);
         byte[] taskSerialized = SerializationUtils.serialize(json);
         Flux<OutboundMessage> outbound = Flux.just(new OutboundMessage("", QUEUE, taskSerialized));
@@ -60,7 +61,6 @@ public class TaskAdapter
     }
 
     public Flux<Task> startReceivingMessages() {
-        ObjectMapper objectMapper = new ObjectMapper();
         return receiver
                 .consumeAutoAck(QUEUE)
                 .flatMap(message -> {
