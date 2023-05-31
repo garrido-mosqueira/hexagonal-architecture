@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class TaskRoute {
 
     private static final String API_TASKS = "/api/tasks";
+    private static final String API_REACTIVE_TASKS = "/api/reactive";
     private static final String TASK_ID = "/{taskId}";
     private static final String EXECUTE = "/execute";
     private static final String CANCEL = "/cancel";
@@ -32,6 +33,10 @@ public class TaskRoute {
                                 .GET(TASK_ID + PROGRESS, handler::getRunningCounter)
                                 .POST(handler::createTask)
                                 .GET(handler::listTasks)
+                                .build())
+                .path(API_REACTIVE_TASKS, builder ->
+                        builder
+                                .GET(handler::reactiveTasks)
                                 .build())
                 .build();
     }

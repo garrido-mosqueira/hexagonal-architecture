@@ -36,6 +36,13 @@ services:
       - ./0-monitoring/grafana/provisioning/:/etc/grafana/provisioning/
     container_name: grafana
 
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
+
 volumes:
   prometheus-data:
   grafana-data:
