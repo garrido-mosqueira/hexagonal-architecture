@@ -57,7 +57,7 @@ public class TaskAdapter
                 .declareQueue(QueueSpecification.queue(QUEUE))
                 .thenMany(sender.sendWithPublishConfirms(outbound))
                 .doOnError(exception -> log.error("Send failed", exception))
-                .subscribe(m -> log.info("Message sent:" + task.getId()));
+                .subscribe(m -> log.info("Message sent:" + task.getName()));
     }
 
     public Flux<Task> startReceivingMessages() {
