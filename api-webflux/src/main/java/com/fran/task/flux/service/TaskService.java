@@ -33,8 +33,9 @@ public class TaskService {
                 .collect(toList());
     }
 
-    public Flux<Task> reactiveTasks() {
-        return taskAdapter.startReceivingMessages();
+    public Flux<ProjectGenerationTask> reactiveTasks() {
+        return taskAdapter.startReceivingMessages()
+                .map(mapper::toDTO);
     }
 
     public ProjectGenerationTask getTask(String taskId) {
