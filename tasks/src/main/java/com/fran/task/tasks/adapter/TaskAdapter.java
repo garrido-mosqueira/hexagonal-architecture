@@ -55,7 +55,7 @@ public class TaskAdapter
         byte[] taskSerialized = SerializationUtils.serialize(json);
         Flux<OutboundMessage> outbound = Flux.just(new OutboundMessage("", QUEUE, taskSerialized));
         sender
-                .declareQueue(QueueSpecification.queue(QUEUE))
+                .declareQueue(QueueSpecification.queue(QUEUE).durable(true))
                 .thenMany(sender.sendWithPublishConfirms(outbound))
                 .doOnError(exception -> log.error("Send failed", exception))
                 .subscribe(m -> log.info("Message sent:" + task.getName()));
