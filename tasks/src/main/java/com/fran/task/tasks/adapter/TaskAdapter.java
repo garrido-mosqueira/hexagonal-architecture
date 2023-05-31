@@ -40,16 +40,17 @@ public class TaskAdapter
     private final Receiver receiver;
     private final ObjectMapper objectMapper;
 
-    private static final String QUEUE =  "spring-reactive-queue";
+    private static final String QUEUE = "spring-reactive-queue";
 
     @Override
     public Task createTask(Task task) {
-        queueTask(task);
-        return persistenceAdapter.createTask(task);
+        Task persistedTask = persistenceAdapter.createTask(task);
+        queueTask(persistedTask);
+        return persistedTask;
     }
 
     @SneakyThrows
-    private void queueTask(Task task){
+    private void queueTask(Task task) {
         String json = objectMapper.writeValueAsString(task);
         byte[] taskSerialized = SerializationUtils.serialize(json);
         Flux<OutboundMessage> outbound = Flux.just(new OutboundMessage("", QUEUE, taskSerialized));
@@ -69,7 +70,7 @@ public class TaskAdapter
                     Task task = null;
                     try {
                         task = objectMapper.readValue(json, Task.class);
-                        task.setId("This task is coming from the Queue!!!");
+                        task.setName(task.getName() + " from the Queue");
                         task.setCreationDate(Date.from(Instant.now()));
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
