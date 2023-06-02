@@ -22,6 +22,7 @@ import static reactor.core.publisher.Mono.defer;
 public class TaskHandler {
 
     private final TaskService service;
+    private static final String TASK_ID_VARIABLE_PATH = "taskId";
 
     public Mono<ServerResponse> createTask(final ServerRequest request) {
         return ok()
@@ -36,12 +37,11 @@ public class TaskHandler {
         return ok()
                 .contentType(APPLICATION_JSON)
                 .body(Flux.fromIterable(service.listTasks()), ProjectGenerationTask.class);
-
     }
 
     public Mono<ServerResponse> getTask(final ServerRequest request) {
         return Mono
-                .just(request.pathVariable("taskId"))
+                .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::getTask)
                 .flatMap(generationTask -> ok()
                         .contentType(APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class TaskHandler {
     }
 
     public Mono<ServerResponse> updateTask(final ServerRequest request) {
-        String taskId = request.pathVariable("taskId");
+        String taskId = request.pathVariable(TASK_ID_VARIABLE_PATH);
         return ok()
                 .contentType(APPLICATION_JSON)
                 .body(request
@@ -65,7 +65,7 @@ public class TaskHandler {
 
     public Mono<ServerResponse> deleteTask(final ServerRequest request) {
         return Mono
-                .just(request.pathVariable("taskId"))
+                .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::deleteTask)
                 .flatMap(resource -> noContent().build())
                 .switchIfEmpty(defer(() -> notFound()
@@ -75,7 +75,7 @@ public class TaskHandler {
 
     public Mono<ServerResponse> executeTask(final ServerRequest request) {
         return Mono
-                .just(request.pathVariable("taskId"))
+                .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::executeTask)
                 .flatMap(resource -> noContent().build())
                 .switchIfEmpty(defer(() -> notFound()
@@ -85,7 +85,7 @@ public class TaskHandler {
 
     public Mono<ServerResponse> cancelTask(final ServerRequest request) {
         return Mono
-                .just(request.pathVariable("taskId"))
+                .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::cancelTask)
                 .flatMap(resource -> noContent().build())
                 .switchIfEmpty(defer(() -> notFound()
@@ -97,12 +97,11 @@ public class TaskHandler {
         return ok()
                 .contentType(APPLICATION_JSON)
                 .body(Flux.fromIterable(service.getAllRunningCounters()), ProjectGenerationTask.class);
-
     }
 
     public Mono<ServerResponse> getRunningCounter(final ServerRequest request) {
         return Mono
-                .just(request.pathVariable("taskId"))
+                .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::getRunningCounter)
                 .flatMap(generationTask -> ok()
                         .contentType(APPLICATION_JSON)
