@@ -9,6 +9,7 @@ services:
       - "8080:8080"
     depends_on:
       - mongodb-challenge
+      - rabbitmq
     container_name: challenge-java
 
   mongodb-challenge:
