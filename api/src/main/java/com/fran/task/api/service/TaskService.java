@@ -4,7 +4,7 @@ import com.fran.task.api.dto.ProjectGenerationTask;
 import com.fran.task.api.mapper.ProjectTaskMapper;
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
-import com.fran.quartz.tasks.adapter.TaskAdapter;
+import com.fran.quartz.adapter.TaskAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

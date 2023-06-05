@@ -1,7 +1,7 @@
-package com.fran.quartz.tasks.service;
+package com.fran.quartz.service;
 
-import com.fran.quartz.tasks.model.Counter;
-import com.fran.quartz.tasks.util.ScheduleUtils;
+import com.fran.quartz.model.Counter;
+import com.fran.quartz.util.ScheduleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;

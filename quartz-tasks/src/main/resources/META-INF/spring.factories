@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.fran.quartz.tasks.TaskConfiguration
+  com.fran.quartz.TaskConfiguration
