@@ -9,6 +9,7 @@
         <module>persistence</module>
         <module>tasks</module>
         <module>queue-tasks</module>
+        <module>virtual-threads-tasks</module>
     </modules>
 
     <parent>
@@ -45,7 +46,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fran</groupId>
-                <artifactId>task-tasks</artifactId>
+                <artifactId>quartz-tasks</artifactId>
                 <version>${task-java.version}</version>
             </dependency>
             <dependency>

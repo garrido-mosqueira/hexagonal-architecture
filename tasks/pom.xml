@@ -9,9 +9,9 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>task-tasks</artifactId>
-    <name>task-tasks</name>
-    <description>task-tasks</description>
+    <artifactId>quartz-tasks</artifactId>
+    <name>quartz-tasks</name>
+    <description>Using Spring Quartz to manage Tasks</description>
 
     <dependencies>
         <dependency>
