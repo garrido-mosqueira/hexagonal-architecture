@@ -7,7 +7,7 @@
         <module>domain</module>
         <module>api-webflux</module>
         <module>persistence</module>
-        <module>tasks</module>
+        <module>quartz-tasks</module>
         <module>queue-tasks</module>
         <module>virtual-threads-tasks</module>
     </modules>
