@@ -35,7 +35,7 @@ public class SchedulerService {
                     .stream()
                     .map(this::getCounter)
                     .filter(Objects::nonNull)
-                    .toList();
+                    .collect(toList());
         } catch (final SchedulerException e) {
             log.error(e.getMessage(), e);
             return Collections.emptyList();
