@@ -1,6 +1,6 @@
-package com.fran.quartz.tasks.util;
+package com.fran.quartz.util;
 
-import com.fran.quartz.tasks.model.Counter;
+import com.fran.quartz.model.Counter;
 import lombok.NoArgsConstructor;
 import org.quartz.*;
 

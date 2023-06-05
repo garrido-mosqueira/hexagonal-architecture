@@ -1,6 +1,6 @@
-package com.fran.quartz.tasks.mapper;
+package com.fran.quartz.mapper;
 
-import com.fran.quartz.tasks.model.Counter;
+import com.fran.quartz.model.Counter;
 import com.fran.task.domain.model.Task;
 import org.mapstruct.Mapper;
 

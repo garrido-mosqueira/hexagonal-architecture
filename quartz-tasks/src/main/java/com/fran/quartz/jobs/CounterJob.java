@@ -1,6 +1,6 @@
-package com.fran.quartz.tasks.jobs;
+package com.fran.quartz.jobs;
 
-import com.fran.quartz.tasks.model.Counter;
+import com.fran.quartz.model.Counter;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobDataMap;

@@ -1,7 +1,7 @@
-package com.fran.quartz.tasks.service;
+package com.fran.quartz.service;
 
-import com.fran.quartz.tasks.jobs.CounterJob;
-import com.fran.quartz.tasks.model.Counter;
+import com.fran.quartz.jobs.CounterJob;
+import com.fran.quartz.model.Counter;
 import lombok.RequiredArgsConstructor;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
