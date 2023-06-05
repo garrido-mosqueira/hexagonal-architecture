@@ -1,4 +1,4 @@
-package com.fran.task;
+package com.fran.quartz.tasks;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

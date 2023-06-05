@@ -1,4 +1,4 @@
-package com.fran.task.tasks.model;
+package com.fran.quartz.tasks.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

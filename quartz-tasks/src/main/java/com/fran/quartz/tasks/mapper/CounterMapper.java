@@ -1,7 +1,7 @@
-package com.fran.task.tasks.mapper;
+package com.fran.quartz.tasks.mapper;
 
+import com.fran.quartz.tasks.model.Counter;
 import com.fran.task.domain.model.Task;
-import com.fran.task.tasks.model.Counter;
 import org.mapstruct.Mapper;
 
 import java.util.List;
