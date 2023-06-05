@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class SchedulerService {
                     .stream()
                     .map(this::getCounter)
                     .filter(Objects::nonNull)
-                    .collect(toList());
+                    .toList();
         } catch (final SchedulerException e) {
             log.error(e.getMessage(), e);
             return Collections.emptyList();
