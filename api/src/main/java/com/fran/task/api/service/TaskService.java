@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @RequiredArgsConstructor
 @Service
 public class TaskService {
@@ -27,7 +25,7 @@ public class TaskService {
     public List<ProjectGenerationTask> listTasks() {
         return taskAdapter.getTasks().stream()
                 .map(mapper::toDTO)
-                .collect(toList());
+                .toList();
     }
 
     public ProjectGenerationTask getTask(String taskId) {
