@@ -8,9 +8,12 @@ import com.fran.task.tasks.adapter.TaskAdapter;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Service
@@ -27,7 +30,12 @@ public class TaskService {
     public List<ProjectGenerationTask> listTasks() {
         return taskAdapter.getTasks().stream()
                 .map(mapper::toDTO)
-                .toList();
+                .collect(toList());
+    }
+
+    public Flux<ProjectGenerationTask> reactiveTasks() {
+        return taskAdapter.startReceivingMessages()
+                .map(mapper::toDTO);
     }
 
     public ProjectGenerationTask getTask(String taskId) {

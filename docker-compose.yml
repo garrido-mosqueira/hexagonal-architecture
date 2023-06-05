@@ -1,5 +1,6 @@
 version: '3.9'
 services:
+
   challenge-java:
     build:
       context: ./
@@ -9,13 +10,21 @@ services:
       - "8080:8080"
     depends_on:
       - mongodb-challenge
+      - rabbitmq
     container_name: challenge-java
 
   mongodb-challenge:
     image: mongo:latest
-    container_name: "mongodb-challenge"
     ports:
       - "27017:27017"
+    container_name: "mongodb-challenge"
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
 
   prometheus:
     image: "prom/prometheus"

@@ -1,9 +1,11 @@
 package com.fran.task.flux.handle;
 
+import com.fran.task.domain.model.Task;
 import com.fran.task.flux.dto.ProjectGenerationTask;
 import com.fran.task.flux.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -37,6 +39,12 @@ public class TaskHandler {
         return ok()
                 .contentType(APPLICATION_JSON)
                 .body(Flux.fromIterable(service.listTasks()), ProjectGenerationTask.class);
+    }
+
+    public Mono<ServerResponse> reactiveTasks(final ServerRequest request) {
+        return ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(service.reactiveTasks(), Task.class);
     }
 
     public Mono<ServerResponse> getTask(final ServerRequest request) {
