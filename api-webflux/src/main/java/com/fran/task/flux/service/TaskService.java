@@ -4,7 +4,7 @@ import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.flux.dto.ProjectGenerationTask;
 import com.fran.task.flux.mapper.ProjectTaskMapper;
-import com.fran.task.tasks.adapter.TaskAdapter;
+import com.fran.task.domain.port.TaskManager;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
@@ -17,55 +17,55 @@ import java.util.List;
 @Service
 public class TaskService {
 
-    private final TaskAdapter taskAdapter;
+    private final TaskManager taskManager;
     private final ProjectTaskMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskAdapter.createTask(task));
+        return mapper.toDTO(taskManager.createTask(task));
     }
 
     public List<ProjectGenerationTask> listTasks() {
-        return taskAdapter.getTasks().stream()
+        return taskManager.getTasks().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
     public Flux<ProjectGenerationTask> reactiveTasks() {
-        return taskAdapter.startReceivingMessages()
+        return taskManager.startReceivingMessages()
                 .map(mapper::toDTO);
     }
 
     public ProjectGenerationTask getTask(String taskId) {
-        return taskAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
+        return taskManager.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
     }
 
     public ProjectGenerationTask updateTask(String taskId, ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskAdapter.updateTask(taskId, task));
+        return mapper.toDTO(taskManager.updateTask(taskId, task));
     }
 
     public Publisher<Void> deleteTask(String taskId) {
-        taskAdapter.deleteTask(taskId);
+        taskManager.deleteTask(taskId);
         return Mono.empty();
     }
 
     public Publisher<Void> cancelTask(String taskId) {
-        taskAdapter.cancelTask(taskId);
+        taskManager.cancelTask(taskId);
         return Mono.empty();
     }
 
     public Publisher<Void> executeTask(String taskId) {
-        taskAdapter.getTask(taskId).ifPresent(taskAdapter::executeTask);
+        taskManager.getTask(taskId).ifPresent(taskManager::executeTask);
         return Mono.empty();
     }
 
     public List<ProjectGenerationTask> getAllRunningCounters() {
-        return mapper.toDTO(taskAdapter.getAllRunningCounters());
+        return mapper.toDTO(taskManager.getAllRunningCounters());
     }
 
     public ProjectGenerationTask getRunningCounter(String taskId) {
-        return mapper.toDTO(taskAdapter.getRunningCounter(taskId));
+        return mapper.toDTO(taskManager.getRunningCounter(taskId));
     }
 
 }

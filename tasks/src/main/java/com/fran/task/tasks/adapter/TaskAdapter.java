@@ -3,7 +3,7 @@ package com.fran.task.tasks.adapter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.port.*;
+import com.fran.task.domain.port.TaskManager;
 import com.fran.task.persistence.adapter.PersistenceAdapter;
 import com.fran.task.tasks.mapper.CounterMapper;
 import com.fran.task.tasks.model.Counter;
@@ -29,8 +29,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TaskAdapter
-        implements CreateTaskPort, ReadTaskPort, UpdateTaskPort, DeleteTaskPort, ExecuteTaskPort, CancelTaskPort {
+public class TaskAdapter implements TaskManager {
 
     private final PersistenceAdapter persistenceAdapter;
     private final CounterService counterService;
@@ -61,6 +60,7 @@ public class TaskAdapter
                 .subscribe(m -> log.info("Message sent:" + task.getName()));
     }
 
+    @Override
     public Flux<Task> startReceivingMessages() {
         return receiver
                 .consumeAutoAck(QUEUE)
@@ -104,11 +104,13 @@ public class TaskAdapter
         counterService.cancelCounter(taskId);
     }
 
+    @Override
     public List<Task> getAllRunningCounters() {
         return mapper.toDomain(counterService.getAllRunningCounters());
     }
 
     @SneakyThrows
+    @Override
     public Task getRunningCounter(final String counterId) {
         return mapper.toDomain(counterService.getRunningCounter(counterId));
     }
