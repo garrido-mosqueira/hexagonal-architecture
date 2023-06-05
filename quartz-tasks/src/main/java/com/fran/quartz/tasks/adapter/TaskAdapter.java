@@ -1,13 +1,13 @@
-package com.fran.task.tasks.adapter;
+package com.fran.quartz.tasks.adapter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fran.quartz.tasks.mapper.CounterMapper;
+import com.fran.quartz.tasks.model.Counter;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
 import com.fran.task.persistence.adapter.PersistenceAdapter;
-import com.fran.task.tasks.mapper.CounterMapper;
-import com.fran.task.tasks.model.Counter;
-import com.fran.task.tasks.service.CounterService;
+import com.fran.quartz.tasks.service.CounterService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
