@@ -16,6 +16,7 @@ public class RabbitMqConfiguration {
     public ConnectionFactory connectionFactory() {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.useNio();
+        connectionFactory.setHost("rabbitmq");
         return connectionFactory;
     }
 
