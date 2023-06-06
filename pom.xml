@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>io.projectreactor.rabbitmq</groupId>
                 <artifactId>reactor-rabbitmq</artifactId>
-                <version>LATEST</version>
+                <version>1.5.6</version>
             </dependency>
 
             <dependency>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-rabbit-test</artifactId>
-                <version>LATEST</version>
+                <version>3.0.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
