@@ -27,7 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TaskAdapter implements TaskManager {
+public class TaskQuartzAdapter implements TaskManager {
 
     private final CounterService counterService;
     private final CounterMapper mapper;
