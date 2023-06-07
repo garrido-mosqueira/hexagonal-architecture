@@ -5,7 +5,6 @@ import com.fran.task.domain.port.TaskManager;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
-import java.util.Optional;
 
 public class TaskAdapter implements TaskManager {
 
@@ -15,27 +14,7 @@ public class TaskAdapter implements TaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
-        return null;
-    }
-
-    @Override
-    public void deleteTask(String taskId) {
-
-    }
-
-    @Override
-    public void executeTask(Task task) {
-
-    }
-
-    @Override
-    public Optional<Task> getTask(String taskId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Task> getTasks() {
+    public Task executeTask(Task task) {
         return null;
     }
 
@@ -54,8 +33,4 @@ public class TaskAdapter implements TaskManager {
         return null;
     }
 
-    @Override
-    public Task updateTask(String taskId, Task taskUpdate) {
-        return null;
-    }
 }

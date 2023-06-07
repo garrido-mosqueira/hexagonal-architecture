@@ -20,10 +20,6 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
-            <artifactId>task-persistence</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fran</groupId>
             <artifactId>queue-tasks</artifactId>
         </dependency>
 
