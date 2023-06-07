@@ -1,6 +1,6 @@
 package com.fran.threads.config;
 
-import com.fran.task.domain.model.Task;
+import com.fran.threads.model.TaskThread;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 public class TaskConfiguration {
 
     @Bean
-    public Map<String, Task> taskRegister() {
+    public Map<String, TaskThread> taskRegister() {
         return new ConcurrentHashMap<>();
     }
 
