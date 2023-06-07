@@ -8,9 +8,9 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>virtual-threads-tasks</artifactId>
-    <name>virtual-threads-tasks</name>
-    <description>Using Virtual Threads to execute tasks</description>
+    <artifactId>threads-tasks</artifactId>
+    <name>threads-tasks</name>
+    <description>Using Threads to execute tasks</description>
 
     <dependencies>
         <dependency>

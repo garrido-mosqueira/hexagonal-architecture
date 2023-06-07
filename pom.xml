@@ -9,7 +9,7 @@
         <module>persistence</module>
         <module>quartz-tasks</module>
         <module>queue-tasks</module>
-        <module>virtual-threads-tasks</module>
+        <module>threads-tasks</module>
     </modules>
 
     <parent>
