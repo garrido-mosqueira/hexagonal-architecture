@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TaskAdapter implements TaskManager {
+public class TaskThreadAdapter implements TaskManager {
 
     private final Map<String, TaskThread> taskRegister;
     private final ExecutorService executorService;
