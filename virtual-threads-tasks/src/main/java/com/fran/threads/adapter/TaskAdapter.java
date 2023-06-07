@@ -3,6 +3,7 @@ package com.fran.threads.adapter;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
 import com.fran.threads.exception.CounterTaskNotFoundException;
+import com.fran.threads.model.TaskThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,15 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 public class TaskAdapter implements TaskManager {
 
-    private final Map<String, Task> taskRegister;
+    private final Map<String, TaskThread> taskRegister;
     private final ExecutorService executorService;
 
     @Override
     public void cancelTask(String taskId) {
+        TaskThread taskThread = taskRegister.get(taskId);
+        if (taskThread.thread() != null) {
+            taskThread.thread().interrupt();
+        }
     }
 
     @Override
@@ -29,14 +34,13 @@ public class TaskAdapter implements TaskManager {
         if (task == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID ");
         }
-        taskRegister.put(task.getId(), task);
-
         executorService.execute(() -> {
+            taskRegister.put(task.getId(), new TaskThread(task, Thread.currentThread()));
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
                 task.setProgress(i);
                 log.info("Counter progress is '{}' for '{}' ", task.getProgress(), task.getId());
                 try {
-                    Thread.sleep(1000); // Simulating some work being done
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -48,17 +52,18 @@ public class TaskAdapter implements TaskManager {
     @Override
     public List<Task> getAllRunningCounters() {
         return taskRegister.values().stream()
+                .map(TaskThread::task)
                 .filter(task -> task.getFinish() > task.getProgress())
                 .toList();
     }
 
     @Override
     public Task getRunningCounter(String counterId) {
-        Task task = taskRegister.get(counterId);
-        if (task == null) {
+        TaskThread taskThread = taskRegister.get(counterId);
+        if (taskThread == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
-        return task;
+        return taskThread.task();
     }
 
     @Override
