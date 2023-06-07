@@ -6,10 +6,6 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 public interface TaskManager extends
-        CreateTaskPort,
-        ReadTaskPort,
-        UpdateTaskPort,
-        DeleteTaskPort,
         ExecuteTaskPort,
         CancelTaskPort {
 

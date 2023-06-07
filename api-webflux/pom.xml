@@ -21,6 +21,10 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
+            <artifactId>task-persistence</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fran</groupId>
             <artifactId>quartz-tasks</artifactId>
         </dependency>
 

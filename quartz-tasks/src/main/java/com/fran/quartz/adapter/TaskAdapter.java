@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fran.quartz.mapper.CounterMapper;
 import com.fran.quartz.model.Counter;
+import com.fran.quartz.service.CounterService;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
-import com.fran.task.persistence.adapter.PersistenceAdapter;
-import com.fran.quartz.service.CounterService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +23,12 @@ import reactor.rabbitmq.Sender;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TaskAdapter implements TaskManager {
 
-    private final PersistenceAdapter persistenceAdapter;
     private final CounterService counterService;
     private final CounterMapper mapper;
 
@@ -40,13 +37,6 @@ public class TaskAdapter implements TaskManager {
     private final ObjectMapper objectMapper;
 
     private static final String QUEUE = "spring-reactive-queue";
-
-    @Override
-    public Task createTask(Task task) {
-        Task persistedTask = persistenceAdapter.createTask(task);
-        queueTask(persistedTask);
-        return persistedTask;
-    }
 
     @SneakyThrows
     private void queueTask(Task task) {
@@ -80,26 +70,6 @@ public class TaskAdapter implements TaskManager {
     }
 
     @Override
-    public List<Task> getTasks() {
-        return persistenceAdapter.getTasks();
-    }
-
-    @Override
-    public Optional<Task> getTask(String taskId) {
-        return persistenceAdapter.getTask(taskId);
-    }
-
-    @Override
-    public Task updateTask(String taskId, Task taskUpdate) {
-        return persistenceAdapter.updateTask(taskId, taskUpdate);
-    }
-
-    @Override
-    public void deleteTask(String taskId) {
-        persistenceAdapter.deleteTask(taskId);
-    }
-
-    @Override
     public void cancelTask(String taskId) {
         counterService.cancelCounter(taskId);
     }
@@ -117,14 +87,15 @@ public class TaskAdapter implements TaskManager {
 
     @SneakyThrows
     @Override
-    public void executeTask(Task task) {
+    public Task executeTask(Task task) {
+        queueTask(task);
         executeCounterTask(task);
+        return task;
     }
 
     public void executeCounterTask(Task task) throws SchedulerException {
         Counter counter = mapper.toCounter(task);
         counterService.runCounterJob(counter);
-        persistenceAdapter.updateExecution(task);
     }
 
 }
