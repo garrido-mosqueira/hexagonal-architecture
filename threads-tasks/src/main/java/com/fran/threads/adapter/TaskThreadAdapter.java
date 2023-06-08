@@ -38,7 +38,7 @@ public class TaskThreadAdapter implements TaskManager {
             taskRegister.put(task.getId(), new TaskThread(task, Thread.currentThread()));
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
                 task.setProgress(i);
-                log.info("Counter progress is '{}' for '{}' ", task.getProgress(), task.getId());
+                log.info("Counter progress is '{}' for '{}' running in '{}' ", task.getProgress(), task.getId(), Thread.currentThread().getName());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -63,6 +63,7 @@ public class TaskThreadAdapter implements TaskManager {
         if (taskThread == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
+        log.info("Counter progress is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(),taskThread.thread().getName());
         return taskThread.task();
     }
 
