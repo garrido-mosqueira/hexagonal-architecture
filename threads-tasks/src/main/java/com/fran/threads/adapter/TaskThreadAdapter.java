@@ -59,11 +59,12 @@ public class TaskThreadAdapter implements TaskManager {
 
     @Override
     public Task getRunningCounter(String counterId) {
-        TaskThread taskThread = taskRegister.get(counterId);
-        if (taskThread == null) {
+        if (taskRegister.isEmpty() || taskRegister.get(counterId) == null) {
+            log.error("Failed to find counter with ID " + counterId);
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
-        log.info("Counter progress is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(),taskThread.thread().getName());
+        TaskThread taskThread = taskRegister.get(counterId);
+        log.info("Counter progress is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.thread().getName());
         return taskThread.task();
     }
 
