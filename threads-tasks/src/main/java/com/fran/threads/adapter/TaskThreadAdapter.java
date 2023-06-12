@@ -9,9 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -20,6 +24,7 @@ public class TaskThreadAdapter implements TaskManager {
 
     private final Map<String, TaskThread> taskRegister;
     private final ExecutorService executorService;
+    private final ScheduledExecutorService scheduledExecutorService;
 
     @Override
     public void cancelTask(String taskId) {
@@ -27,6 +32,7 @@ public class TaskThreadAdapter implements TaskManager {
         if (taskThread.thread() != null) {
             taskThread.thread().interrupt();
         }
+        taskRegister.remove(taskId);
     }
 
     @Override
@@ -51,6 +57,7 @@ public class TaskThreadAdapter implements TaskManager {
 
     @Override
     public List<Task> getAllRunningCounters() {
+        removeFinishedTasks();
         return taskRegister.values().stream()
                 .map(TaskThread::task)
                 .filter(task -> task.getFinish() > task.getProgress())
@@ -63,6 +70,7 @@ public class TaskThreadAdapter implements TaskManager {
             log.error("Failed to find counter with ID " + counterId);
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
+        removeFinishedTasks();
         TaskThread taskThread = taskRegister.get(counterId);
         log.info("Counter progress is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.thread().getName());
         return taskThread.task();
@@ -71,6 +79,26 @@ public class TaskThreadAdapter implements TaskManager {
     @Override
     public Flux<Task> startReceivingMessages() {
         return null;
+    }
+
+    @PostConstruct
+    private void createScheduleRemoveTask() {
+        Runnable deleteTasksSchedule = () -> {
+            if (taskRegister != null && !taskRegister.isEmpty()) {
+                log.info("Schedule executing every 5 minutes will remove {} tasks from the Running Register.", taskRegister.size());
+                taskRegister.clear();
+            } else {
+                log.info("Not running tasks will be deleted from Running Register");
+            }
+        };
+        scheduledExecutorService.scheduleAtFixedRate(deleteTasksSchedule, 0, 5, TimeUnit.MINUTES);
+    }
+
+    private void removeFinishedTasks() {
+        taskRegister.values().stream()
+                .map(TaskThread::task)
+                .filter(task -> Objects.equals(task.getFinish(), task.getProgress()))
+                .forEach(task -> taskRegister.remove(task.getId()));
     }
 
 }
