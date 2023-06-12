@@ -20,13 +20,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TaskThreadAdapter implements TaskManager {
+public class TaskThreadAdapter {
 
     private final Map<String, TaskThread> taskRegister;
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    @Override
     public void cancelTask(String taskId) {
         TaskThread taskThread = taskRegister.get(taskId);
         if (taskThread.thread() != null) {
@@ -35,7 +34,6 @@ public class TaskThreadAdapter implements TaskManager {
         taskRegister.remove(taskId);
     }
 
-    @Override
     public Task executeTask(Task task) {
         if (task == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID ");
@@ -55,7 +53,6 @@ public class TaskThreadAdapter implements TaskManager {
         return task;
     }
 
-    @Override
     public List<Task> getAllRunningCounters() {
         removeFinishedTasks();
         return taskRegister.values().stream()
@@ -64,7 +61,6 @@ public class TaskThreadAdapter implements TaskManager {
                 .toList();
     }
 
-    @Override
     public Task getRunningCounter(String counterId) {
         if (taskRegister.isEmpty() || taskRegister.get(counterId) == null) {
             log.error("Failed to find counter with ID " + counterId);
@@ -76,7 +72,6 @@ public class TaskThreadAdapter implements TaskManager {
         return taskThread.task();
     }
 
-    @Override
     public Flux<Task> startReceivingMessages() {
         return null;
     }
