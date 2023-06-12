@@ -45,7 +45,7 @@ public class TaskFutureAdapter implements TaskManager {
         Future<Task> progressFuture = executorService.submit(() -> {
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
                 task.setProgress(i);
-                log.info("Counter progress is '{}' for '{}' running in '{}'", task.getProgress(), task.getId(), Thread.currentThread().getName());
+                log.info("Counter progress from Future is '{}' for '{}' running in '{}'", task.getProgress(), task.getId(), Thread.currentThread().getName());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -75,7 +75,7 @@ public class TaskFutureAdapter implements TaskManager {
         }
         removeFinishedTasks();
         TaskFuture taskThread = taskRegister.get(counterId);
-        log.info("Counter progress is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.future());
+        log.info("Progress from Future is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.future());
         return taskThread.task();
     }
 
@@ -87,10 +87,10 @@ public class TaskFutureAdapter implements TaskManager {
     private void createScheduleRemoveTask() {
         Runnable deleteTasksSchedule = () -> {
             if (taskRegister != null && !taskRegister.isEmpty()) {
-                log.info("Schedule executing every 5 minutes will remove {} tasks from the Running Register.", taskRegister.size());
+                log.info("Schedule executing every 5 minutes will remove {} tasks from the Running Future Register.", taskRegister.size());
                 taskRegister.clear();
             } else {
-                log.info("Not running tasks will be deleted from Running Register");
+                log.info("Not running tasks will be deleted from Running Future Register");
             }
         };
         scheduledExecutorService.scheduleAtFixedRate(deleteTasksSchedule, 0, 5, TimeUnit.MINUTES);
