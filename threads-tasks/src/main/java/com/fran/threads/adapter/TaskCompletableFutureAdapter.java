@@ -71,7 +71,6 @@ public class TaskCompletableFutureAdapter implements TaskManager, TaskConcurrent
         return null;
     }
 
-    @Override
     public boolean isTaskRunning(String id) {
         return !taskRegister.isEmpty() && taskRegister.get(id) != null;
     }

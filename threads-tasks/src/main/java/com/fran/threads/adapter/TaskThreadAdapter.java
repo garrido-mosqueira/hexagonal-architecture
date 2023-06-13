@@ -1,7 +1,7 @@
 package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.exceptions.NotFoundException;
+import com.fran.threads.config.ValidateTaskRunning;
 import com.fran.threads.model.TaskThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,8 @@ public class TaskThreadAdapter {
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduledExecutorService;
 
+    @ValidateTaskRunning
     public void cancelTask(String taskId) {
-        throwNotFoundIfTaskIsNotRunning(taskId);
         TaskThread taskThread = taskRegister.get(taskId);
         if (taskThread.thread() != null) {
             taskThread.thread().interrupt();
@@ -58,8 +58,8 @@ public class TaskThreadAdapter {
                 .toList();
     }
 
+    @ValidateTaskRunning
     public Task getRunningCounter(String counterId) {
-        throwNotFoundIfTaskIsNotRunning(counterId);
         removeFinishedTasks();
         TaskThread taskThread = taskRegister.get(counterId);
         log.info("Progress from Thread is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.thread().getName());
@@ -90,11 +90,8 @@ public class TaskThreadAdapter {
                 .forEach(task -> taskRegister.remove(task.getId()));
     }
 
-    private void throwNotFoundIfTaskIsNotRunning(String taskId) {
-        if (taskRegister.isEmpty() || taskRegister.get(taskId) == null) {
-            log.error("Failed to find counter with ID " + taskId);
-            throw new NotFoundException("Failed to find counter with ID " + taskId);
-        }
+    public boolean isTaskRunning(String id) {
+        return !taskRegister.isEmpty() && taskRegister.get(id) != null;
     }
 
 }
