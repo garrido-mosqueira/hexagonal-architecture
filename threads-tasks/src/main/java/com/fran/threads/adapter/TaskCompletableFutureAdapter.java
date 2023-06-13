@@ -1,12 +1,11 @@
-
 package com.fran.threads.adapter;
 
-import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
+import com.fran.threads.config.TaskConcurrent;
+import com.fran.threads.config.ValidateTaskRunning;
 import com.fran.threads.model.TaskCompletableFuture;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,14 +18,13 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TaskCompletableFutureAdapter implements TaskManager {
+public class TaskCompletableFutureAdapter implements TaskManager, TaskConcurrent {
 
     private final Map<String, TaskCompletableFuture> taskRegister;
     private final ExecutorService executorService;
 
-    @SneakyThrows
+    @ValidateTaskRunning
     public void cancelTask(String taskId) {
-        throwNotFoundIfTaskIsNotRunning(taskId);
         TaskCompletableFuture tasktaskCompletableFuture = taskRegister.get(taskId);
         if (tasktaskCompletableFuture.completableFuture() != null) {
             tasktaskCompletableFuture.completableFuture().cancel(true);
@@ -62,8 +60,8 @@ public class TaskCompletableFutureAdapter implements TaskManager {
                 .toList();
     }
 
+    @ValidateTaskRunning
     public Task getRunningCounter(String counterId) {
-        throwNotFoundIfTaskIsNotRunning(counterId);
         TaskCompletableFuture taskThread = taskRegister.get(counterId);
         log.info("Progress from from CompletableFuture is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.completableFuture());
         return taskThread.task();
@@ -73,11 +71,9 @@ public class TaskCompletableFutureAdapter implements TaskManager {
         return null;
     }
 
-    private void throwNotFoundIfTaskIsNotRunning(String taskId) {
-        if (taskRegister.isEmpty() || taskRegister.get(taskId) == null) {
-            log.error("Failed to find counter with ID " + taskId);
-            throw new NotFoundException("Failed to find counter with ID " + taskId);
-        }
+    @Override
+    public boolean isTaskRunning(String id) {
+        return !taskRegister.isEmpty() && taskRegister.get(id) != null;
     }
 
 }
