@@ -11,13 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -26,7 +23,6 @@ public class TaskCompletableFutureAdapter implements TaskManager {
 
     private final Map<String, TaskCompletableFuture> taskRegister;
     private final ExecutorService executorService;
-    private final ScheduledExecutorService scheduledExecutorService;
 
     @SneakyThrows
     public void cancelTask(String taskId) {
@@ -81,19 +77,6 @@ public class TaskCompletableFutureAdapter implements TaskManager {
 
     public Flux<Task> startReceivingMessages() {
         return null;
-    }
-
-    @PostConstruct
-    private void createScheduleRemoveTask() {
-        Runnable deleteTasksSchedule = () -> {
-            if (taskRegister != null && !taskRegister.isEmpty()) {
-                log.info("Schedule executing every 5 minutes will remove {} tasks from the Running CompletableFuture Register.", taskRegister.size());
-                taskRegister.clear();
-            } else {
-                log.info("Not running tasks will be deleted from Running CompletableFuture Register");
-            }
-        };
-        scheduledExecutorService.scheduleAtFixedRate(deleteTasksSchedule, 0, 5, TimeUnit.MINUTES);
     }
 
 }
