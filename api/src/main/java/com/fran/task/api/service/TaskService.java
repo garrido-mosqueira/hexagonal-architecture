@@ -4,7 +4,8 @@ import com.fran.task.api.dto.ProjectGenerationTask;
 import com.fran.task.api.mapper.ProjectTaskMapper;
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
-import com.fran.task.tasks.adapter.TaskAdapter;
+import com.fran.task.domain.port.TaskManager;
+import com.fran.task.persistence.adapter.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,31 +15,32 @@ import java.util.List;
 @Service
 public class TaskService {
 
-    private final TaskAdapter taskAdapter;
+    private final TaskManager taskAdapter;
+    private final PersistenceAdapter persistenceAdapter;
     private final ProjectTaskMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskAdapter.createTask(task));
+        return mapper.toDTO(persistenceAdapter.createTask(task));
     }
 
     public List<ProjectGenerationTask> listTasks() {
-        return taskAdapter.getTasks().stream()
+        return persistenceAdapter.getTasks().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
     public ProjectGenerationTask getTask(String taskId) {
-        return taskAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
+        return persistenceAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
     }
 
     public ProjectGenerationTask updateTask(String taskId, ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskAdapter.updateTask(taskId, task));
+        return mapper.toDTO(persistenceAdapter.updateTask(taskId, task));
     }
 
     public void deleteTask(String taskId) {
-        taskAdapter.deleteTask(taskId);
+        persistenceAdapter.deleteTask(taskId);
     }
 
     public void cancelTask(String taskId) {
@@ -46,7 +48,11 @@ public class TaskService {
     }
 
     public void executeTask(String taskId) {
-        taskAdapter.getTask(taskId).ifPresent(taskAdapter::executeTask);
+        persistenceAdapter.getTask(taskId)
+                .ifPresent(task -> {
+                    Task executed = taskAdapter.executeTask(task);
+                    persistenceAdapter.updateExecution(executed);
+                });
     }
 
     public List<ProjectGenerationTask> getAllRunningCounters() {
