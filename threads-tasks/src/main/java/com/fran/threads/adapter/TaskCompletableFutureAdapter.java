@@ -1,9 +1,9 @@
 
 package com.fran.threads.adapter;
 
+import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
-import com.fran.threads.exception.CounterTaskNotFoundException;
 import com.fran.threads.model.TaskCompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,6 +26,7 @@ public class TaskCompletableFutureAdapter implements TaskManager {
 
     @SneakyThrows
     public void cancelTask(String taskId) {
+        throwNotFoundIfTaskIsNotRunning(taskId);
         TaskCompletableFuture tasktaskCompletableFuture = taskRegister.get(taskId);
         if (tasktaskCompletableFuture.completableFuture() != null) {
             tasktaskCompletableFuture.completableFuture().cancel(true);
@@ -34,10 +35,6 @@ public class TaskCompletableFutureAdapter implements TaskManager {
     }
 
     public Task executeTask(Task task) {
-        if (task == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID ");
-        }
-
         CompletableFuture<Task> completableFuture = CompletableFuture.supplyAsync(() -> {
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
                 task.setProgress(i);
@@ -66,10 +63,7 @@ public class TaskCompletableFutureAdapter implements TaskManager {
     }
 
     public Task getRunningCounter(String counterId) {
-        if (taskRegister.isEmpty() || taskRegister.get(counterId) == null) {
-            log.error("Failed to find counter with ID " + counterId);
-            throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
-        }
+        throwNotFoundIfTaskIsNotRunning(counterId);
         TaskCompletableFuture taskThread = taskRegister.get(counterId);
         log.info("Progress from from CompletableFuture is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.completableFuture());
         return taskThread.task();
@@ -77,6 +71,13 @@ public class TaskCompletableFutureAdapter implements TaskManager {
 
     public Flux<Task> startReceivingMessages() {
         return null;
+    }
+
+    private void throwNotFoundIfTaskIsNotRunning(String taskId) {
+        if (taskRegister.isEmpty() || taskRegister.get(taskId) == null) {
+            log.error("Failed to find counter with ID " + taskId);
+            throw new NotFoundException("Failed to find counter with ID " + taskId);
+        }
     }
 
 }
