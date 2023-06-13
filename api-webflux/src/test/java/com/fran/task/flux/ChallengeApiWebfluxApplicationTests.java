@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
+class ChallengeApiWebfluxApplicationTests extends MongoDBContainerConfiguration {
 
     @Autowired
     private TaskRepository repository;
@@ -44,7 +44,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void createTask() {
+    void createTask() {
         given()
                 .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -62,7 +62,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void listTasks() {
+    void listTasks() {
         //given
         var taskToSave_1 = TaskDocument.builder().id(UUID.randomUUID().toString()).name("task_1")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
@@ -88,7 +88,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void getTask() {
+    void getTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveThenGet = TaskDocument.builder().id(uuidId).name("task_to_get")
@@ -109,7 +109,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void updateTask() {
+    void updateTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenUpdate = TaskDocument.builder().id(uuidId).name("old_name")
@@ -133,7 +133,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void deleteTask() {
+    void deleteTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenDelete = TaskDocument.builder().id(uuidId).name("task_to_delete")
@@ -154,7 +154,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
     }
 
     @Test
-    public void executeTask() {
+    void executeTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
@@ -177,11 +177,11 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
                     .get(BASE_URL + uuidId + "/progress").
             then()
                     .extract().response().as(ProjectGenerationTask.class).getProgress()
-        ).isGreaterThan(0);
+        ).isPositive();
     }
 
     @Test
-    public void cancelTask() {
+    void cancelTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
