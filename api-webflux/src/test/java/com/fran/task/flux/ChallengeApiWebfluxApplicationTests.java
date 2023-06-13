@@ -159,7 +159,7 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerTest {
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(2)
+                .begin(1).finish(3)
                 .build();
         repository.save(taskToSaveAndThenExecute);
 
