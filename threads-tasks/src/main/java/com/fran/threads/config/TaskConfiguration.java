@@ -1,5 +1,6 @@
 package com.fran.threads.config;
 
+import com.fran.threads.model.TaskCompletableFuture;
 import com.fran.threads.model.TaskFuture;
 import com.fran.threads.model.TaskThread;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,11 @@ public class TaskConfiguration {
 
     @Bean
     public Map<String, TaskFuture> taskFutureRegister() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @Bean
+    public Map<String, TaskCompletableFuture> taskCompletableFutureRegister() {
         return new ConcurrentHashMap<>();
     }
 
