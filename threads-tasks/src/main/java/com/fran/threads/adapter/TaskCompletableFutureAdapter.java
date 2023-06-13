@@ -23,15 +23,6 @@ public class TaskCompletableFutureAdapter implements TaskManager, TaskConcurrent
     private final Map<String, TaskCompletableFuture> taskRegister;
     private final ExecutorService executorService;
 
-    @ValidateTaskRunning
-    public void cancelTask(String taskId) {
-        TaskCompletableFuture tasktaskCompletableFuture = taskRegister.get(taskId);
-        if (tasktaskCompletableFuture.completableFuture() != null) {
-            tasktaskCompletableFuture.completableFuture().cancel(true);
-        }
-        taskRegister.remove(taskId);
-    }
-
     public Task executeTask(Task task) {
         CompletableFuture<Task> completableFuture = CompletableFuture.supplyAsync(() -> {
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
@@ -65,6 +56,15 @@ public class TaskCompletableFutureAdapter implements TaskManager, TaskConcurrent
         TaskCompletableFuture taskThread = taskRegister.get(counterId);
         log.info("Progress from from CompletableFuture is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.completableFuture());
         return taskThread.task();
+    }
+
+    @ValidateTaskRunning
+    public void cancelTask(String taskId) {
+        TaskCompletableFuture tasktaskCompletableFuture = taskRegister.get(taskId);
+        if (tasktaskCompletableFuture.completableFuture() != null) {
+            tasktaskCompletableFuture.completableFuture().cancel(true);
+        }
+        taskRegister.remove(taskId);
     }
 
     public Flux<Task> startReceivingMessages() {

@@ -26,15 +26,6 @@ public class TaskFutureAdapter {
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    @ValidateTaskRunning
-    public void cancelTask(String taskId) {
-        TaskFuture taskThread = taskRegister.get(taskId);
-        if (taskThread.future() != null) {
-            taskThread.future().cancel(true);
-        }
-        taskRegister.remove(taskId);
-    }
-
     public Task executeTask(Task task) {
         Future<Task> progressFuture = executorService.submit(() -> {
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
@@ -68,6 +59,15 @@ public class TaskFutureAdapter {
         TaskFuture taskThread = taskRegister.get(counterId);
         log.info("Progress from Future is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.future());
         return taskThread.task();
+    }
+
+    @ValidateTaskRunning
+    public void cancelTask(String taskId) {
+        TaskFuture taskThread = taskRegister.get(taskId);
+        if (taskThread.future() != null) {
+            taskThread.future().cancel(true);
+        }
+        taskRegister.remove(taskId);
     }
 
     public Flux<Task> startReceivingMessages() {

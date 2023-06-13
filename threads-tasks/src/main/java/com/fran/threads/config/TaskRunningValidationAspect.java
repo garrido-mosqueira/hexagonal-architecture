@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class TaskRunningValidationAspect {
 
