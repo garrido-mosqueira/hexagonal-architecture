@@ -4,5 +4,6 @@ import com.fran.task.domain.model.Task;
 
 public interface ExecuteTaskPort {
 
-    void executeTask(Task task);
+    Task executeTask(Task task);
+
 }

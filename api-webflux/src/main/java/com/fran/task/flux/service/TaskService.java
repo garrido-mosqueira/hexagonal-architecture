@@ -2,9 +2,10 @@ package com.fran.task.flux.service;
 
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
+import com.fran.task.domain.port.TaskManager;
 import com.fran.task.flux.dto.ProjectGenerationTask;
 import com.fran.task.flux.mapper.ProjectTaskMapper;
-import com.fran.task.domain.port.TaskManager;
+import com.fran.task.persistence.adapter.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,17 @@ import java.util.List;
 @Service
 public class TaskService {
 
+    private final PersistenceAdapter persistenceAdapter;
     private final TaskManager taskManager;
     private final ProjectTaskMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskManager.createTask(task));
+        return mapper.toDTO(persistenceAdapter.createTask(task));
     }
 
     public List<ProjectGenerationTask> listTasks() {
-        return taskManager.getTasks().stream()
+        return persistenceAdapter.getTasks().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
@@ -37,16 +39,16 @@ public class TaskService {
     }
 
     public ProjectGenerationTask getTask(String taskId) {
-        return taskManager.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
+        return persistenceAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
     }
 
     public ProjectGenerationTask updateTask(String taskId, ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
-        return mapper.toDTO(taskManager.updateTask(taskId, task));
+        return mapper.toDTO(persistenceAdapter.updateTask(taskId, task));
     }
 
     public Publisher<Void> deleteTask(String taskId) {
-        taskManager.deleteTask(taskId);
+        persistenceAdapter.deleteTask(taskId);
         return Mono.empty();
     }
 
@@ -56,7 +58,11 @@ public class TaskService {
     }
 
     public Publisher<Void> executeTask(String taskId) {
-        taskManager.getTask(taskId).ifPresent(taskManager::executeTask);
+        persistenceAdapter.getTask(taskId)
+                .ifPresent(task -> {
+                    Task executed = taskManager.executeTask(task);
+                    persistenceAdapter.updateExecution(executed);
+                });
         return Mono.empty();
     }
 
