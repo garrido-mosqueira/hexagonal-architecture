@@ -25,15 +25,6 @@ public class TaskThreadAdapter {
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    @ValidateTaskRunning
-    public void cancelTask(String taskId) {
-        TaskThread taskThread = taskRegister.get(taskId);
-        if (taskThread.thread() != null) {
-            taskThread.thread().interrupt();
-        }
-        taskRegister.remove(taskId);
-    }
-
     public Task executeTask(Task task) {
         executorService.execute(() -> {
             taskRegister.put(task.getId(), new TaskThread(task, Thread.currentThread()));
@@ -64,6 +55,15 @@ public class TaskThreadAdapter {
         TaskThread taskThread = taskRegister.get(counterId);
         log.info("Progress from Thread is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.thread().getName());
         return taskThread.task();
+    }
+
+    @ValidateTaskRunning
+    public void cancelTask(String taskId) {
+        TaskThread taskThread = taskRegister.get(taskId);
+        if (taskThread.thread() != null) {
+            taskThread.thread().interrupt();
+        }
+        taskRegister.remove(taskId);
     }
 
     public Flux<Task> startReceivingMessages() {
