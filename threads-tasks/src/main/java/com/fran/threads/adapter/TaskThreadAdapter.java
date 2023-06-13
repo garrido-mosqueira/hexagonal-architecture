@@ -1,8 +1,7 @@
 package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.port.TaskManager;
-import com.fran.threads.exception.CounterTaskNotFoundException;
+import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.threads.model.TaskThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +26,7 @@ public class TaskThreadAdapter {
     private final ScheduledExecutorService scheduledExecutorService;
 
     public void cancelTask(String taskId) {
+        throwNotFoundIfTaskIsNotRunning(taskId);
         TaskThread taskThread = taskRegister.get(taskId);
         if (taskThread.thread() != null) {
             taskThread.thread().interrupt();
@@ -35,9 +35,6 @@ public class TaskThreadAdapter {
     }
 
     public Task executeTask(Task task) {
-        if (task == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID ");
-        }
         executorService.execute(() -> {
             taskRegister.put(task.getId(), new TaskThread(task, Thread.currentThread()));
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
@@ -62,10 +59,7 @@ public class TaskThreadAdapter {
     }
 
     public Task getRunningCounter(String counterId) {
-        if (taskRegister.isEmpty() || taskRegister.get(counterId) == null) {
-            log.error("Failed to find counter with ID " + counterId);
-            throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
-        }
+        throwNotFoundIfTaskIsNotRunning(counterId);
         removeFinishedTasks();
         TaskThread taskThread = taskRegister.get(counterId);
         log.info("Progress from Thread is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.thread().getName());
@@ -94,6 +88,13 @@ public class TaskThreadAdapter {
                 .map(TaskThread::task)
                 .filter(task -> Objects.equals(task.getFinish(), task.getProgress()))
                 .forEach(task -> taskRegister.remove(task.getId()));
+    }
+
+    private void throwNotFoundIfTaskIsNotRunning(String taskId) {
+        if (taskRegister.isEmpty() || taskRegister.get(taskId) == null) {
+            log.error("Failed to find counter with ID " + taskId);
+            throw new NotFoundException("Failed to find counter with ID " + taskId);
+        }
     }
 
 }
