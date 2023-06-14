@@ -34,7 +34,7 @@
         <org.lombok.version>1.18.22</org.lombok.version>
         <testcontainers.version>1.17.1</testcontainers.version>
         <rest-assured.version>5.3.0</rest-assured.version>
-        <micrometer-registry-prometheus.version>1.8.4</micrometer-registry-prometheus.version>
+        <micrometer-registry-prometheus.version>1.11.1</micrometer-registry-prometheus.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
         <reactor-rabbitmq.version>1.5.6</reactor-rabbitmq.version>
         <spring-rabbit-test.version>3.0.4</spring-rabbit-test.version>
