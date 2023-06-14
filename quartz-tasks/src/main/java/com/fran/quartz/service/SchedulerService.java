@@ -2,6 +2,7 @@ package com.fran.quartz.service;
 
 import com.fran.quartz.model.Counter;
 import com.fran.quartz.util.ScheduleUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -102,4 +103,5 @@ public class SchedulerService {
             log.error(e.getMessage(), e);
         }
     }
+
 }
