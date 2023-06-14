@@ -8,7 +8,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class MongoDBContainerTest {
+public class MongoDBContainerConfiguration {
 
     @Container
     static final MongoDBContainer container;

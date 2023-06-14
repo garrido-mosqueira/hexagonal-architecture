@@ -1,11 +1,9 @@
 package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.port.TaskManager;
-import com.fran.threads.exception.CounterTaskNotFoundException;
+import com.fran.threads.config.ValidateTaskRunning;
 import com.fran.threads.model.TaskFuture;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,26 +20,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TaskFutureAdapter implements TaskManager {
+public class TaskFutureAdapter {
 
     private final Map<String, TaskFuture> taskRegister;
     private final ExecutorService executorService;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    @SneakyThrows
-    public void cancelTask(String taskId) {
-        TaskFuture taskThread = taskRegister.get(taskId);
-        if (taskThread.future() != null) {
-            taskThread.future().cancel(true);
-        }
-        taskRegister.remove(taskId);
-    }
-
     public Task executeTask(Task task) {
-        if (task == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID ");
-        }
-
         Future<Task> progressFuture = executorService.submit(() -> {
             for (int i = task.getBegin(); i <= task.getFinish(); i++) {
                 task.setProgress(i);
@@ -68,15 +53,21 @@ public class TaskFutureAdapter implements TaskManager {
                 .toList();
     }
 
+    @ValidateTaskRunning
     public Task getRunningCounter(String counterId) {
-        if (taskRegister.isEmpty() || taskRegister.get(counterId) == null) {
-            log.error("Failed to find counter with ID " + counterId);
-            throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
-        }
         removeFinishedTasks();
         TaskFuture taskThread = taskRegister.get(counterId);
         log.info("Progress from Future is '{}' for '{}' running in '{}' ", taskThread.task().getProgress(), taskThread.task().getId(), taskThread.future());
         return taskThread.task();
+    }
+
+    @ValidateTaskRunning
+    public void cancelTask(String taskId) {
+        TaskFuture taskThread = taskRegister.get(taskId);
+        if (taskThread.future() != null) {
+            taskThread.future().cancel(true);
+        }
+        taskRegister.remove(taskId);
     }
 
     public Flux<Task> startReceivingMessages() {
@@ -101,6 +92,10 @@ public class TaskFutureAdapter implements TaskManager {
                 .map(TaskFuture::task)
                 .filter(task -> Objects.equals(task.getFinish(), task.getProgress()))
                 .forEach(task -> taskRegister.remove(task.getId()));
+    }
+
+    public boolean isTaskRunning(String id) {
+        return !taskRegister.isEmpty() && taskRegister.get(id) != null;
     }
 
 }
