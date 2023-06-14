@@ -6,11 +6,10 @@ import com.fran.task.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 
-import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -27,16 +26,10 @@ class ChallengeApiWebfluxApplicationTests extends MongoDBContainerConfiguration 
     @Autowired
     private TaskRepository repository;
 
-    @LocalServerPort
-    private int port;
-
-    private final Map<String, String> headersMap = Map.of("Fran-Auth", "totally_secret");
+    @Value("${base.url}")
     private String BASE_URL;
 
-    @PostConstruct
-    public void setBaseUrlWithPort() {
-        BASE_URL = String.format("http://localhost:%s/api/tasks/", port);
-    }
+    private final Map<String, String> headersMap = Map.of("Fran-Auth", "totally_secret");
 
     @BeforeEach
     public void deleteRepository() {
