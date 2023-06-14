@@ -96,6 +96,8 @@ public class TaskHandler {
                 .just(request.pathVariable(TASK_ID_VARIABLE_PATH))
                 .map(service::cancelTask)
                 .flatMap(resource -> noContent().build())
+                .onErrorResume(error -> Mono.just(error.getMessage())
+                        .flatMap(response -> notFound().build()))
                 .switchIfEmpty(defer(() -> notFound()
                         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                         .build()));
