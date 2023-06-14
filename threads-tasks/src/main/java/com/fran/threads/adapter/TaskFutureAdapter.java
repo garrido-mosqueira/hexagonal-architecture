@@ -3,6 +3,7 @@ package com.fran.threads.adapter;
 import com.fran.task.domain.model.Task;
 import com.fran.threads.config.ValidateTaskRunning;
 import com.fran.threads.model.TaskFuture;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
