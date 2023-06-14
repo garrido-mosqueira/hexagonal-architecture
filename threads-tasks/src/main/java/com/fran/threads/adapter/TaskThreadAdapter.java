@@ -3,12 +3,12 @@ package com.fran.threads.adapter;
 import com.fran.task.domain.model.Task;
 import com.fran.threads.config.ValidateTaskRunning;
 import com.fran.threads.model.TaskThread;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
