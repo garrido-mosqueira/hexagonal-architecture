@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,7 +16,7 @@ public class TaskController {
     private final TaskService service;
 
     @PostMapping("/")
-    public ProjectGenerationTask createTask(@RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
+    public ProjectGenerationTask createTask(@RequestBody ProjectGenerationTask projectGenerationTask) {
         return service.createTask(projectGenerationTask);
     }
 
@@ -33,7 +32,7 @@ public class TaskController {
 
     @PutMapping("/{taskId}")
     public ProjectGenerationTask updateTask(@PathVariable String taskId,
-                                            @RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
+                                            @RequestBody ProjectGenerationTask projectGenerationTask) {
         return service.updateTask(taskId, projectGenerationTask);
     }
 
