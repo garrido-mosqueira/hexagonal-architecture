@@ -5,8 +5,8 @@
 
     <modules>
         <module>domain</module>
-        <module>api-webflux</module>
         <module>persistence</module>
+        <module>api-webflux</module>
         <module>quartz-tasks</module>
         <module>queue-tasks</module>
         <module>threads-tasks</module>
