@@ -17,9 +17,4 @@ public class TaskConfiguration {
         return new ConcurrentHashMap<>();
     }
 
-    @Bean
-    public ExecutorService executorService (){
-        return Executors.newCachedThreadPool();
-    }
-
 }
