@@ -11,7 +11,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Service
@@ -19,7 +18,6 @@ import java.util.concurrent.ExecutorService;
 public class TaskThreadAdapter implements TaskManager {
 
     private final Map<String, TaskVirtualThread> taskRegister;
-    private final ExecutorService executorService;
 
     @Override
     public void cancelTask(String taskId) {
@@ -31,21 +29,21 @@ public class TaskThreadAdapter implements TaskManager {
 
     @Override
     public Task executeTask(Task task) {
-        if (task == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID ");
-        }
-        executorService.execute(() -> {
-            taskRegister.put(task.getId(), new TaskVirtualThread(task, Thread.currentThread()));
-            for (int i = task.getBegin(); i <= task.getFinish(); i++) {
-                task.setProgress(i);
-                log.info("Counter progress is '{}' for '{}' ", task.getProgress(), task.getId());
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+        Thread.ofVirtual().start(
+                () -> {
+                    taskRegister.put(task.getId(), new TaskVirtualThread(task, Thread.currentThread()));
+                    for (int i = task.getBegin(); i <= task.getFinish(); i++) {
+                        task.setProgress(i);
+                        log.info("Counter progress from Virtual Thread is '{}' for '{}' ", task.getProgress(), task.getId());
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
                 }
-            }
-        });
+        );
+
         return task;
     }
 
