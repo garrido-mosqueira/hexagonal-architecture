@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TaskThreadAdapter implements TaskManager {
+public class TaskVirtualThreadAdapter implements TaskManager {
 
     private final Map<String, TaskVirtualThread> taskRegister;
 
