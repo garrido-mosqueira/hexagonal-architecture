@@ -48,11 +48,10 @@ public class TaskService {
     }
 
     public void executeTask(String taskId) {
-        persistenceAdapter.getTask(taskId)
-                .ifPresent(task -> {
-                    Task executed = taskAdapter.executeTask(task);
-                    persistenceAdapter.updateExecution(executed);
-                });
+        Task task = persistenceAdapter.getTask(taskId)
+            .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
+        Task executed = taskAdapter.executeTask(task);
+        persistenceAdapter.updateExecution(executed);
     }
 
     public List<TaskCounter> getAllRunningCounters() {

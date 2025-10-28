@@ -14,16 +14,16 @@ public class ErrorController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public String handleNotFound() {
+    public String handleNotFound(NotFoundException exception) {
         log.warn("Entity not found");
-        return "Not found";
+        return exception.getMessage();
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CounterTaskNotFoundException.class)
-    public String handleCounterTaskNotFound(CounterTaskNotFoundException e) {
-        log.warn("Counter task not found: {}", e.getMessage());
-        return e.getMessage();
+    public String handleCounterTaskNotFound(CounterTaskNotFoundException exception) {
+        log.warn("Counter task not found: {}", exception.getMessage());
+        return exception.getMessage();
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
