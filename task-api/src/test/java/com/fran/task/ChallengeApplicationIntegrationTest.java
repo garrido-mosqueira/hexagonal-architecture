@@ -41,7 +41,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         when()
                 .post(BASE_URL).
         then()
-                .statusCode(is(200)).
+                .statusCode(is(201)).
         assertThat()
                 .body("name", is("task_get"))
                 .body("name", response -> is(
@@ -153,7 +153,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         when()
                 .post(BASE_URL + uuidId + "/execute").
         then()
-                .statusCode(is(204));
+                .statusCode(is(202));
 
         assertThat(
             given().contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -179,14 +179,14 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         when()
                 .post(BASE_URL + uuidId + "/execute").
         then()
-                .statusCode(is(204));
+                .statusCode(is(202));
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .post(BASE_URL + uuidId + "/cancel").
         then()
-                .statusCode(is(204));
+                .statusCode(is(200));
     }
 
 }
