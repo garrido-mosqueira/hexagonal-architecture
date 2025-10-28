@@ -19,6 +19,5 @@ public class TaskDocument {
     private final Date lastExecution;
     private final Integer begin;
     private final Integer finish;
-    private final String storageLocation;
 
 }

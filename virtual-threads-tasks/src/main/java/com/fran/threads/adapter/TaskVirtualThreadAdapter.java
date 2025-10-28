@@ -7,7 +7,6 @@ import com.fran.threads.model.TaskVirtualThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
@@ -62,11 +61,6 @@ public class TaskVirtualThreadAdapter implements TaskManager {
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
         return taskThread.task();
-    }
-
-    @Override
-    public Flux<Task> startReceivingMessages() {
-        return null;
     }
 
 }
