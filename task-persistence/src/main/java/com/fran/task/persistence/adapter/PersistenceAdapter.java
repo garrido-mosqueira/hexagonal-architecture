@@ -26,8 +26,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     @Override
     public Task createTask(Task task) {
         Task newTask = task.withId(null)
-                .withCreationDate(new Date(System.currentTimeMillis()))
-                .withLastExecution(new Date(System.currentTimeMillis()));
+                .withCreationDate(new Date(System.currentTimeMillis()));
         TaskDocument entity = mapper.toEntity(newTask);
         return mapper.toDomain(repository.save(entity));
     }
