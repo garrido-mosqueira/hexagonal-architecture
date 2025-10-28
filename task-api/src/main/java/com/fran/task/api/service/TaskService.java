@@ -1,7 +1,7 @@
 package com.fran.task.api.service;
 
 import com.fran.task.api.dto.ProjectGenerationTask;
-import com.fran.task.api.mapper.ProjectTaskMapper;
+import com.fran.task.api.mapper.TaskCounterMapper;
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
@@ -17,7 +17,7 @@ public class TaskService {
 
     private final TaskManager taskAdapter;
     private final PersistenceAdapter persistenceAdapter;
-    private final ProjectTaskMapper mapper;
+    private final TaskCounterMapper mapper;
 
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
         Task task = mapper.toDomain(projectGenerationTask);
