@@ -30,10 +30,12 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     public Task executeTask(Task task) {
         Thread.ofVirtual().start(
                 () -> {
-                    taskRegister.put(task.getId(), new TaskVirtualThread(task, Thread.currentThread()));
-                    for (int i = task.getBegin(); i <= task.getFinish(); i++) {
-                        task.setProgress(i);
-                        log.info("Counter progress from Virtual Thread is '{}' for '{}' ", task.getProgress(), task.getId());
+                    taskRegister.put(task.id(), new TaskVirtualThread(task, Thread.currentThread()));
+                    for (int i = task.begin(); i <= task.finish(); i++) {
+                        Task updatedTask = task.withProgress(i);
+                        // Update the task in the register
+                        taskRegister.put(task.id(), new TaskVirtualThread(updatedTask, Thread.currentThread()));
+                        log.info("Counter progress from Virtual Thread is '{}' for '{}'", updatedTask.progress(), updatedTask.id());
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -50,7 +52,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     public List<Task> getAllRunningCounters() {
         return taskRegister.values().stream()
                 .map(TaskVirtualThread::task)
-                .filter(task -> task.getFinish() > task.getProgress())
+                .filter(task -> task.finish() > task.progress())
                 .toList();
     }
 

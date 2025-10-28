@@ -25,10 +25,10 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
 
     @Override
     public Task createTask(Task task) {
-        task.setId(null);
-        task.setCreationDate(new Date(System.currentTimeMillis()));
-        task.setLastExecution(new Date(System.currentTimeMillis()));
-        TaskDocument entity = mapper.toEntity(task);
+        Task newTask = task.withId(null)
+                .withCreationDate(new Date(System.currentTimeMillis()))
+                .withLastExecution(new Date(System.currentTimeMillis()));
+        TaskDocument entity = mapper.toEntity(newTask);
         return mapper.toDomain(repository.save(entity));
     }
 
@@ -52,16 +52,17 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     @Override
     public Task updateTask(String taskId, Task taskUpdate) {
         Task existing = getTask(taskId).orElseThrow(NotFoundException::new);
-        existing.setBegin(taskUpdate.getBegin());
-        existing.setFinish(taskUpdate.getFinish());
-        existing.setName(taskUpdate.getName());
-        TaskDocument entity = mapper.toEntity(existing);
+        Task updated = existing.withBegin(taskUpdate.begin())
+                .withFinish(taskUpdate.finish())
+                .withName(taskUpdate.name());
+        TaskDocument entity = mapper.toEntity(updated);
         return mapper.toDomain(repository.save(entity));
     }
 
     public void updateExecution(Task task) {
-        task.setLastExecution(new Date(System.currentTimeMillis()));
-        TaskDocument entity = mapper.toEntity(task);
+        TaskDocument entity = mapper.toEntity(
+                task.withLastExecution(new Date(System.currentTimeMillis()))
+        );
         mapper.toDomain(repository.save(entity));
     }
 

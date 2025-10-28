@@ -32,7 +32,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public TaskCounter updateTask(@PathVariable String taskId,
                                   @RequestBody TaskCounter taskCounter) {
         return service.updateTask(taskId, taskCounter);

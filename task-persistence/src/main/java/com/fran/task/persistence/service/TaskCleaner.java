@@ -20,8 +20,8 @@ public class TaskCleaner {
     public void cleanExpiredTask() {
         log.info("Begin Cleaning task ... ");
         persistenceAdapter.getTasks().stream()
-                .filter(counterTask -> counterTask.getLastExecution().before(new Date(System.currentTimeMillis() - 180 * 1000)))
-                .map(Task::getId)
+                .filter(counterTask -> counterTask.lastExecution().before(new Date(System.currentTimeMillis() - 180 * 1000)))
+                .map(Task::id)
                 .forEach(persistenceAdapter::deleteTask);
 
         log.info("Finished Cleaning task ... ");
