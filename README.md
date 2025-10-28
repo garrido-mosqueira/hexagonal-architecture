@@ -3,7 +3,7 @@
 This demo project is using:
 
 - Spring Boot
-- Quartz Scheduler
+- Java Virtual Threads
 - MongoDb
 - Testcontainers
 - Prometheus
