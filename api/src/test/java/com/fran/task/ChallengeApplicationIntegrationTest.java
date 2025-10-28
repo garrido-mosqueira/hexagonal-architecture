@@ -29,17 +29,14 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     @Value("${base.url}")
     private String BASE_URL;
 
-    private final Map<String, String> headersMap = Map.of("Fran-Auth", "totally_secret");
-
     @BeforeEach
     public void deleteRepository() {
         repository.deleteAll();
     }
 
     @Test
-    public void createTask() {
+    void createTask() {
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(ProjectGenerationTask.builder().name("task_get").begin(1).finish(10).build()).
         when()
@@ -55,7 +52,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void listTasks() {
+    void listTasks() {
         //given
         var taskToSave_1 = TaskDocument.builder().id(UUID.randomUUID().toString()).name("task_1")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
@@ -70,7 +67,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         repository.save(taskToSave_2);
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .get(BASE_URL).
@@ -81,7 +77,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void getTask() {
+    void getTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveThenGet = TaskDocument.builder().id(uuidId).name("task_to_get")
@@ -91,7 +87,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var savedTaskFromRepo = repository.save(taskToSaveThenGet);
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .get(BASE_URL + uuidId).
@@ -102,7 +97,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void updateTask() {
+    void updateTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenUpdate = TaskDocument.builder().id(uuidId).name("old_name")
@@ -114,7 +109,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var taskWithNewName = ProjectGenerationTask.builder().name("new_name").begin(1).finish(10).build();
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(taskWithNewName).
         when()
@@ -126,7 +120,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void deleteTask() {
+    void deleteTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenDelete = TaskDocument.builder().id(uuidId).name("task_to_delete")
@@ -136,7 +130,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         repository.save(taskToSaveAndThenDelete);
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .delete(BASE_URL + uuidId).
@@ -147,7 +140,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void executeTask() {
+    void executeTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
@@ -157,7 +150,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         repository.save(taskToSaveAndThenExecute);
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .post(BASE_URL + uuidId + "/execute").
@@ -165,7 +157,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .statusCode(is(204));
 
         assertThat(
-            given().headers(headersMap).contentType(MediaType.APPLICATION_JSON_VALUE).
+            given().contentType(MediaType.APPLICATION_JSON_VALUE).
             when()
                     .get(BASE_URL + uuidId + "/progress").
             then()
@@ -174,7 +166,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     }
 
     @Test
-    public void cancelTask() {
+    void cancelTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
@@ -184,7 +176,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .post(BASE_URL + uuidId + "/execute").
@@ -192,7 +183,6 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .statusCode(is(204));
 
         given()
-                .headers(headersMap)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
                 .post(BASE_URL + uuidId + "/cancel").
