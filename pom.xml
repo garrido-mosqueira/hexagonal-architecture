@@ -7,7 +7,6 @@
         <module>task-domain</module>
         <module>task-persistence</module>
         <module>task-api</module>
-        <module>threads-tasks</module>
         <module>virtual-threads-tasks</module>
     </modules>
 
