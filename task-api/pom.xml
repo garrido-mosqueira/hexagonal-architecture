@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
-            <artifactId>quartz-tasks</artifactId>
+            <artifactId>virtual-threads-tasks</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
