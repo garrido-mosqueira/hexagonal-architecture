@@ -16,6 +16,7 @@ public class TaskController {
     private final TaskService service;
 
     @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     public TaskCounter createTask(@RequestBody TaskCounter taskCounter) {
         return service.createTask(taskCounter);
     }
@@ -31,6 +32,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public TaskCounter updateTask(@PathVariable String taskId,
                                   @RequestBody TaskCounter taskCounter) {
         return service.updateTask(taskId, taskCounter);
@@ -43,13 +45,13 @@ public class TaskController {
     }
 
     @PostMapping("/{taskId}/execute")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void executeTask(@PathVariable String taskId) {
         service.executeTask(taskId);
     }
 
     @PostMapping("/{taskId}/cancel")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void cancelTask(@PathVariable String taskId) {
         service.cancelTask(taskId);
     }
