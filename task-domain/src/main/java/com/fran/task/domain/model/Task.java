@@ -18,7 +18,7 @@ public record Task(
     }
 
     public Task withCreationDate(Date newCreationDate) {
-        return new Task(id, name, creationDate, lastExecution,
+        return new Task(id, name, newCreationDate, lastExecution,
                 begin, finish, progress, storageLocation);
     }
 
