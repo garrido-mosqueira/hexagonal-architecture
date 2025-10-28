@@ -20,6 +20,5 @@ public class Task {
     private Integer begin;
     private Integer finish;
     private Integer progress;
-    private String storageLocation;
 
 }
