@@ -1,6 +1,6 @@
 package com.fran.task.api.controllers;
 
-import com.fran.task.api.dto.ProjectGenerationTask;
+import com.fran.task.api.dto.TaskCounter;
 import com.fran.task.api.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,24 +16,24 @@ public class TaskController {
     private final TaskService service;
 
     @PostMapping("/")
-    public ProjectGenerationTask createTask(@RequestBody ProjectGenerationTask projectGenerationTask) {
-        return service.createTask(projectGenerationTask);
+    public TaskCounter createTask(@RequestBody TaskCounter taskCounter) {
+        return service.createTask(taskCounter);
     }
 
     @GetMapping("/")
-    public List<ProjectGenerationTask> listTasks() {
+    public List<TaskCounter> listTasks() {
         return service.listTasks();
     }
 
     @GetMapping("/{taskId}")
-    public ProjectGenerationTask getTask(@PathVariable String taskId) {
+    public TaskCounter getTask(@PathVariable String taskId) {
         return service.getTask(taskId);
     }
 
     @PutMapping("/{taskId}")
-    public ProjectGenerationTask updateTask(@PathVariable String taskId,
-                                            @RequestBody ProjectGenerationTask projectGenerationTask) {
-        return service.updateTask(taskId, projectGenerationTask);
+    public TaskCounter updateTask(@PathVariable String taskId,
+                                  @RequestBody TaskCounter taskCounter) {
+        return service.updateTask(taskId, taskCounter);
     }
 
     @DeleteMapping("/{taskId}")
@@ -55,12 +55,12 @@ public class TaskController {
     }
 
     @GetMapping("/running")
-    public List<ProjectGenerationTask> getAllRunningCounters() {
+    public List<TaskCounter> getAllRunningCounters() {
         return service.getAllRunningCounters();
     }
 
     @GetMapping("/{taskId}/progress")
-    public ProjectGenerationTask getRunningCounter(@PathVariable String taskId) {
+    public TaskCounter getRunningCounter(@PathVariable String taskId) {
         return service.getRunningCounter(taskId);
     }
 

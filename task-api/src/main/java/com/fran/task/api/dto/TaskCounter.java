@@ -14,7 +14,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectGenerationTask {
+public class TaskCounter {
 
     String id;
     String name;

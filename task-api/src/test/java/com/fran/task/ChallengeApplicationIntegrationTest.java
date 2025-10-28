@@ -1,6 +1,6 @@
 package com.fran.task;
 
-import com.fran.task.api.dto.ProjectGenerationTask;
+import com.fran.task.api.dto.TaskCounter;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -38,7 +37,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     void createTask() {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(ProjectGenerationTask.builder().name("task_get").begin(1).finish(10).build()).
+                .body(TaskCounter.builder().name("task_get").begin(1).finish(10).build()).
         when()
                 .post(BASE_URL).
         then()
@@ -46,7 +45,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         assertThat()
                 .body("name", is("task_get"))
                 .body("name", response -> is(
-                        repository.findById(response.as(ProjectGenerationTask.class).getId())
+                        repository.findById(response.as(TaskCounter.class).getId())
                                 .map(TaskDocument::getName).orElseThrow()
                 ));
     }
@@ -106,7 +105,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .build();
         repository.save(taskToSaveAndThenUpdate);
 
-        var taskWithNewName = ProjectGenerationTask.builder().name("new_name").begin(1).finish(10).build();
+        var taskWithNewName = TaskCounter.builder().name("new_name").begin(1).finish(10).build();
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -161,7 +160,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
             when()
                     .get(BASE_URL + uuidId + "/progress").
             then()
-                    .extract().response().as(ProjectGenerationTask.class).getProgress()
+                    .extract().response().as(TaskCounter.class).getProgress()
         ).isGreaterThan(0);
     }
 
