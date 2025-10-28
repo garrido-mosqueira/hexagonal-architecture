@@ -5,7 +5,7 @@
 
     <modules>
         <module>task-domain</module>
-        <module>persistence</module>
+        <module>task-persistence</module>
         <module>api-webflux</module>
         <module>quartz-tasks</module>
         <module>queue-tasks</module>
