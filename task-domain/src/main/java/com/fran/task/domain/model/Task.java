@@ -1,12 +1,12 @@
 package com.fran.task.domain.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record Task(
         String id,
         String name,
-        Date creationDate,
-        Date lastExecution,
+        LocalDateTime creationDate,
+        LocalDateTime lastExecution,
         Integer begin,
         Integer finish,
         Integer progress,
@@ -17,18 +17,13 @@ public record Task(
                 begin, finish, newProgress, storageLocation);
     }
 
-    public Task withCreationDate(Date newCreationDate) {
+    public Task withCreationDate(LocalDateTime newCreationDate) {
         return new Task(id, name, newCreationDate, lastExecution,
                 begin, finish, progress, storageLocation);
     }
 
-    public Task withLastExecution(Date newLastExecution) {
+    public Task withLastExecution(LocalDateTime newLastExecution) {
         return new Task(id, name, creationDate, newLastExecution,
-                begin, finish, progress, storageLocation);
-    }
-
-    public Task withId(String newId) {
-        return new Task(newId, name, creationDate, lastExecution,
                 begin, finish, progress, storageLocation);
     }
 

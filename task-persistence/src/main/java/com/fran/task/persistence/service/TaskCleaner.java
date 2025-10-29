@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,8 +21,8 @@ public class TaskCleaner {
         log.info("Begin Cleaning task ... ");
         persistenceAdapter.getTasks().stream()
                 .filter(counterTask ->
-                        counterTask.lastExecution() == null && counterTask.creationDate().before(new Date(System.currentTimeMillis() - 180 * 1000))
-                                || counterTask.lastExecution() != null && counterTask.lastExecution().before(new Date(System.currentTimeMillis() - 180 * 1000)))
+                        counterTask.lastExecution() == null && counterTask.creationDate().isBefore(LocalDateTime.now().minusMinutes(3))
+                                || counterTask.lastExecution() != null && counterTask.lastExecution().isBefore(LocalDateTime.now().minusMinutes(3)))
                 .map(Task::id)
                 .forEach(persistenceAdapter::deleteTask);
 
