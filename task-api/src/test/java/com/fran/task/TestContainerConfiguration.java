@@ -11,25 +11,26 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class TestContainerConfiguration {
 
-    static final MongoDBContainer mongoDbContainer = new MongoDBContainer(DockerImageName.parse("mongo:7.0.5"))
+    static final MongoDBContainer mongoDb = new MongoDBContainer(DockerImageName.parse("mongo:7.0.5"))
             .withExposedPorts(27017);
 
-    static {
-        mongoDbContainer.start();
-    }
-
     @Container
-    static final GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
+    static final GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
             .withExposedPorts(6379);
+
+    static {
+        mongoDb.start();
+        redis.start();
+    }
 
     @DynamicPropertySource
     static void setMongoDbContainerProperties(final DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongoDbContainer::getReplicaSetUrl);
-        registry.add("spring.data.mongodb.host", mongoDbContainer::getHost);
-        registry.add("spring.data.mongodb.port", mongoDbContainer::getFirstMappedPort);
+        registry.add("spring.data.mongodb.uri", mongoDb::getReplicaSetUrl);
+        registry.add("spring.data.mongodb.host", mongoDb::getHost);
+        registry.add("spring.data.mongodb.port", mongoDb::getFirstMappedPort);
 
-        registry.add("spring.data.redis.host", redisContainer::getHost);
-        registry.add("spring.data.redis.port", redisContainer::getFirstMappedPort);
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", redis::getFirstMappedPort);
     }
 
 }
