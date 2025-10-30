@@ -16,7 +16,8 @@ public class TestContainerConfiguration {
 
     @Container
     static final GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
-            .withExposedPorts(6379);
+            .withExposedPorts(6379)
+            .withReuse(true);
 
     static {
         mongoDb.start();
