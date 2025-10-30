@@ -1,7 +1,7 @@
 package com.fran.task.api.controllers;
 
-import com.fran.task.api.exceptions.NotAuthorizedException;
 import com.fran.task.domain.exceptions.NotFoundException;
+import com.fran.threads.exception.CounterTaskNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,16 +14,16 @@ public class ErrorController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public String handleNotFound() {
+    public String handleNotFound(NotFoundException exception) {
         log.warn("Entity not found");
-        return "Not found";
+        return exception.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(NotAuthorizedException.class)
-    public String handleNotAuthorized() {
-        log.warn("Not authorized");
-        return "Not authorized";
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CounterTaskNotFoundException.class)
+    public String handleCounterTaskNotFound(CounterTaskNotFoundException exception) {
+        log.warn("Counter task not found: {}", exception.getMessage());
+        return exception.getMessage();
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

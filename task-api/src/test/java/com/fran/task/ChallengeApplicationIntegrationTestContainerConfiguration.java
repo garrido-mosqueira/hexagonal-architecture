@@ -1,6 +1,6 @@
 package com.fran.task;
 
-import com.fran.task.api.dto.ProjectGenerationTask;
+import com.fran.task.api.dto.TaskCounter;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,16 +12,17 @@ import org.springframework.http.MediaType;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
+class TasksApplicationIntegrationTest extends TestContainerConfiguration {
 
     @Autowired
     private TaskRepository repository;
@@ -38,15 +39,15 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
     void createTask() {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(ProjectGenerationTask.builder().name("task_get").begin(1).finish(10).build()).
+                .body(TaskCounter.builder().name("task_get").begin(1).finish(10).build()).
         when()
                 .post(BASE_URL).
         then()
-                .statusCode(is(200)).
+                .statusCode(is(201)).
         assertThat()
                 .body("name", is("task_get"))
                 .body("name", response -> is(
-                        repository.findById(response.as(ProjectGenerationTask.class).getId())
+                        repository.findById(response.as(TaskCounter.class).getId())
                                 .map(TaskDocument::getName).orElseThrow()
                 ));
     }
@@ -106,7 +107,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
                 .build();
         repository.save(taskToSaveAndThenUpdate);
 
-        var taskWithNewName = ProjectGenerationTask.builder().name("new_name").begin(1).finish(10).build();
+        var taskWithNewName = TaskCounter.builder().name("new_name").begin(1).finish(10).build();
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -145,7 +146,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(1)
+                .begin(1).finish(22)
                 .build();
         repository.save(taskToSaveAndThenExecute);
 
@@ -154,15 +155,18 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         when()
                 .post(BASE_URL + uuidId + "/execute").
         then()
-                .statusCode(is(204));
+                .statusCode(is(202));
 
-        assertThat(
-            given().contentType(MediaType.APPLICATION_JSON_VALUE).
-            when()
-                    .get(BASE_URL + uuidId + "/progress").
-            then()
-                    .extract().response().as(ProjectGenerationTask.class).getProgress()
-        ).isGreaterThan(0);
+        await().atMost(1, SECONDS).untilAsserted(() -> {
+            TaskCounter progress =
+                    given()
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .get(BASE_URL + uuidId + "/progress")
+                    .then()
+                        .   statusCode(200)
+                    .extract().as(TaskCounter.class);
+            assertThat(progress.getProgress()).isGreaterThan(0);
+        });
     }
 
     @Test
@@ -171,7 +175,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(600)
+                .begin(1).finish(22)
                 .build();
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
@@ -180,14 +184,18 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         when()
                 .post(BASE_URL + uuidId + "/execute").
         then()
-                .statusCode(is(204));
+                .statusCode(is(202));
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE).
-        when()
-                .post(BASE_URL + uuidId + "/cancel").
-        then()
-                .statusCode(is(204));
+        await()
+                .atMost(1, SECONDS)
+                .untilAsserted(() -> {
+                    given()
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .when()
+                            .post(BASE_URL + uuidId + "/cancel").
+                    then()
+                            .statusCode(is(200));
+                });
     }
 
 }
