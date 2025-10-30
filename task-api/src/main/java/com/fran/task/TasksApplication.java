@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableMongoRepositories
-public class ChallengeApplication {
+public class TasksApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ChallengeApplication.class, args);
+        SpringApplication.run(TasksApplication.class, args);
     }
 }

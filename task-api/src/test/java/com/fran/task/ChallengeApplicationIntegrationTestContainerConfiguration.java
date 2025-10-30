@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChallengeApplicationIntegrationTest extends TestContainerConfiguration {
+class TasksApplicationIntegrationTest extends TestContainerConfiguration {
 
     @Autowired
     private TaskRepository repository;
