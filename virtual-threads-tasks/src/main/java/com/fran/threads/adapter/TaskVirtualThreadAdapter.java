@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -38,31 +36,28 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     @Override
     public Task executeTask(Task task) {
         log.info("Execute task '{}' with Virtual Thread", task.id());
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            executor.submit(
-                    () -> {
-                        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
-                        int i = task.begin();
-                        TaskVirtualThread taskThread;
-                        do {
-                            Task updatedTaskWithNewProgress = task.withProgress(i);
-                            tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
-                            log.info("Counter progress from Virtual Thread is '{}' for '{}'", updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id());
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                break;
-                            }
-                            i++;
-                            taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + task.id());
-                        } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
-                        tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
-                        log.info("End counter progress from Virtual Thread for '{}'", task.id());
-                    }
-            );
-            executor.shutdown();
-        }
+        Thread.ofVirtual().start(
+                () -> {
+                    tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
+                    int i = task.begin();
+                    TaskVirtualThread taskThread;
+                    do {
+                        Task updatedTaskWithNewProgress = task.withProgress(i);
+                        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
+                        log.info("Counter progress from Virtual Thread is '{}' for '{}'", updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id());
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                        i++;
+                        taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + task.id());
+                    } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
+                    tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
+                    log.info("End counter progress from Virtual Thread for '{}'", task.id());
+                }
+        );
 
         return task;
     }
