@@ -8,6 +8,8 @@ services:
     image: "challenge-java"
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb-challenge:27017/test
     depends_on:
       - mongodb-challenge
     container_name: challenge-java
