@@ -10,12 +10,14 @@ import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.mapper.TaskDocumentMapper;
 import com.fran.task.persistence.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteTaskPort, UpdateTaskPort {
@@ -26,8 +28,9 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     @Override
     public Task createTask(Task task) {
         Task newTask = task.withCreationDate(LocalDateTime.now());
-        TaskDocument entity = mapper.toEntity(newTask);
-        return mapper.toDomain(repository.save(entity));
+        TaskDocument saved = repository.save(mapper.toEntity(newTask));
+        log.info("Creating task {}", saved.getId());
+        return mapper.toDomain(saved);
     }
 
     @Override
@@ -49,6 +52,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
 
     @Override
     public Task updateTask(String taskId, Task taskUpdate) {
+        log.info("Updating task {}", taskId);
         Task existing = getTask(taskId).orElseThrow(NotFoundException::new);
         Task updated = existing.withBegin(taskUpdate.begin())
                 .withFinish(taskUpdate.finish())
@@ -58,6 +62,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
     }
 
     public void updateExecution(Task task) {
+        log.info("Updating execution for task {}", task.id());
         TaskDocument entity = mapper.toEntity(task.withLastExecution(LocalDateTime.now()));
         mapper.toDomain(repository.save(entity));
     }

@@ -26,6 +26,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     @Override
     public void cancelTask(String taskId) {
         TaskVirtualThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + taskId);
+        log.info("Cancel task '{}' with Virtual Thread", taskId);
         if (taskThread != null && taskThread.task() != null) {
             tasksRegister.opsForValue().set(
                     TASK_REGISTER_PREFIX + taskId,
@@ -36,6 +37,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
 
     @Override
     public Task executeTask(Task task) {
+        log.info("Execute task '{}' with Virtual Thread", task.id());
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             executor.submit(
                     () -> {
