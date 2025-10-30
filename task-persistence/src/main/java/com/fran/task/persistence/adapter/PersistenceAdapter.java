@@ -10,12 +10,14 @@ import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.mapper.TaskDocumentMapper;
 import com.fran.task.persistence.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteTaskPort, UpdateTaskPort {
@@ -25,11 +27,10 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
 
     @Override
     public Task createTask(Task task) {
-        task.setId(null);
-        task.setCreationDate(new Date(System.currentTimeMillis()));
-        task.setLastExecution(new Date(System.currentTimeMillis()));
-        TaskDocument entity = mapper.toEntity(task);
-        return mapper.toDomain(repository.save(entity));
+        Task newTask = task.withCreationDate(LocalDateTime.now());
+        TaskDocument saved = repository.save(mapper.toEntity(newTask));
+        log.info("Creating task {}", saved.getId());
+        return mapper.toDomain(saved);
     }
 
     @Override
@@ -51,18 +52,18 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
 
     @Override
     public Task updateTask(String taskId, Task taskUpdate) {
+        log.info("Updating task {}", taskId);
         Task existing = getTask(taskId).orElseThrow(NotFoundException::new);
-        existing.setBegin(taskUpdate.getBegin());
-        existing.setFinish(taskUpdate.getFinish());
-        existing.setName(taskUpdate.getName());
-        existing.setStorageLocation(taskUpdate.getStorageLocation());
-        TaskDocument entity = mapper.toEntity(existing);
+        Task updated = existing.withBegin(taskUpdate.begin())
+                .withFinish(taskUpdate.finish())
+                .withName(taskUpdate.name());
+        TaskDocument entity = mapper.toEntity(updated);
         return mapper.toDomain(repository.save(entity));
     }
 
     public void updateExecution(Task task) {
-        task.setLastExecution(new Date(System.currentTimeMillis()));
-        TaskDocument entity = mapper.toEntity(task);
+        log.info("Updating execution for task {}", task.id());
+        TaskDocument entity = mapper.toEntity(task.withLastExecution(LocalDateTime.now()));
         mapper.toDomain(repository.save(entity));
     }
 

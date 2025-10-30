@@ -12,13 +12,20 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb-challenge:27017/test
     depends_on:
       - mongodb-challenge
+      - redis-challenge
     container_name: challenge-java
 
   mongodb-challenge:
     image: mongo:latest
     ports:
       - "27017:27017"
-    container_name: "mongodb-challenge"
+    container_name: mongodb-challenge
+
+  redis-challenge:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    container_name: redis-challenge
 
   prometheus:
     image: "prom/prometheus"

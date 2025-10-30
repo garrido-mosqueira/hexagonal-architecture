@@ -1,25 +1,44 @@
 package com.fran.task.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
-import java.util.Date;
+public record Task(
+        String id,
+        String name,
+        LocalDateTime creationDate,
+        LocalDateTime lastExecution,
+        Integer begin,
+        Integer finish,
+        Integer progress) {
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Task {
+    public Task withProgress(Integer newProgress) {
+        return new Task(id, name, creationDate, lastExecution,
+                begin, finish, newProgress);
+    }
 
-    private String id;
-    private String name;
-    private Date creationDate;
-    private Date lastExecution;
-    private Integer begin;
-    private Integer finish;
-    private Integer progress;
-    private String storageLocation;
+    public Task withCreationDate(LocalDateTime newCreationDate) {
+        return new Task(id, name, newCreationDate, lastExecution,
+                begin, finish, progress);
+    }
+
+    public Task withLastExecution(LocalDateTime newLastExecution) {
+        return new Task(id, name, creationDate, newLastExecution,
+                begin, finish, progress);
+    }
+
+    public Task withName(String newName) {
+        return new Task(id, newName, creationDate, lastExecution,
+                begin, finish, progress);
+    }
+
+    public Task withBegin(Integer newBegin) {
+        return new Task(id, name, creationDate, lastExecution,
+                newBegin, finish, progress);
+    }
+
+    public Task withFinish(Integer newFinish) {
+        return new Task(id, name, creationDate, lastExecution,
+                begin, newFinish, progress);
+    }
 
 }
