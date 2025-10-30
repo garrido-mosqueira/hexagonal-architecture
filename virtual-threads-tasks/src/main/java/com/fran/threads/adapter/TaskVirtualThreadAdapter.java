@@ -80,6 +80,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
 
     @Override
     public Task getRunningCounter(String counterId) {
+        log.info("Get running counter with ID '{}'", counterId);
         TaskVirtualThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + counterId);
         if (taskThread == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
