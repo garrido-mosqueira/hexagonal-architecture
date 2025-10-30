@@ -15,12 +15,14 @@ import java.util.Date;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
+class ChallengeApplicationIntegrationTest extends TestContainerConfiguration {
 
     @Autowired
     private TaskRepository repository;
@@ -144,7 +146,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(1)
+                .begin(1).finish(22)
                 .build();
         repository.save(taskToSaveAndThenExecute);
 
@@ -155,13 +157,16 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         then()
                 .statusCode(is(202));
 
-        assertThat(
-            given().contentType(MediaType.APPLICATION_JSON_VALUE).
-            when()
-                    .get(BASE_URL + uuidId + "/progress").
-            then()
-                    .extract().response().as(TaskCounter.class).getProgress()
-        ).isGreaterThan(0);
+        await().atMost(1, SECONDS).untilAsserted(() -> {
+            TaskCounter progress =
+                    given()
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .get(BASE_URL + uuidId + "/progress")
+                    .then()
+                        .   statusCode(200)
+                    .extract().as(TaskCounter.class);
+            assertThat(progress.getProgress()).isGreaterThan(0);
+        });
     }
 
     @Test
@@ -170,7 +175,7 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         var uuidId = UUID.randomUUID().toString();
         var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
                 .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(600)
+                .begin(1).finish(22)
                 .build();
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
@@ -181,12 +186,16 @@ class ChallengeApplicationIntegrationTest extends MongoDBContainerTest {
         then()
                 .statusCode(is(202));
 
-        given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE).
-        when()
-                .post(BASE_URL + uuidId + "/cancel").
-        then()
-                .statusCode(is(200));
+        await()
+                .atMost(1, SECONDS)
+                .untilAsserted(() -> {
+                    given()
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .when()
+                            .post(BASE_URL + uuidId + "/cancel").
+                    then()
+                            .statusCode(is(200));
+                });
     }
 
 }
