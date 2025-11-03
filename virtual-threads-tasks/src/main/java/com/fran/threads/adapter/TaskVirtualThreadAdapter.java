@@ -27,8 +27,8 @@ public class TaskVirtualThreadAdapter implements TaskManager {
         log.info("Cancel task '{}' with Virtual Thread", taskId);
         if (taskThread != null && taskThread.task() != null) {
             tasksRegister.opsForValue().set(
-                    TASK_REGISTER_PREFIX + taskId,
-                    new TaskVirtualThread(taskThread.task(), true)
+                TASK_REGISTER_PREFIX + taskId,
+                new TaskVirtualThread(taskThread.task(), true)
             );
         }
     }
@@ -37,26 +37,28 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     public Task executeTask(Task task) {
         log.info("Execute task '{}' with Virtual Thread", task.id());
         Thread.ofVirtual().start(
-                () -> {
-                    tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
-                    int i = task.begin();
-                    TaskVirtualThread taskThread;
-                    do {
-                        Task updatedTaskWithNewProgress = task.withProgress(i);
-                        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
-                        log.info("Counter progress from Virtual Thread is '{}' for '{}'", updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                        i++;
-                        taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + task.id());
-                    } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
-                    tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
-                    log.info("End counter progress from Virtual Thread for '{}'", task.id());
-                }
+            () -> {
+                tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
+                int i = task.begin();
+                TaskVirtualThread taskThread;
+                do {
+                    Task updatedTaskWithNewProgress = task.withProgress(i);
+                    tasksRegister.opsForValue()
+                        .set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
+                    log.info("Counter progress from Virtual Thread is '{}' for '{}' running in thread: '{}'",
+                        updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id(), Thread.currentThread());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                    i++;
+                    taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + task.id());
+                } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
+                tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
+                log.info("End counter progress from Virtual Thread for '{}'", task.id());
+            }
         );
 
         return task;
@@ -66,11 +68,11 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     public List<Task> getAllRunningCounters() {
         Set<String> keys = tasksRegister.keys(TASK_REGISTER_PREFIX + "*");
         return keys.stream()
-                .map(this::getTaskVirtualThread)
-                .filter(Objects::nonNull)
-                .map(TaskVirtualThread::task)
-                .filter(task -> task.finish() > task.progress())
-                .toList();
+            .map(this::getTaskVirtualThread)
+            .filter(Objects::nonNull)
+            .map(TaskVirtualThread::task)
+            .filter(task -> task.finish() > task.progress())
+            .toList();
     }
 
     @Override
