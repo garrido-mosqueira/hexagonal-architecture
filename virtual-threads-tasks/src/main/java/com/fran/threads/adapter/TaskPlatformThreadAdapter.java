@@ -3,7 +3,7 @@ package com.fran.threads.adapter;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskManager;
 import com.fran.threads.exception.CounterTaskNotFoundException;
-import com.fran.threads.model.TaskVirtualThread;
+import com.fran.threads.model.TaskThread;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,17 +18,17 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class TaskPlatformThreadAdapter implements TaskManager {
 
-    private final RedisTemplate<String, TaskVirtualThread> tasksRegister;
+    private final RedisTemplate<String, TaskThread> tasksRegister;
     private static final String TASK_REGISTER_PREFIX = "task:register:";
 
     @Override
     public void cancelTask(String taskId) {
-        TaskVirtualThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + taskId);
+        TaskThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + taskId);
         log.info("Cancel task '{}' with Platform Thread", taskId);
         if (taskThread != null && taskThread.task() != null) {
             tasksRegister.opsForValue().set(
                 TASK_REGISTER_PREFIX + taskId,
-                new TaskVirtualThread(taskThread.task(), true)
+                new TaskThread(taskThread.task(), true)
             );
         }
     }
@@ -38,13 +38,13 @@ public class TaskPlatformThreadAdapter implements TaskManager {
         log.info("Execute task '{}' with Platform Thread", task.id());
         new Thread(
             () -> {
-                tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
+                tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(task, false));
                 int i = task.begin();
-                TaskVirtualThread taskThread;
+                TaskThread taskThread;
                 do {
                     Task updatedTaskWithNewProgress = task.withProgress(i);
                     tasksRegister.opsForValue()
-                        .set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
+                        .set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(updatedTaskWithNewProgress, false));
                     log.info("Counter progress from Platform Thread is '{}' for '{}' running in thread: '{}'",
                         updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id(), Thread.currentThread());
                     try {
@@ -70,7 +70,7 @@ public class TaskPlatformThreadAdapter implements TaskManager {
         return keys.stream()
             .map(this::getTaskVirtualThread)
             .filter(Objects::nonNull)
-            .map(TaskVirtualThread::task)
+            .map(TaskThread::task)
             .filter(task -> task.finish() > task.progress())
             .toList();
     }
@@ -78,14 +78,14 @@ public class TaskPlatformThreadAdapter implements TaskManager {
     @Override
     public Task getRunningCounter(String counterId) {
         log.info("Get running counter with ID '{}'", counterId);
-        TaskVirtualThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + counterId);
+        TaskThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + counterId);
         if (taskThread == null) {
             throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
         }
         return taskThread.task();
     }
 
-    private TaskVirtualThread getTaskVirtualThread(String key) {
+    private TaskThread getTaskVirtualThread(String key) {
         return tasksRegister.opsForValue().get(key);
     }
 
