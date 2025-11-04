@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class TaskService {
 
-    private final TaskManager taskAdapter;
+    private final TaskManager taskManager;
     private final PersistenceAdapter persistenceAdapter;
     private final TaskCounterMapper mapper;
 
@@ -44,22 +44,24 @@ public class TaskService {
     }
 
     public void cancelTask(String taskId) {
-        taskAdapter.cancelTask(taskId);
+        taskManager.cancelTask(taskId);
     }
 
     public void executeTask(String taskId) {
         Task task = persistenceAdapter.getTask(taskId)
             .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
-        Task executed = taskAdapter.executeTask(task);
+        Task executed = taskManager.executeTask(task);
         persistenceAdapter.updateExecution(executed);
     }
 
     public List<TaskCounter> getAllRunningCounters() {
-        return mapper.toDTO(taskAdapter.getAllRunningCounters());
+        return mapper.toDTO(taskManager.getAllRunningCounters());
     }
 
     public TaskCounter getRunningCounter(String taskId) {
-        return mapper.toDTO(taskAdapter.getRunningCounter(taskId));
+        Task task = persistenceAdapter.getTask(taskId)
+            .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
+        return mapper.toDTO(taskManager.getRunningCounter(taskId));
     }
 
 }

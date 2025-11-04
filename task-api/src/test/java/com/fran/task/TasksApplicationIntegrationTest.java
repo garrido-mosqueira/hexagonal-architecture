@@ -1,6 +1,7 @@
 package com.fran.task;
 
 import com.fran.task.api.dto.TaskCounter;
+import com.fran.task.domain.model.TaskType;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,14 +56,8 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     @Test
     void listTasks() {
         //given
-        var taskToSave_1 = TaskDocument.builder().id(UUID.randomUUID().toString()).name("task_1")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(10)
-                .build();
-        var taskToSave_2 = TaskDocument.builder().id(UUID.randomUUID().toString()).name("task_2")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(10)
-                .build();
+        var taskToSave_1 = task("task_1", TaskType.VIRTUAL);
+        var taskToSave_2 = task("task_2", TaskType.VIRTUAL);
         repository.deleteAll();
         repository.save(taskToSave_1);
         repository.save(taskToSave_2);
@@ -80,17 +75,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     @Test
     void getTask() {
         //given
-        var uuidId = UUID.randomUUID().toString();
-        var taskToSaveThenGet = TaskDocument.builder().id(uuidId).name("task_to_get")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(10)
-                .build();
+        var taskToSaveThenGet = task("task_to_get", TaskType.PLATFORM);
+
         var savedTaskFromRepo = repository.save(taskToSaveThenGet);
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .get(BASE_URL + uuidId).
+                .get(BASE_URL + taskToSaveThenGet.getId()).
         then()
                 .statusCode(is(200)).
         assertThat()
@@ -100,11 +92,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     @Test
     void updateTask() {
         //given
-        var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenUpdate = TaskDocument.builder().id(uuidId).name("old_name")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(10)
-                .build();
+        var taskToSaveAndThenUpdate = task("old_name", TaskType.PLATFORM);
         repository.save(taskToSaveAndThenUpdate);
 
         var taskWithNewName = TaskCounter.builder().name("new_name").begin(1).finish(10).build();
@@ -113,7 +101,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(taskWithNewName).
         when()
-                .put(BASE_URL + uuidId).
+                .put(BASE_URL + taskToSaveAndThenUpdate.getId()).
         then()
                 .statusCode(is(200)).
         assertThat()
@@ -123,37 +111,29 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     @Test
     void deleteTask() {
         //given
-        var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenDelete = TaskDocument.builder().id(uuidId).name("task_to_delete")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(10)
-                .build();
+        var taskToSaveAndThenDelete = task("task_to_delete", TaskType.PLATFORM);
         repository.save(taskToSaveAndThenDelete);
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .delete(BASE_URL + uuidId).
+                .delete(BASE_URL + taskToSaveAndThenDelete.getId()).
         then()
                 .statusCode(is(204));
 
-        assertThat(repository.findById(uuidId).isPresent()).isFalse();
+        assertThat(repository.findById(taskToSaveAndThenDelete.getId()).isPresent()).isFalse();
     }
 
     @Test
     void executeTask() {
         //given
-        var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(22)
-                .build();
+        var taskToSaveAndThenExecute = task("old_name", TaskType.VIRTUAL);
         repository.save(taskToSaveAndThenExecute);
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + uuidId + "/execute").
+                .post(BASE_URL + taskToSaveAndThenExecute.getId() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -161,7 +141,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
             TaskCounter progress =
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .get(BASE_URL + uuidId + "/progress")
+                            .get(BASE_URL + taskToSaveAndThenExecute.getId() + "/progress")
                     .then()
                         .   statusCode(200)
                     .extract().as(TaskCounter.class);
@@ -172,17 +152,13 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     @Test
     void cancelTask() {
         //given
-        var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(22)
-                .build();
+        var taskToSaveAndThenExecuteThenCancel = task("old_name", TaskType.VIRTUAL);
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + uuidId + "/execute").
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -192,10 +168,26 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .when()
-                            .post(BASE_URL + uuidId + "/cancel").
+                            .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
                     then()
                             .statusCode(is(200));
                 });
+    }
+
+    private static TaskDocument task(String name) {
+        return task(name, TaskType.VIRTUAL);
+    }
+
+    private static TaskDocument task(String name, TaskType type) {
+        return TaskDocument.builder()
+            .id(UUID.randomUUID().toString())
+            .name(name)
+            .taskType(type)
+            .creationDate(Date.from(Instant.now()))
+            .lastExecution(Date.from(Instant.now()))
+            .begin(1)
+            .finish(10)
+            .build();
     }
 
 }
