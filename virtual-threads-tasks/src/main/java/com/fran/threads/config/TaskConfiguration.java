@@ -28,7 +28,7 @@ public class TaskConfiguration {
 
         // Use Jackson2JsonRedisSerializer with a specific type
         Jackson2JsonRedisSerializer<TaskThread> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, TaskThread.class);
+            new Jackson2JsonRedisSerializer<>(objectMapper, TaskThread.class);
 
         template.setValueSerializer(serializer);
         template.setHashValueSerializer(serializer);

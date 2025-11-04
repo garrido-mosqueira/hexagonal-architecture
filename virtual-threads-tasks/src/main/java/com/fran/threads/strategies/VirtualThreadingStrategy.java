@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class VirtualThreadingStrategy implements ThreadingStrategy {
 
     @Override
-    public void runTask(String taskId, Runnable runnable) {
+    public void launch(String taskId, Runnable runnable) {
         Thread.ofVirtual().name(taskId).start(runnable);
     }
 

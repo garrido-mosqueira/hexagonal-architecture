@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class PlatformThreadingStrategy implements ThreadingStrategy {
 
     @Override
-    public void runTask(String taskId, Runnable runnable) {
+    public void launch(String taskId, Runnable runnable) {
         new Thread(runnable, taskId).start();
     }
 

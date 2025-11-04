@@ -45,7 +45,7 @@ public class TaskManagerAdapter implements TaskManager {
         }
 
         log.info("Execute task '{}' with {}", task.id(), strategy.getClass().getSimpleName());
-        strategy.runTask(task.id(), () -> runLoop(task));
+        strategy.launch(task.id(), () -> runLoop(task));
 
         return task;
     }
