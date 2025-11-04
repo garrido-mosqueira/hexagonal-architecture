@@ -1,6 +1,7 @@
 package com.fran.task;
 
 import com.fran.task.api.dto.TaskCounter;
+import com.fran.task.domain.model.TaskType;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,10 +145,11 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     void executeTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId).name("old_name")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(22)
-                .build();
+        var taskToSaveAndThenExecute = TaskDocument.builder().id(uuidId)
+            .name("old_name").taskType(TaskType.VIRTUAL)
+            .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
+            .begin(1).finish(22)
+            .build();
         repository.save(taskToSaveAndThenExecute);
 
         given()
@@ -173,10 +175,11 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     void cancelTask() {
         //given
         var uuidId = UUID.randomUUID().toString();
-        var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId).name("old_name")
-                .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
-                .begin(1).finish(22)
-                .build();
+        var taskToSaveAndThenExecuteThenCancel = TaskDocument.builder().id(uuidId)
+            .name("old_name").taskType(TaskType.VIRTUAL)
+            .creationDate(Date.from(Instant.now())).lastExecution(Date.from(Instant.now()))
+            .begin(1).finish(22)
+            .build();
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
         given()
