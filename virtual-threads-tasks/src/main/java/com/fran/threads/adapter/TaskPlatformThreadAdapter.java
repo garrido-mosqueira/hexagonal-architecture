@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
-@Component(value = "VIRTUAL")
+@Component(value = "PLATFORM")
 @RequiredArgsConstructor
-public class TaskVirtualThreadAdapter implements TaskManager {
+public class TaskPlatformThreadAdapter implements TaskManager {
 
     private final RedisTemplate<String, TaskVirtualThread> tasksRegister;
     private static final String TASK_REGISTER_PREFIX = "task:register:";
@@ -24,7 +24,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
     @Override
     public void cancelTask(String taskId) {
         TaskVirtualThread taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + taskId);
-        log.info("Cancel task '{}' with Virtual Thread", taskId);
+        log.info("Cancel task '{}' with Platform Thread", taskId);
         if (taskThread != null && taskThread.task() != null) {
             tasksRegister.opsForValue().set(
                 TASK_REGISTER_PREFIX + taskId,
@@ -35,8 +35,8 @@ public class TaskVirtualThreadAdapter implements TaskManager {
 
     @Override
     public Task executeTask(Task task) {
-        log.info("Execute task '{}' with Virtual Thread", task.id());
-        Thread.ofVirtual().start(
+        log.info("Execute task '{}' with Platform Thread", task.id());
+        new Thread(
             () -> {
                 tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(task, false));
                 int i = task.begin();
@@ -45,7 +45,7 @@ public class TaskVirtualThreadAdapter implements TaskManager {
                     Task updatedTaskWithNewProgress = task.withProgress(i);
                     tasksRegister.opsForValue()
                         .set(TASK_REGISTER_PREFIX + task.id(), new TaskVirtualThread(updatedTaskWithNewProgress, false));
-                    log.info("Counter progress from Virtual Thread is '{}' for '{}' running in thread: '{}'",
+                    log.info("Counter progress from Platform Thread is '{}' for '{}' running in thread: '{}'",
                         updatedTaskWithNewProgress.progress(), updatedTaskWithNewProgress.id(), Thread.currentThread());
                     try {
                         Thread.sleep(1000);
@@ -57,9 +57,9 @@ public class TaskVirtualThreadAdapter implements TaskManager {
                     taskThread = getTaskVirtualThread(TASK_REGISTER_PREFIX + task.id());
                 } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
                 tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
-                log.info("End counter progress from Virtual Thread for '{}'", task.id());
+                log.info("End counter progress from Platform Thread for '{}'", task.id());
             }
-        );
+        ).start();
 
         return task;
     }
