@@ -26,6 +26,13 @@ public class ErrorController {
         return exception.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleCounterTaskNotFound(IllegalArgumentException exception) {
+        log.warn("Bad Request: {}", exception.getMessage());
+        return exception.getMessage();
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public String handleInternalError(Exception e) {
