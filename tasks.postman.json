@@ -1,367 +1,315 @@
 {
-	"info": {
-		"_postman_id": "2047bc00-0941-44ee-a437-827d986262fc",
-		"name": "Fran Challenge",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Create File Task",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"var jsonData = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"taskId\", jsonData.id);"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"task_file\",\n    \"storageLocation\" : \"/resources\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Counter Task",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"var jsonData = JSON.parse(responseBody);",
-							"postman.setEnvironmentVariable(\"taskId\", jsonData.id);"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"task_counter\",\n    \"begin\" : 1,\n    \"finish\" : 120\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Task",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Execute Task",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}/execute",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}",
-						"execute"
-					],
-					"query": [
-						{
-							"key": "taskId",
-							"value": "",
-							"disabled": true
-						},
-						{
-							"key": "begin",
-							"value": "1",
-							"disabled": true
-						},
-						{
-							"key": "end",
-							"value": "500",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Result",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}/result",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}",
-						"result"
-					],
-					"query": [
-						{
-							"key": "taskId",
-							"value": null,
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Time",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}"
-					],
-					"query": [
-						{
-							"key": "timerId",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Progress Time",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}/progress",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}",
-						"progress"
-					],
-					"query": [
-						{
-							"key": "timerId",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Task Runing",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/running",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"running"
-					],
-					"query": [
-						{
-							"key": "timerId",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "List Tasks",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Cancel Task",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Fran-Auth",
-						"value": "totally_secret",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{BASE_URL}}/api/tasks/{{taskId}}/cancel",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"{{taskId}}",
-						"cancel"
-					],
-					"query": [
-						{
-							"key": "taskId",
-							"value": "",
-							"disabled": true
-						},
-						{
-							"key": "begin",
-							"value": "1",
-							"disabled": true
-						},
-						{
-							"key": "end",
-							"value": "500",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "8a84fc88-865a-44aa-aa26-a275a2005d1e",
+    "name": "Fran Challenge",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2498193"
+  },
+  "item": [
+    {
+      "name": "Create Counter Task",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "pm.collectionVariables.set(\"taskId\", jsonData.id);",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"task_counter\",\n    \"taskType\" : \"VIRTUAL\",\n    \"begin\" : 1,\n    \"finish\" : 300\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Task",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/{{taskId}}",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "{{taskId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Tasks",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Execute Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/{{taskId}}/execute",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "{{taskId}}",
+            "execute"
+          ],
+          "query": [
+            {
+              "key": "taskId",
+              "value": "",
+              "disabled": true
+            },
+            {
+              "key": "begin",
+              "value": "1",
+              "disabled": true
+            },
+            {
+              "key": "end",
+              "value": "500",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/{{taskId}}/cancel",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "{{taskId}}",
+            "cancel"
+          ],
+          "query": [
+            {
+              "key": "taskId",
+              "value": "",
+              "disabled": true
+            },
+            {
+              "key": "begin",
+              "value": "1",
+              "disabled": true
+            },
+            {
+              "key": "end",
+              "value": "500",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Time",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/{{taskId}}",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "{{taskId}}"
+          ],
+          "query": [
+            {
+              "key": "timerId",
+              "value": "",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Progress Time",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/{{taskId}}/progress",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "{{taskId}}",
+            "progress"
+          ],
+          "query": [
+            {
+              "key": "timerId",
+              "value": "",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Task Runing",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Fran-Auth",
+            "value": "totally_secret",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/tasks/running",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "tasks",
+            "running"
+          ],
+          "query": [
+            {
+              "key": "timerId",
+              "value": "",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "taskId",
+      "value": "",
+      "type": "default"
+    }
+  ]
 }
