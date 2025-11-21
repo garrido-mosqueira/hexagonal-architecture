@@ -30,6 +30,57 @@ First check if everything is ok running `mvn clean verify`
 
 This project is using Docker. So it will be necessary to set up a local environment. 
 
+### macOS setup with Homebrew and Colima
+If you're on macOS and not using Docker Desktop, you can use Colima to provide a local Docker runtime.
+
+1) Install required tools via Homebrew:
+
+```
+brew install docker
+brew install colima
+brew install docker-compose docker-credential-helper
+```
+
+2) Start Colima (this creates a local Docker environment):
+
+```
+colima start
+```
+
+3) Set the following environment variables in your shell or JVM run configuration so Docker/Testcontainers target Colima's socket:
+
+```
+export DOCKER_HOST="unix://${HOME}/.colima/docker.sock"
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="/var/run/docker.sock"
+```
+
+To persist these settings, add the two `export` lines above to your shell profile file (choose the one you use):
+
+- `~/.bashrc` or `~/.bash_profile`
+- `~/.zshrc`
+
+4) Check Docker config credential store (macOS):
+
+If you previously used Docker Desktop, your Docker CLI might still be configured to use its credential helper, which can cause `docker login` or Testcontainers auth to fail when running under Colima.
+
+Inspect `~/.docker/config.json` and look for a `credsStore` entry. If you see:
+
+```
+{
+  "credsStore": "desktop"
+}
+```
+
+On macOS, replace `desktop` with the default `osxkeychain` or remove the `credsStore` line entirely. For example:
+
+```
+{
+  "credsStore": "osxkeychain"
+}
+```
+
+After updating, re-run `docker login` if needed.
+
 The next command will up the Spring Boot Application, MongoDB, Redis, Prometheus and Grafana.
 
 ``` docker-compose up ```
