@@ -39,7 +39,7 @@ public class TaskManagerAdapter implements TaskManager {
 
     @Override
     public Task executeTask(Task task) {
-        ThreadingStrategy strategy = strategies.get(task.taskType().name());
+        ThreadingStrategy strategy = strategies.get(task.taskType().name().toUpperCase());
         if (strategy == null) {
             throw new IllegalArgumentException("Unsupported task type: " + task.taskType());
         }
