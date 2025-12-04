@@ -1,11 +1,11 @@
 package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
+import com.fran.task.domain.model.TaskType;
 import com.fran.task.domain.port.TaskManager;
 import com.fran.threads.exception.CounterTaskNotFoundException;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,16 +14,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TaskManagerAdapter implements TaskManager {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;
-    private final Map<String, ThreadingStrategy> strategies;
+    private final Map<TaskType, ThreadingStrategy> strategies;
 
     private static final String TASK_REGISTER_PREFIX = "task:register:";
+
+    public TaskManagerAdapter(RedisTemplate<String, TaskThread> tasksRegister,
+        List<ThreadingStrategy> strategyList) {
+        this.tasksRegister = tasksRegister;
+        this.strategies = strategyList.stream()
+            .collect(Collectors.toMap(
+                ThreadingStrategy::supports,
+                Function.identity()
+            ));
+    }
 
     @Override
     public void cancelTask(String taskId) {
@@ -39,7 +50,7 @@ public class TaskManagerAdapter implements TaskManager {
 
     @Override
     public Task executeTask(Task task) {
-        ThreadingStrategy strategy = strategies.get(task.taskType().name().toUpperCase());
+        ThreadingStrategy strategy = strategies.get(task.taskType());
         if (strategy == null) {
             throw new IllegalArgumentException("Unsupported task type: " + task.taskType());
         }
