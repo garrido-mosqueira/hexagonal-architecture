@@ -1,8 +1,9 @@
 package com.fran.threads.strategies;
 
+import com.fran.task.domain.model.TaskType;
 import org.springframework.stereotype.Component;
 
-@Component("PLATFORM")
+@Component(TaskType.Constants.PLATFORM)
 public class PlatformThreadingStrategy implements ThreadingStrategy {
 
     @Override
