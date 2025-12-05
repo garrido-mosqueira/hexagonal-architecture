@@ -27,7 +27,7 @@ public class TaskManagerAdapter implements TaskManager {
     private static final String TASK_REGISTER_PREFIX = "task:register:";
 
     public TaskManagerAdapter(RedisTemplate<String, TaskThread> tasksRegister,
-        List<ThreadingStrategy> strategyList) {
+                              List<ThreadingStrategy> strategyList) {
         this.tasksRegister = tasksRegister;
         this.strategies = strategyList.stream()
             .collect(Collectors.toMap(
