@@ -1,0 +1,66 @@
+sequenceDiagram
+    actor Client
+    participant TM as TaskManagerAdapter
+    participant TS as ThreadingStrategy (Specific Impl)
+    participant Redis
+    participant Worker as Worker Thread (runLoop)
+
+    note over Client, Redis: Part 1: Task Execution Kickoff
+
+    Client->>TM: executeTask(task)
+    activate TM
+    TM->>TM: Determine Strategy based on TaskType
+    TM->>TS: launch(taskId, runLoopLambda)
+    activate TS
+    TS--)Worker: Async Start (e.g., threadPool.submit(runLoopLambda))
+    deactivate TS
+    TM-->>Client: return task (immediate response)
+    deactivate TM
+
+    note over Redis, Worker: Part 2: The Async Execution Loop
+
+    activate Worker
+    note right of Worker: runLoop starts here
+    Worker->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=false)
+    
+    loop While (i <= finish) AND (not cancelled)
+        Worker->>Worker: Increment progress (i++)
+        Worker->>Redis: SET task:register:{id} <br/>Value: TaskThread(updatedTask, false)
+        note right of Worker: Simulate work
+        Worker->>Worker: Thread.sleep(1000)
+
+        rect rgb(240, 240, 240)
+            note right of Worker: Crucial Step: Polling for cancellation signal
+            Worker->>Redis: GET task:register:{id}
+            Redis-->>Worker: Returns current TaskThread
+            Worker->>Worker: Check if TaskThread.isCancelled()
+        end
+    end
+
+    note right of Worker: Loop finished normally OR loop broken via cancellation
+    Worker->>Redis: DEL task:register:{id}
+    note right of Worker: Task Complete
+
+
+    note over Client, Worker: Part 3: Intervening Cancellation Scenario
+
+    note right of Client: Assume Worker is currently running in the "loop" above
+    Client->>TM: cancelTask(taskId)
+    activate TM
+    TM->>Redis: GET task:register:{id}
+    Redis-->>TM: Value: TaskThread(task, isCancelled=false)
+    
+    rect rgb(255, 230, 230)
+        note right of TM: The "Kill Signal". <br/>Does NOT stop thread immediately.<br/>Just updates shared state.
+        TM->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=TRUE)
+    end
+    deactivate TM
+
+    activate Worker
+    note right of Worker: Back in the Worker Thread loop...
+    Worker->>Worker: Wakes up from sleep
+    Worker->>Redis: GET task:register:{id}
+    Redis-->>Worker: Value: TaskThread(task, isCancelled=TRUE)
+    Worker->>Worker: Detects isCancelled=true. Breaks loop.
+    Worker->>Redis: DEL task:register:{id}
+    deactivate Worker
