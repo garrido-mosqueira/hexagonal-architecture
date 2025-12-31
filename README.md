@@ -60,3 +60,16 @@ This solution is designed to work effectively in a distributed system environmen
   - **Resource efficiency**: No memory leaks from cancelled tasks
   - **Clean separation**: Transient runtime state (Redis) vs permanent records (MongoDB)
   - **Observability**: Complete task lifecycle tracking even after cancellation
+
+
+### Diagrams
+
+Following an asynchronous task execution pattern with polling-based cancellation, using Redis as the shared state registry to coordinate between the main thread and the worker thread.
+
+Here is are some diagrams illustrating the complete lifecycle: starting a task, its execution loop, and how an external cancellation request stops it.
+
+#### Worker Thread Process Flowchart
+![process-flow-diagram.png](docs/process-flow-diagram.png)
+
+#### Sequence diagram
+![secuence-diagram.png](docs/secuence-diagram.png)
