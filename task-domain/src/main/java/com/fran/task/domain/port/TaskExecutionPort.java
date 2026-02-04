@@ -4,9 +4,11 @@ import com.fran.task.domain.model.Task;
 
 import java.util.List;
 
-public interface TaskExecutionPort extends
-        ExecuteTaskPort,
-        CancelTaskPort {
+public interface TaskExecutionPort {
+
+    Task executeTask(Task task);
+
+    void cancelTask(String taskId);
 
     List<Task> getAllRunningCounters();
 
