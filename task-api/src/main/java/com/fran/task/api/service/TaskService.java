@@ -4,8 +4,8 @@ import com.fran.task.api.dto.TaskCounter;
 import com.fran.task.api.mapper.TaskCounterMapper;
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.port.TaskManager;
-import com.fran.task.persistence.adapter.PersistenceAdapter;
+import com.fran.task.domain.port.TaskExecutionPort;
+import com.fran.task.domain.port.TaskPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,53 +15,53 @@ import java.util.List;
 @Service
 public class TaskService {
 
-    private final TaskManager taskManager;
-    private final PersistenceAdapter persistenceAdapter;
+    private final TaskExecutionPort executionPort;
+    private final TaskPersistencePort persistencePort;
     private final TaskCounterMapper mapper;
 
     public TaskCounter createTask(TaskCounter taskCounter) {
         Task task = mapper.toDomain(taskCounter);
-        return mapper.toDTO(persistenceAdapter.createTask(task));
+        return mapper.toDTO(persistencePort.createTask(task));
     }
 
     public List<TaskCounter> listTasks() {
-        return persistenceAdapter.getTasks().stream()
+        return persistencePort.getTasks().stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
     public TaskCounter getTask(String taskId) {
-        return persistenceAdapter.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
+        return persistencePort.getTask(taskId).map(mapper::toDTO).orElseThrow(NotFoundException::new);
     }
 
     public TaskCounter updateTask(String taskId, TaskCounter taskCounter) {
         Task task = mapper.toDomain(taskCounter);
-        return mapper.toDTO(persistenceAdapter.updateTask(taskId, task));
+        return mapper.toDTO(persistencePort.updateTask(taskId, task));
     }
 
     public void deleteTask(String taskId) {
-        persistenceAdapter.deleteTask(taskId);
+        persistencePort.deleteTask(taskId);
     }
 
     public void cancelTask(String taskId) {
-        taskManager.cancelTask(taskId);
+        executionPort.cancelTask(taskId);
     }
 
     public void executeTask(String taskId) {
-        Task task = persistenceAdapter.getTask(taskId)
+        Task task = persistencePort.getTask(taskId)
             .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
-        Task executed = taskManager.executeTask(task);
-        persistenceAdapter.updateExecution(executed);
+        Task executed = executionPort.executeTask(task);
+        persistencePort.updateExecution(executed);
     }
 
     public List<TaskCounter> getAllRunningCounters() {
-        return mapper.toDTO(taskManager.getAllRunningCounters());
+        return mapper.toDTO(executionPort.getAllRunningCounters());
     }
 
     public TaskCounter getRunningCounter(String taskId) {
-        Task task = persistenceAdapter.getTask(taskId)
+        Task task = persistencePort.getTask(taskId)
             .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
-        return mapper.toDTO(taskManager.getRunningCounter(taskId));
+        return mapper.toDTO(executionPort.getRunningCounter(taskId));
     }
 
 }

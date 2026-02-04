@@ -2,10 +2,7 @@ package com.fran.task.persistence.adapter;
 
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
-import com.fran.task.domain.port.CreateTaskPort;
-import com.fran.task.domain.port.DeleteTaskPort;
-import com.fran.task.domain.port.ReadTaskPort;
-import com.fran.task.domain.port.UpdateTaskPort;
+import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.mapper.TaskDocumentMapper;
 import com.fran.task.persistence.repository.TaskRepository;
@@ -20,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteTaskPort, UpdateTaskPort {
+public class PersistenceAdapter implements TaskPersistencePort {
 
     private final TaskRepository repository;
     private final TaskDocumentMapper mapper;
@@ -61,6 +58,7 @@ public class PersistenceAdapter implements CreateTaskPort, ReadTaskPort, DeleteT
         return mapper.toDomain(repository.save(entity));
     }
 
+    @Override
     public void updateExecution(Task task) {
         log.info("Updating execution for task {}", task.id());
         TaskDocument entity = mapper.toEntity(task.withLastExecution(LocalDateTime.now()));

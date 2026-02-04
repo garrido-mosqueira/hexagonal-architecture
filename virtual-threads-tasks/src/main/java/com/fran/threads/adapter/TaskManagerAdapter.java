@@ -2,7 +2,7 @@ package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.model.TaskType;
-import com.fran.task.domain.port.TaskManager;
+import com.fran.task.domain.port.TaskExecutionPort;
 import com.fran.threads.exception.CounterTaskNotFoundException;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class TaskManagerAdapter implements TaskManager {
+public class TaskManagerAdapter implements TaskExecutionPort {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;
     private final Map<TaskType, ThreadingStrategy> strategies;

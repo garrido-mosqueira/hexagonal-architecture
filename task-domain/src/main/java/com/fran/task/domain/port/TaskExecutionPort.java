@@ -4,7 +4,7 @@ import com.fran.task.domain.model.Task;
 
 import java.util.List;
 
-public interface TaskManager extends
+public interface TaskExecutionPort extends
         ExecuteTaskPort,
         CancelTaskPort {
 
