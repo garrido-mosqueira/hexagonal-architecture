@@ -12,6 +12,12 @@ public record Task(
         Integer finish,
         Integer progress) {
 
+    public Task {
+        if (begin != null && finish != null && begin > finish) {
+            throw new IllegalArgumentException("Begin value cannot be greater than finish value");
+        }
+    }
+
     public Task withProgress(Integer newProgress) {
         return new Task(id, name, taskType, creationDate, lastExecution,
                 begin, finish, newProgress);
