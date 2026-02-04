@@ -1,5 +1,6 @@
 sequenceDiagram
     actor Client
+    participant UC as TaskUseCase (TaskService)
     participant TM as TaskManagerAdapter
     participant TS as ThreadingStrategy (Specific Impl)
     participant Redis
@@ -7,15 +8,19 @@ sequenceDiagram
 
     note over Client, Redis: Part 1: Task Execution Kickoff
 
-    Client->>TM: executeTask(task)
+    Client->>UC: executeTask(taskId)
+    activate UC
+    UC->>TM: executeTask(task)
     activate TM
     TM->>TM: Determine Strategy based on TaskType
     TM->>TS: launch(taskId, runLoopLambda)
     activate TS
     TS--)Worker: Async Start (e.g., threadPool.submit(runLoopLambda))
     deactivate TS
-    TM-->>Client: return task (immediate response)
+    TM-->>UC: return task
     deactivate TM
+    UC-->>Client: return (202 Accepted)
+    deactivate UC
 
     note over Redis, Worker: Part 2: The Async Execution Loop
 
@@ -45,7 +50,9 @@ sequenceDiagram
     note over Client, Worker: Part 3: Intervening Cancellation Scenario
 
     note right of Client: Assume Worker is currently running in the "loop" above
-    Client->>TM: cancelTask(taskId)
+    Client->>UC: cancelTask(taskId)
+    activate UC
+    UC->>TM: cancelTask(taskId)
     activate TM
     TM->>Redis: GET task:register:{id}
     Redis-->>TM: Value: TaskThread(task, isCancelled=false)
@@ -55,6 +62,8 @@ sequenceDiagram
         TM->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=TRUE)
     end
     deactivate TM
+    UC-->>Client: return (200 OK)
+    deactivate UC
 
     activate Worker
     note right of Worker: Back in the Worker Thread loop...

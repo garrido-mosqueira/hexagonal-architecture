@@ -15,6 +15,7 @@ This demo project is using:
 
 #### Requirements
 The task type is a simple counter which is configured with two input parameters, `begin` and `finish` of type `integer`.
+- **Validation**: `begin` must be less than or equal to `finish`.
 When the task is executed, the counter should start in the background and progress should be monitored.
 Counting should start from `begin` and get increased by one every second.
 When counting reaches `finish`, the task should finish successfully.
@@ -32,6 +33,11 @@ The tasks that are not executed after an extended period (e.g. a 5 minutes) shou
 
 ### Architecture Highlights
 
+- **Hexagonal Architecture**: Strictly follows Hexagonal (Ports & Adapters) principles:
+  - **Inbound Port (`TaskUseCase`)**: Defines the business operations available to the outside world.
+  - **Inbound Adapter (`TaskController`)**: REST API that interacts only with the Use Case interface and handles DTO mapping.
+  - **Outbound Ports**: `TaskPersistencePort` and `TaskExecutionPort` decouple the domain from specific technologies.
+  - **Application Service (`TaskService`)**: Orchestrates business logic without framework leakage (configured as a Bean).
 - **Virtual Threads**: Tasks are executed asynchronously using Java Virtual Threads directly (no ExecutorService), providing lightweight concurrency
 - **Redis Integration**: Task progress and execution state are tracked in Redis for real-time monitoring
 - **MongoDB**: Task metadata and configuration are persisted in MongoDB
@@ -66,7 +72,7 @@ This solution is designed to work effectively in a distributed system environmen
 
 Following an asynchronous task execution pattern with polling-based cancellation, using Redis as the shared state registry to coordinate between the main thread and the worker thread.
 
-Here is are some diagrams illustrating the complete lifecycle: starting a task, its execution loop, and how an external cancellation request stops it.
+Here are some diagrams illustrating the complete lifecycle: starting a task, its execution loop, and how an external cancellation request stops it.
 
 #### Worker Thread Process Flowchart
 ![process-flow-diagram.png](docs/process-flow-diagram.png)
