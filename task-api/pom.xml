@@ -20,6 +20,10 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
+            <artifactId>task-application</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fran</groupId>
             <artifactId>virtual-threads-tasks</artifactId>
         </dependency>
         <dependency>

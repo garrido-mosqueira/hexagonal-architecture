@@ -16,10 +16,11 @@ The main idea is to take advantage of Dependency Inversion, where high level mod
 
 The modules are:
 
-    * task-domain              : here is defined the app's context and uses cases
-    * task-persistence         : configuration of data base using MongoDB
-    * task-api                 : REST API using Spring MVC
-    * virtual-threads-tasks    : Task execution logic using Java Virtual Threads
+    * task-domain              : defines the domain models and ports (interfaces)
+    * task-application         : implementation of use cases (application services) without framework dependencies
+    * task-persistence         : outbound adapter for MongoDB persistence
+    * task-api                 : inbound adapter (REST API) and Spring Boot entry point
+    * virtual-threads-tasks    : outbound adapter for task execution using Java Virtual Threads
 
 Cool thing about using this approach with modules is it's easy to exchange an `infrastructure` dependency.
 For example, the task execution module can be swapped to use different concurrency approaches by changing the dependency in the parent POM.

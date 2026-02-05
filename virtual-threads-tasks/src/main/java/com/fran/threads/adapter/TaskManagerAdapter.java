@@ -1,11 +1,11 @@
 package com.fran.threads.adapter;
 
+import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.model.TaskStatus;
 import com.fran.task.domain.model.TaskType;
 import com.fran.task.domain.port.TaskExecutionPort;
 import com.fran.task.domain.port.TaskPersistencePort;
-import com.fran.threads.exception.CounterTaskNotFoundException;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +121,7 @@ public class TaskManagerAdapter implements TaskExecutionPort {
         log.info("Get running counter with ID '{}'", counterId);
         TaskThread taskThread = getTaskThread(TASK_REGISTER_PREFIX + counterId);
         if (taskThread == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
+            throw new NotFoundException("Failed to find counter with ID " + counterId);
         }
         return taskThread.task();
     }

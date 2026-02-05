@@ -34,10 +34,10 @@ The tasks that are not executed after an extended period (e.g. a 5 minutes) shou
 ### Architecture Highlights
 
 - **Hexagonal Architecture**: Strictly follows Hexagonal (Ports & Adapters) principles:
-  - **Inbound Port (`TaskUseCase`)**: Defines the business operations available to the outside world.
-  - **Inbound Adapter (`TaskController`)**: REST API that interacts only with the Use Case interface and handles DTO mapping.
+  - **Application Layer (`task-application`)**: Orchestrates business logic via `TaskService` without framework leakage (configured as a Spring Bean in the API module).
+  - **Inbound Port (`TaskUseCase`)**: Defined in `task-domain`, it specifies the business operations available to the outside world.
+  - **Inbound Adapter (`task-api`)**: REST API that interacts only with the Use Case interface and handles DTO mapping.
   - **Outbound Ports**: `TaskPersistencePort` and `TaskExecutionPort` decouple the domain from specific technologies.
-  - **Application Service (`TaskService`)**: Orchestrates business logic without framework leakage (configured as a Bean).
 - **Virtual Threads**: Tasks are executed asynchronously using Java Virtual Threads directly (no ExecutorService), providing lightweight concurrency
 - **Redis Integration**: Task progress and execution state are tracked in Redis for real-time monitoring
 - **MongoDB**: Task metadata and configuration are persisted in MongoDB
