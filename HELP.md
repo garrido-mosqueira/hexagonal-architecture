@@ -89,6 +89,12 @@ A Postman collection (`tasks.postman.json`) is available in the root directory i
 
 ### Considerations
 To run/debug the project from your IDE it will be necessary to run MongoDB and Redis separately.
+You can use the following commands to start only the required infrastructure:
+
+```bash
+docker-compose up -d mongodb-challenge redis-challenge
+```
+
 And also change the hosts in application.properties file. By default, they are set with the container names instead of localhost.
 
 ```

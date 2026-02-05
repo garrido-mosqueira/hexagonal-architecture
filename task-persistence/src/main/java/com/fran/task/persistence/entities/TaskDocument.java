@@ -1,5 +1,6 @@
 package com.fran.task.persistence.entities;
 
+import com.fran.task.domain.model.TaskStatus;
 import com.fran.task.domain.model.TaskType;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,6 @@ public class TaskDocument {
     private final Date lastExecution;
     private final Integer begin;
     private final Integer finish;
+    private final TaskStatus status;
 
 }

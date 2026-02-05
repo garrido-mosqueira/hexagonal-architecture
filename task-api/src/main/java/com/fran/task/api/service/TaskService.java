@@ -52,8 +52,7 @@ public class TaskService implements TaskUseCase {
     public void executeTask(String taskId) {
         Task task = getTask(taskId)
             .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
-        Task executed = executionPort.executeTask(task);
-        persistencePort.updateExecution(executed);
+        executionPort.executeTask(task);
     }
 
     @Override

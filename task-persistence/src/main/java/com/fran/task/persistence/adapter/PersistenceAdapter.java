@@ -24,7 +24,8 @@ public class PersistenceAdapter implements TaskPersistencePort {
 
     @Override
     public Task createTask(Task task) {
-        Task newTask = task.withCreationDate(LocalDateTime.now());
+        Task newTask = task.withCreationDate(LocalDateTime.now())
+                .withStatus(com.fran.task.domain.model.TaskStatus.CREATED);
         TaskDocument saved = repository.save(mapper.toEntity(newTask));
         log.info("Creating task {}", saved.getId());
         return mapper.toDomain(saved);

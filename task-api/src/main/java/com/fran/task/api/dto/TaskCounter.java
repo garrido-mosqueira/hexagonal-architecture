@@ -30,5 +30,7 @@ public class TaskCounter {
     @JsonInclude(Include.NON_NULL)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
     Date lastExecution;
+    @JsonInclude(Include.NON_NULL)
+    String status;
 
 }

@@ -1,8 +1,10 @@
 package com.fran.threads.adapter;
 
 import com.fran.task.domain.model.Task;
+import com.fran.task.domain.model.TaskStatus;
 import com.fran.task.domain.model.TaskType;
 import com.fran.task.domain.port.TaskExecutionPort;
+import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.threads.exception.CounterTaskNotFoundException;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
@@ -23,12 +25,15 @@ public class TaskManagerAdapter implements TaskExecutionPort {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;
     private final Map<TaskType, ThreadingStrategy> strategies;
+    private final TaskPersistencePort persistencePort;
 
     private static final String TASK_REGISTER_PREFIX = "task:register:";
 
     public TaskManagerAdapter(RedisTemplate<String, TaskThread> tasksRegister,
-                              List<ThreadingStrategy> strategyList) {
+                              List<ThreadingStrategy> strategyList,
+                              TaskPersistencePort persistencePort) {
         this.tasksRegister = tasksRegister;
+        this.persistencePort = persistencePort;
         this.strategies = strategyList.stream()
             .collect(Collectors.toMap(
                 ThreadingStrategy::supports,
@@ -62,11 +67,13 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     }
 
     private void runLoop(Task task) {
-        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(task, false));
+        Task runningTask = task.withStatus(TaskStatus.RUNNING);
+        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(runningTask, false));
+        persistencePort.updateExecution(runningTask);
         int i = task.begin();
-        TaskThread taskThread;
+        TaskThread taskThread = null;
         do {
-            Task updated = task.withProgress(i);
+            Task updated = runningTask.withProgress(i);
             tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(updated, false));
             log.info("Progress {} for '{}' in thread {}", updated.progress(), updated.id(), Thread.currentThread());
             try {
@@ -78,6 +85,14 @@ public class TaskManagerAdapter implements TaskExecutionPort {
             i++;
             taskThread = getTaskThread(TASK_REGISTER_PREFIX + task.id());
         } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
+
+        if (taskThread != null && taskThread.isCancelled()) {
+            Task cancelledTask = task.withProgress(i - 1).withStatus(TaskStatus.CANCELLED);
+            persistencePort.updateExecution(cancelledTask);
+        } else if (i > task.finish()) {
+            Task completedTask = task.withProgress(task.finish()).withStatus(TaskStatus.COMPLETED);
+            persistencePort.updateExecution(completedTask);
+        }
 
         tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
         log.info("End counter for '{}'", task.id());

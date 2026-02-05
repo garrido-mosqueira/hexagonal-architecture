@@ -10,7 +10,8 @@ public record Task(
         LocalDateTime lastExecution,
         Integer begin,
         Integer finish,
-        Integer progress) {
+        Integer progress,
+        TaskStatus status) {
 
     public Task {
         if (begin != null && finish != null && begin > finish) {
@@ -20,32 +21,37 @@ public record Task(
 
     public Task withProgress(Integer newProgress) {
         return new Task(id, name, taskType, creationDate, lastExecution,
-                begin, finish, newProgress);
+                begin, finish, newProgress, status);
+    }
+
+    public Task withStatus(TaskStatus newStatus) {
+        return new Task(id, name, taskType, creationDate, lastExecution,
+                begin, finish, progress, newStatus);
     }
 
     public Task withCreationDate(LocalDateTime newCreationDate) {
         return new Task(id, name, taskType, newCreationDate, lastExecution,
-                begin, finish, progress);
+                begin, finish, progress, status);
     }
 
     public Task withLastExecution(LocalDateTime newLastExecution) {
         return new Task(id, name, taskType, creationDate, newLastExecution,
-                begin, finish, progress);
+                begin, finish, progress, status);
     }
 
     public Task withName(String newName) {
         return new Task(id, newName, taskType, creationDate, lastExecution,
-                begin, finish, progress);
+                begin, finish, progress, status);
     }
 
     public Task withBegin(Integer newBegin) {
         return new Task(id, name, taskType, creationDate, lastExecution,
-                newBegin, finish, progress);
+                newBegin, finish, progress, status);
     }
 
     public Task withFinish(Integer newFinish) {
         return new Task(id, name, taskType, creationDate, lastExecution,
-                begin, newFinish, progress);
+                begin, newFinish, progress, status);
     }
 
 }
