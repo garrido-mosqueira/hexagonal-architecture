@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class PersistenceAdapter implements TaskPersistencePort {
 
     private final TaskRepository repository;
