@@ -44,17 +44,24 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     @Override
     public void cancelTask(String taskId) {
         TaskThread taskThread = getTaskThread(TASK_REGISTER_PREFIX + taskId);
-        if (taskThread != null && taskThread.task() != null) {
+        if (taskThread != null && taskThread.task() != null && !taskThread.isCancelled()) {
             log.info("Cancel task '{}' with '{}' Thread", taskId, taskThread.task().taskType().name());
             tasksRegister.opsForValue().set(
                 TASK_REGISTER_PREFIX + taskId,
                 new TaskThread(taskThread.task(), true)
             );
+        } else {
+            log.info("Task '{}' is not running or already cancelled", taskId);
         }
     }
 
     @Override
     public Task executeTask(Task task) {
+        if (getTaskThread(TASK_REGISTER_PREFIX + task.id()) != null) {
+            log.info("Task '{}' is already running", task.id());
+            return task;
+        }
+
         ThreadingStrategy strategy = strategies.get(task.taskType());
         if (strategy == null) {
             throw new IllegalArgumentException("Unsupported task type: " + task.taskType());

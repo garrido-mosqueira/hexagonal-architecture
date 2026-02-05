@@ -137,6 +137,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         then()
                 .statusCode(is(202));
 
+        // Idempotency check: execute again should still be 202 (or as defined by API, currently it returns 202)
+        given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE).
+        when()
+                .post(BASE_URL + taskToSaveAndThenExecute.getId() + "/execute").
+        then()
+                .statusCode(is(202));
+
         await().atMost(1, SECONDS).untilAsserted(() -> {
             TaskCounter progress =
                     given()
@@ -155,6 +163,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         var taskToSaveAndThenExecuteThenCancel = task("old_name", TaskType.VIRTUAL);
         repository.save(taskToSaveAndThenExecuteThenCancel);
 
+        // Cancel not running task should be safe (200 OK)
+        given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE).
+        when()
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
+        then()
+                .statusCode(is(200));
+
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
@@ -172,6 +188,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                     then()
                             .statusCode(is(200));
                 });
+
+        // Cancel already cancelled task should be safe (200 OK)
+        given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE).
+        when()
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
+        then()
+                .statusCode(is(200));
     }
 
     private static TaskDocument task(String name) {
