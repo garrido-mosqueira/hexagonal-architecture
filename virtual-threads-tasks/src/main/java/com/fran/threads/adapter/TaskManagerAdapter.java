@@ -10,7 +10,6 @@ import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 public class TaskManagerAdapter implements TaskExecutionPort {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;

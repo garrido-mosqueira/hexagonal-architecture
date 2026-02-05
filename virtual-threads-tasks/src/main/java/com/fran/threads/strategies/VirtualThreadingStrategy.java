@@ -1,9 +1,7 @@
 package com.fran.threads.strategies;
 
 import com.fran.task.domain.model.TaskType;
-import org.springframework.stereotype.Component;
 
-@Component
 public class VirtualThreadingStrategy implements ThreadingStrategy {
 
     @Override

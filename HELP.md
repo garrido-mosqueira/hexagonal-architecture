@@ -20,7 +20,7 @@ The modules are:
     * task-application         : implementation of use cases (application services) without framework dependencies
     * task-persistence         : outbound adapter for MongoDB persistence
     * task-api                 : inbound adapter (REST API) and Spring Boot entry point
-    * virtual-threads-tasks    : outbound adapter for task execution using Java Virtual Threads
+    * virtual-threads-tasks    : outbound adapter for task execution using Java Virtual Threads without framework dependencies
 
 Cool thing about using this approach with modules is it's easy to exchange an `infrastructure` dependency.
 For example, the task execution module can be swapped to use different concurrency approaches by changing the dependency in the parent POM.
