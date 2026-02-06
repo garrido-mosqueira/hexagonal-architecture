@@ -40,7 +40,12 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     void createTask() {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(TaskCounter.builder().name("task_get").begin(1).finish(10).build()).
+                .body(TaskCounter.builder()
+                        .name("task_get")
+                        .taskType(TaskType.VIRTUAL.name())
+                        .begin(1)
+                        .finish(10)
+                        .build()).
         when()
                 .post(BASE_URL).
         then()
@@ -95,7 +100,12 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         var taskToSaveAndThenUpdate = task("old_name", TaskType.PLATFORM);
         repository.save(taskToSaveAndThenUpdate);
 
-        var taskWithNewName = TaskCounter.builder().name("new_name").begin(1).finish(10).build();
+        var taskWithNewName = TaskCounter.builder()
+                .name("new_name")
+                .taskType(TaskType.PLATFORM.name())
+                .begin(1)
+                .finish(10)
+                .build();
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

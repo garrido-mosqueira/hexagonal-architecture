@@ -4,6 +4,7 @@ import com.fran.task.api.dto.TaskCounter;
 import com.fran.task.api.mapper.TaskCounterMapper;
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.port.TaskUseCase;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class TaskController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskCounter createTask(@RequestBody TaskCounter taskCounter) {
+    public TaskCounter createTask(@Valid @RequestBody TaskCounter taskCounter) {
         return mapper.toDTO(useCase.createTask(mapper.toDomain(taskCounter)));
     }
 
@@ -37,7 +38,7 @@ public class TaskController {
     @PutMapping("/{taskId}")
     @ResponseStatus(HttpStatus.OK)
     public TaskCounter updateTask(@PathVariable String taskId,
-                                  @RequestBody TaskCounter taskCounter) {
+                                  @Valid @RequestBody TaskCounter taskCounter) {
         return mapper.toDTO(useCase.updateTask(taskId, mapper.toDomain(taskCounter)));
     }
 
