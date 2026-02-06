@@ -8,7 +8,8 @@ import com.fran.task.domain.port.TaskExecutionPort;
 import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class TaskManagerAdapter implements TaskExecutionPort {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;
@@ -26,6 +26,7 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     private final TaskPersistencePort persistencePort;
 
     private static final String TASK_REGISTER_PREFIX = "task:register:";
+    private static final Logger log = LoggerFactory.getLogger(TaskManagerAdapter.class);
 
     public TaskManagerAdapter(RedisTemplate<String, TaskThread> tasksRegister,
                               List<ThreadingStrategy> strategyList,
