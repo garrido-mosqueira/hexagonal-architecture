@@ -73,35 +73,46 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     }
 
     private void runLoop(Task task) {
+        String taskKey = TASK_REGISTER_PREFIX + task.id();
         Task runningTask = task.withStatus(TaskStatus.RUNNING);
-        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(runningTask, false));
+        updateTaskInRegister(taskKey, runningTask);
         persistencePort.updateExecution(runningTask);
+
         int i = task.begin();
         TaskThread taskThread = null;
         do {
             Task updated = runningTask.withProgress(i);
-            tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(updated, false));
+            updateTaskInRegister(taskKey, updated);
             log.info("Progress {} for '{}' in thread {}", updated.progress(), updated.id(), Thread.currentThread());
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
+
             i++;
-            taskThread = getTaskThread(TASK_REGISTER_PREFIX + task.id());
+            taskThread = getTaskThread(taskKey);
         } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
 
+        finalizeTask(task, i, taskThread);
+        tasksRegister.delete(taskKey);
+        log.info("End counter for '{}'", task.id());
+    }
+
+    private void updateTaskInRegister(String taskKey, Task task) {
+        tasksRegister.opsForValue().set(taskKey, new TaskThread(task, false));
+    }
+
+    private void finalizeTask(Task task, int finalProgress, TaskThread taskThread) {
         if (taskThread != null && taskThread.isCancelled()) {
-            Task cancelledTask = task.withProgress(i - 1).withStatus(TaskStatus.CANCELLED);
+            Task cancelledTask = task.withProgress(finalProgress - 1).withStatus(TaskStatus.CANCELLED);
             persistencePort.updateExecution(cancelledTask);
-        } else if (i > task.finish()) {
+        } else if (finalProgress > task.finish()) {
             Task completedTask = task.withProgress(task.finish()).withStatus(TaskStatus.COMPLETED);
             persistencePort.updateExecution(completedTask);
         }
-
-        tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
-        log.info("End counter for '{}'", task.id());
     }
 
     @Override
