@@ -5,18 +5,24 @@ sequenceDiagram
     participant TS as ThreadingStrategy (Specific Impl)
     participant Redis
     participant Worker as Worker Thread (runLoop)
+    participant DB as MongoDB
 
     note over Client, Redis: Part 1: Task Execution Kickoff
 
     Client->>UC: executeTask(taskId)
+    note right of UC: Includes input validation via DTO
     activate UC
     UC->>TM: executeTask(task)
     activate TM
-    TM->>TM: Determine Strategy based on TaskType
-    TM->>TS: launch(taskId, runLoopLambda)
-    activate TS
-    TS--)Worker: Async Start (e.g., threadPool.submit(runLoopLambda))
-    deactivate TS
+    TM->>Redis: GET task:register:{id}
+    Redis-->>TM: check if already running
+    alt Not Running
+        TM->>TM: Determine Strategy based on TaskType
+        TM->>TS: launch(taskId, runLoopLambda)
+        activate TS
+        TS--)Worker: Async Start (e.g., threadPool.submit(runLoopLambda))
+        deactivate TS
+    end
     TM-->>UC: return task
     deactivate TM
     UC-->>Client: return (202 Accepted)
@@ -27,6 +33,7 @@ sequenceDiagram
     activate Worker
     note right of Worker: runLoop starts here
     Worker->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=false)
+    Worker->>DB: Update task status to RUNNING
     
     loop While (i <= finish) AND (not cancelled)
         Worker->>Worker: Increment progress (i++)
@@ -43,6 +50,11 @@ sequenceDiagram
     end
 
     note right of Worker: Loop finished normally OR loop broken via cancellation
+    alt isCancelled
+        Worker->>DB: Update final task status to CANCELLED
+    else Completed
+        Worker->>DB: Update final task status to COMPLETED
+    end
     Worker->>Redis: DEL task:register:{id}
     note right of Worker: Task Complete
 
@@ -57,9 +69,13 @@ sequenceDiagram
     TM->>Redis: GET task:register:{id}
     Redis-->>TM: Value: TaskThread(task, isCancelled=false)
     
-    rect rgb(255, 230, 230)
-        note right of TM: The "Kill Signal". <br/>Does NOT stop thread immediately.<br/>Just updates shared state.
-        TM->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=TRUE)
+    alt Task Running and Not Cancelled
+        rect rgb(255, 230, 230)
+            note right of TM: The "Kill Signal". <br/>Does NOT stop thread immediately.<br/>Just updates shared state.
+            TM->>Redis: SET task:register:{id} <br/>Value: TaskThread(task, isCancelled=TRUE)
+        end
+    else Not running / Already cancelled
+        TM->>TM: Log: Already cancelled or not running
     end
     deactivate TM
     UC-->>Client: return (200 OK)

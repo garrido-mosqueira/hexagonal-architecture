@@ -1,22 +1,23 @@
-package com.fran.task.api.service;
+package com.fran.task.application.service;
 
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskExecutionPort;
 import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.task.domain.port.TaskUseCase;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
-@Service
 public class TaskService implements TaskUseCase {
 
     private final TaskExecutionPort executionPort;
     private final TaskPersistencePort persistencePort;
+
+    public TaskService(TaskExecutionPort executionPort, TaskPersistencePort persistencePort) {
+        this.executionPort = executionPort;
+        this.persistencePort = persistencePort;
+    }
 
     @Override
     public Task createTask(Task task) {
@@ -52,8 +53,7 @@ public class TaskService implements TaskUseCase {
     public void executeTask(String taskId) {
         Task task = getTask(taskId)
             .orElseThrow(() -> new NotFoundException("Task with ID " + taskId + " not found"));
-        Task executed = executionPort.executeTask(task);
-        persistencePort.updateExecution(executed);
+        executionPort.executeTask(task);
     }
 
     @Override

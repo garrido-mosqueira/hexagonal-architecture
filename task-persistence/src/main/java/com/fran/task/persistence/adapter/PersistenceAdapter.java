@@ -6,27 +6,30 @@ import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.mapper.TaskDocumentMapper;
 import com.fran.task.persistence.repository.TaskRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@RequiredArgsConstructor
-@Component
 public class PersistenceAdapter implements TaskPersistencePort {
 
     private final TaskRepository repository;
     private final TaskDocumentMapper mapper;
+    private static final Logger log = LoggerFactory.getLogger(PersistenceAdapter.class);
+
+    public PersistenceAdapter(TaskRepository repository, TaskDocumentMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     @Override
     public Task createTask(Task task) {
-        Task newTask = task.withCreationDate(LocalDateTime.now());
+        Task newTask = task.withCreationDate(LocalDateTime.now())
+                .withStatus(com.fran.task.domain.model.TaskStatus.CREATED);
         TaskDocument saved = repository.save(mapper.toEntity(newTask));
-        log.info("Creating task {}", saved.getId());
+        log.info("Creating task {}", saved.id());
         return mapper.toDomain(saved);
     }
 

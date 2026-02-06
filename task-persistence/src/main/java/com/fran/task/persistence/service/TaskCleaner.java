@@ -2,21 +2,20 @@ package com.fran.task.persistence.service;
 
 import com.fran.task.domain.model.Task;
 import com.fran.task.domain.port.TaskPersistencePort;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
-@Slf4j
-@Service
 public class TaskCleaner {
 
     private final TaskPersistencePort persistencePort;
+    private static final Logger log = LoggerFactory.getLogger(TaskCleaner.class);
 
-    @Scheduled(cron = "${delete.expired.task.scheduled}")
+    public TaskCleaner(TaskPersistencePort persistencePort) {
+        this.persistencePort = persistencePort;
+    }
+
     public void cleanExpiredTask() {
         log.info("Begin Cleaning task ... ");
         persistencePort.getTasks().stream()

@@ -20,7 +20,19 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
+            <artifactId>task-application</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fran</groupId>
             <artifactId>virtual-threads-tasks</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>

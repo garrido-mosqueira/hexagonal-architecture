@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface TaskDocumentMapper {
 
     Task toDomain(TaskDocument taskDocument);

@@ -1,14 +1,16 @@
 package com.fran.threads.adapter;
 
+import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
+import com.fran.task.domain.model.TaskStatus;
 import com.fran.task.domain.model.TaskType;
 import com.fran.task.domain.port.TaskExecutionPort;
-import com.fran.threads.exception.CounterTaskNotFoundException;
+import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.threads.model.TaskThread;
 import com.fran.threads.strategies.ThreadingStrategy;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -17,18 +19,20 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Slf4j
-@Service
 public class TaskManagerAdapter implements TaskExecutionPort {
 
     private final RedisTemplate<String, TaskThread> tasksRegister;
     private final Map<TaskType, ThreadingStrategy> strategies;
+    private final TaskPersistencePort persistencePort;
 
     private static final String TASK_REGISTER_PREFIX = "task:register:";
+    private static final Logger log = LoggerFactory.getLogger(TaskManagerAdapter.class);
 
     public TaskManagerAdapter(RedisTemplate<String, TaskThread> tasksRegister,
-                              List<ThreadingStrategy> strategyList) {
+                              List<ThreadingStrategy> strategyList,
+                              TaskPersistencePort persistencePort) {
         this.tasksRegister = tasksRegister;
+        this.persistencePort = persistencePort;
         this.strategies = strategyList.stream()
             .collect(Collectors.toMap(
                 ThreadingStrategy::supports,
@@ -39,17 +43,24 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     @Override
     public void cancelTask(String taskId) {
         TaskThread taskThread = getTaskThread(TASK_REGISTER_PREFIX + taskId);
-        if (taskThread != null && taskThread.task() != null) {
+        if (taskThread != null && taskThread.task() != null && !taskThread.isCancelled()) {
             log.info("Cancel task '{}' with '{}' Thread", taskId, taskThread.task().taskType().name());
             tasksRegister.opsForValue().set(
                 TASK_REGISTER_PREFIX + taskId,
                 new TaskThread(taskThread.task(), true)
             );
+        } else {
+            log.info("Task '{}' is not running or already cancelled", taskId);
         }
     }
 
     @Override
     public Task executeTask(Task task) {
+        if (getTaskThread(TASK_REGISTER_PREFIX + task.id()) != null) {
+            log.info("Task '{}' is already running", task.id());
+            return task;
+        }
+
         ThreadingStrategy strategy = strategies.get(task.taskType());
         if (strategy == null) {
             throw new IllegalArgumentException("Unsupported task type: " + task.taskType());
@@ -62,25 +73,46 @@ public class TaskManagerAdapter implements TaskExecutionPort {
     }
 
     private void runLoop(Task task) {
-        tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(task, false));
+        String taskKey = TASK_REGISTER_PREFIX + task.id();
+        Task runningTask = task.withStatus(TaskStatus.RUNNING);
+        updateTaskInRegister(taskKey, runningTask);
+        persistencePort.updateExecution(runningTask);
+
         int i = task.begin();
-        TaskThread taskThread;
+        TaskThread taskThread = null;
         do {
-            Task updated = task.withProgress(i);
-            tasksRegister.opsForValue().set(TASK_REGISTER_PREFIX + task.id(), new TaskThread(updated, false));
+            Task updated = runningTask.withProgress(i);
+            updateTaskInRegister(taskKey, updated);
             log.info("Progress {} for '{}' in thread {}", updated.progress(), updated.id(), Thread.currentThread());
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
+
             i++;
-            taskThread = getTaskThread(TASK_REGISTER_PREFIX + task.id());
+            taskThread = getTaskThread(taskKey);
         } while (i <= task.finish() && taskThread != null && !taskThread.isCancelled());
 
-        tasksRegister.delete(TASK_REGISTER_PREFIX + task.id());
+        finalizeTask(task, i, taskThread);
+        tasksRegister.delete(taskKey);
         log.info("End counter for '{}'", task.id());
+    }
+
+    private void updateTaskInRegister(String taskKey, Task task) {
+        tasksRegister.opsForValue().set(taskKey, new TaskThread(task, false));
+    }
+
+    private void finalizeTask(Task task, int finalProgress, TaskThread taskThread) {
+        if (taskThread != null && taskThread.isCancelled()) {
+            Task cancelledTask = task.withProgress(finalProgress - 1).withStatus(TaskStatus.CANCELLED);
+            persistencePort.updateExecution(cancelledTask);
+        } else if (finalProgress > task.finish()) {
+            Task completedTask = task.withProgress(task.finish()).withStatus(TaskStatus.COMPLETED);
+            persistencePort.updateExecution(completedTask);
+        }
     }
 
     @Override
@@ -99,7 +131,7 @@ public class TaskManagerAdapter implements TaskExecutionPort {
         log.info("Get running counter with ID '{}'", counterId);
         TaskThread taskThread = getTaskThread(TASK_REGISTER_PREFIX + counterId);
         if (taskThread == null) {
-            throw new CounterTaskNotFoundException("Failed to find counter with ID " + counterId);
+            throw new NotFoundException("Failed to find counter with ID " + counterId);
         }
         return taskThread.task();
     }
