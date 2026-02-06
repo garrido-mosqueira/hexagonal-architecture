@@ -49,7 +49,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                 .body("name", is("task_get"))
                 .body("name", response -> is(
                         repository.findById(response.as(TaskCounter.class).getId())
-                                .map(TaskDocument::getName).orElseThrow()
+                                .map(TaskDocument::name).orElseThrow()
                 ));
     }
 
@@ -82,11 +82,11 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .get(BASE_URL + taskToSaveThenGet.getId()).
+                .get(BASE_URL + taskToSaveThenGet.id()).
         then()
                 .statusCode(is(200)).
         assertThat()
-                .body("id", is(savedTaskFromRepo.getId()));
+                .body("id", is(savedTaskFromRepo.id()));
     }
 
     @Test
@@ -101,7 +101,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(taskWithNewName).
         when()
-                .put(BASE_URL + taskToSaveAndThenUpdate.getId()).
+                .put(BASE_URL + taskToSaveAndThenUpdate.id()).
         then()
                 .statusCode(is(200)).
         assertThat()
@@ -117,11 +117,11 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .delete(BASE_URL + taskToSaveAndThenDelete.getId()).
+                .delete(BASE_URL + taskToSaveAndThenDelete.id()).
         then()
                 .statusCode(is(204));
 
-        assertThat(repository.findById(taskToSaveAndThenDelete.getId()).isPresent()).isFalse();
+        assertThat(repository.findById(taskToSaveAndThenDelete.id()).isPresent()).isFalse();
     }
 
     @Test
@@ -133,7 +133,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecute.getId() + "/execute").
+                .post(BASE_URL + taskToSaveAndThenExecute.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -141,7 +141,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecute.getId() + "/execute").
+                .post(BASE_URL + taskToSaveAndThenExecute.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -149,7 +149,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
             TaskCounter progress =
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .get(BASE_URL + taskToSaveAndThenExecute.getId() + "/progress")
+                            .get(BASE_URL + taskToSaveAndThenExecute.id() + "/progress")
                     .then()
                         .   statusCode(200)
                     .extract().as(TaskCounter.class);
@@ -167,14 +167,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
         then()
                 .statusCode(is(200));
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/execute").
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -184,7 +184,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .when()
-                            .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
+                            .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
                     then()
                             .statusCode(is(200));
                 });
@@ -193,7 +193,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.getId() + "/cancel").
+                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
         then()
                 .statusCode(is(200));
     }
@@ -203,15 +203,16 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
     }
 
     private static TaskDocument task(String name, TaskType type) {
-        return TaskDocument.builder()
-            .id(UUID.randomUUID().toString())
-            .name(name)
-            .taskType(type)
-            .creationDate(Date.from(Instant.now()))
-            .lastExecution(Date.from(Instant.now()))
-            .begin(1)
-            .finish(10)
-            .build();
+        return new TaskDocument(
+            UUID.randomUUID().toString(),
+            name,
+            type,
+            Date.from(Instant.now()),
+            Date.from(Instant.now()),
+            1,
+            10,
+            null
+        );
     }
 
 }
