@@ -24,8 +24,13 @@
         </dependency>
         <dependency>
             <groupId>com.fran</groupId>
+            <artifactId>task-persistence</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fran</groupId>
             <artifactId>virtual-threads-tasks</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -33,10 +38,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fran</groupId>
-            <artifactId>task-persistence</artifactId>
         </dependency>
 
         <dependency>
@@ -56,6 +57,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
