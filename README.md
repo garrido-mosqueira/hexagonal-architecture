@@ -78,4 +78,4 @@ Here are some diagrams illustrating the complete lifecycle: starting a task, its
 ![process-flow-diagram.png](docs/process-flow-diagram.png)
 
 #### Sequence diagram
-![secuence-diagram.png](docs/secuence-diagram.png)
+![sequence-diagram.png](docs/sequence-diagram.png)
