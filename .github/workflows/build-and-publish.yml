@@ -61,17 +61,8 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Print Docker env
-        run: |
-          echo "DOCKER_HOST=$DOCKER_HOST"
-          echo "DOCKER_API_VERSION=$DOCKER_API_VERSION"
-          env | grep DOCKER || true
-
       - name: Build JAR (task-api)
-        run: mvn -B -pl task-api -am clean package -DargLine="-Ddocker.client.apiVersion=1.44"
-        env:
-          DOCKER_API_VERSION: "1.44"
-          TESTCONTAINERS_RYUK_DISABLED: "true"
+        run: mvn -B -pl task-api -am clean package -DskipTests
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
