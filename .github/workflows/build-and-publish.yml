@@ -10,8 +10,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  DOCKER_API_VERSION: "1.44"
-  DOCKER_HOST: "unix:///var/run/docker.sock"
   TESTCONTAINERS_RYUK_DISABLED: true
 
 jobs:
@@ -63,6 +61,12 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: 'maven'
+
+      - name: Print Docker env
+        run: |
+          echo "DOCKER_HOST=$DOCKER_HOST"
+          echo "DOCKER_API_VERSION=$DOCKER_API_VERSION"
+          env | grep DOCKER || true
 
       - name: Build JAR (task-api)
         run: mvn -B -pl task-api -am clean package
