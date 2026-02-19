@@ -111,4 +111,33 @@ Docker is required for running the tests.
 
 After running `docker-compose up` to monitor the JVM. Grafana will be working on `localhost:3000`
 
+### Deployment
+
+#### GitHub Actions: Build and Deploy to GKE
+
+This project includes a GitHub Actions workflow to automatically build and deploy the application to a Google Kubernetes Engine (GKE) cluster.
+
+**Workflow Location:** `.github/workflows/google-cloud-gke-deploy.yml`
+
+**Prerequisites:**
+
+1.  **Google Cloud Project**: A project with GKE and Artifact Registry APIs enabled.
+2.  **GKE Cluster**: A running Kubernetes cluster.
+3.  **Artifact Registry**: A Docker repository in Artifact Registry.
+4.  **Workload Identity Federation**: Recommended for secure authentication from GitHub Actions to Google Cloud.
+
+**Required GitHub Secrets:**
+
+-   `GKE_PROJECT`: Your Google Cloud Project ID.
+-   `WIF_PROVIDER`: Full identifier of the Workload Identity Provider (e.g., `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`).
+-   `WIF_SERVICE_ACCOUNT`: Email of the Google Cloud Service Account (e.g., `my-service-account@my-project.iam.gserviceaccount.com`).
+
+**Configuration:**
+
+Update the following environment variables in `.github/workflows/google-cloud-gke-deploy.yml`:
+
+-   `GAR_LOCATION`: Region of your Artifact Registry (e.g., `us-central1`).
+-   `GKE_CLUSTER`: Name of your GKE cluster.
+-   `GKE_ZONE`: Zone or region of your GKE cluster (e.g., `us-central1-c`).
+-   `REPOSITORY`: Name of your Artifact Registry repository.
 
