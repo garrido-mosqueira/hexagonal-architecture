@@ -12,8 +12,7 @@ import org.testcontainers.utility.DockerImageName;
 public class TestContainerConfiguration {
 
     static {
-        System.setProperty("DOCKER_HOST", "unix:///var/run/docker.sock");
-        System.setProperty("DOCKER_API_VERSION", "1.44");
+        System.setProperty("docker.client.apiVersion", "1.44");
     }
 
     @Container
