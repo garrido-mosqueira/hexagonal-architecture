@@ -11,6 +11,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   DOCKER_API_VERSION: "1.44"
+  DOCKER_HOST: "unix:///var/run/docker.sock"
+  TESTCONTAINERS_RYUK_DISABLED: true
 
 jobs:
   build:
@@ -63,9 +65,7 @@ jobs:
           cache: 'maven'
 
       - name: Build JAR (task-api)
-        run: mvn -B -pl task-api -am clean package -DargLine="-Ddocker.client.apiVersion=1.44"
-        env:
-          DOCKER_API_VERSION: "1.44"
+        run: mvn -B -pl task-api -am clean package
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
