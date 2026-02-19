@@ -62,11 +62,6 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Setup Testcontainers Cloud # Or just the engine check
-        uses: testcontainers/testcontainers-action@v1
-        with:
-          domain-name: ghcr.io
-
       - name: Build JAR (task-api)
         run: |
           docker version
