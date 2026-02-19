@@ -51,6 +51,14 @@ jobs:
       with:
         project_id: '${{ env.PROJECT_ID }}'
 
+    - name: Debug context
+      run: |
+        echo "repository=${{ github.repository }}"
+        echo "ref=${{ github.ref }}"
+        echo "repository_owner=${{ github.repository_owner }}"
+        echo "project=${{ env.PROJECT_ID }}"
+        echo "secret_proj=${{ secrets.GKE_PROJECT }}
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -92,10 +100,3 @@ jobs:
         kubectl rollout status deployment/$IMAGE
         kubectl get services -o wide
 
-    - name: Debug context
-      run: |
-        echo "repository=${{ github.repository }}"
-        echo "ref=${{ github.ref }}"
-        echo "repository_owner=${{ github.repository_owner }}"
-        echo "project=${{ env.PROJECT_ID }}"
-        echo "secret_proj=${{ secrets.GKE_PROJECT }}
