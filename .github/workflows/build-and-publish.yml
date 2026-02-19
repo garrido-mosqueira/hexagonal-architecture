@@ -10,6 +10,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  DOCKER_API_VERSION: "1.44"
 
 jobs:
   build:
@@ -63,8 +64,6 @@ jobs:
 
       - name: Build JAR (task-api)
         run: mvn -B -pl task-api -am clean package
-        env:
-          DOCKER_API_VERSION: "1.44"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
