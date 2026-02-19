@@ -63,11 +63,7 @@ jobs:
           cache: 'maven'
 
       - name: Build JAR (task-api)
-        run: |
-          docker version
-          mvn -B -pl task-api -am clean package
-        env:
-          DOCKER_API_VERSION: "1.44"
+        run: mvn -B -pl task-api -am clean package -DargLine="-Ddocker.client.apiVersion=1.44"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action

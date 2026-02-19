@@ -11,6 +11,11 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class TestContainerConfiguration {
 
+    static {
+        System.setProperty("DOCKER_HOST", "unix:///var/run/docker.sock");
+        System.setProperty("DOCKER_API_VERSION", "1.44");
+    }
+
     @Container
     static final MongoDBContainer mongoDb = new MongoDBContainer(DockerImageName.parse("mongo:7.0.5"));
 
