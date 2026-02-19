@@ -62,8 +62,17 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
+      - name: Setup Testcontainers Cloud # Or just the engine check
+        uses: testcontainers/testcontainers-action@v1
+        with:
+          domain-name: ghcr.io
+
       - name: Build JAR (task-api)
-        run: mvn -B -pl task-api -am clean package
+        run: |
+          docker version
+          mvn -B -pl task-api -am clean package
+        env:
+          DOCKER_API_VERSION: "1.44"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
