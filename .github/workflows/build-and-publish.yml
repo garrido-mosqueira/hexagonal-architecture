@@ -11,19 +11,11 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   TESTCONTAINERS_RYUK_DISABLED: true
-  DOCKER_HOST: tcp://localhost:2375
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:24.0.5-dind
-        options: --privileged
-        ports:
-          - 2375:2375
-
     permissions:
       contents: read
       packages: write
@@ -69,8 +61,6 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: 'maven'
-      - run: docker version
-      - run: mvn clean verify
 
       - name: Print Docker env
         run: |
