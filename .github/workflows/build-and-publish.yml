@@ -30,6 +30,8 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        env:
+          DOCKER_API_VERSION: "1.44"
 
       - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
