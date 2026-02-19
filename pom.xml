@@ -30,7 +30,7 @@
         <spring-boot.version>3.2.0</spring-boot.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <org.lombok.version>1.18.30</org.lombok.version>
-        <testcontainers.version>1.19.3</testcontainers.version>
+        <testcontainers.version>1.20.1</testcontainers.version>
         <rest-assured.version>5.4.0</rest-assured.version>
         <micrometer-registry-prometheus.version>1.11.1</micrometer-registry-prometheus.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
