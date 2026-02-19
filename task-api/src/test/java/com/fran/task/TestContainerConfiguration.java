@@ -11,6 +11,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class TestContainerConfiguration {
 
+    @Container
     static final MongoDBContainer mongoDb = new MongoDBContainer(DockerImageName.parse("mongo:7.0.5"))
             .withExposedPorts(27017);
 
@@ -18,11 +19,6 @@ public class TestContainerConfiguration {
     static final GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
             .withExposedPorts(6379)
             .withReuse(true);
-
-    static {
-        mongoDb.start();
-        redis.start();
-    }
 
     @DynamicPropertySource
     static void setMongoDbContainerProperties(final DynamicPropertyRegistry registry) {
