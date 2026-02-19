@@ -46,6 +46,11 @@ jobs:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
 
+    - name: 'Set up Cloud SDK'
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: '${{ env.PROJECT_ID }}'
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -92,3 +97,5 @@ jobs:
         echo "repository=${{ github.repository }}"
         echo "ref=${{ github.ref }}"
         echo "repository_owner=${{ github.repository_owner }}"
+        echo "project=${{ env.PROJECT_ID }}"
+        echo "secret_proj=${{ secrets.GKE_PROJECT }}
