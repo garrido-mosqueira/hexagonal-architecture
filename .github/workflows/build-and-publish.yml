@@ -10,7 +10,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  TESTCONTAINERS_RYUK_DISABLED: true
 
 jobs:
   build:
@@ -69,7 +68,10 @@ jobs:
           env | grep DOCKER || true
 
       - name: Build JAR (task-api)
-        run: mvn -B -pl task-api -am clean package
+        run: mvn -B -pl task-api -am clean package -DargLine="-Ddocker.client.apiVersion=1.44"
+        env:
+          DOCKER_API_VERSION: "1.44"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
