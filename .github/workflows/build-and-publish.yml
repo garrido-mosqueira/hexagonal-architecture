@@ -11,6 +11,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   TESTCONTAINERS_RYUK_DISABLED: true
+  DOCKER_HOST: tcp://localhost:2375
 
 jobs:
   build:
