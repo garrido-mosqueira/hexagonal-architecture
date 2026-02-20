@@ -1,7 +1,6 @@
 name: Build and Deploy to GKE
 
-on:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 permissions:
   id-token: 'write'
