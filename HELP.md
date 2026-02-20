@@ -117,16 +117,16 @@ After running `docker-compose up` to monitor the JVM. Grafana will be working on
 
 This project includes a GitHub Actions workflow to automatically build and deploy the application to a Google Kubernetes Engine (GKE) cluster.
 
-**Workflow Location:** `.github/workflows/google-cloud-gke-deploy.yml`
+**📍 Workflow Location:** `.github/workflows/google-cloud-gke-deploy.yml`
 
-**Prerequisites:**
+**📋 Prerequisites:**
 
 1.  **Google Cloud Project**: A project with GKE and Artifact Registry APIs enabled.
 2.  **GKE Cluster**: A running Kubernetes cluster.
 3.  **Artifact Registry**: A Docker repository in Artifact Registry.
 4.  **Workload Identity Federation**: Recommended for secure authentication from GitHub Actions to Google Cloud.
 
-**Required GitHub Secrets:**
+**🔑 Required GitHub Secrets:**
 
 -   `GKE_PROJECT`: Your Google Cloud Project ID.
 -   `WIF_PROVIDER`: Full identifier of the Workload Identity Provider (e.g., `projects/123456789/locations/global/workloadIdentityPools/<POOL_NAME>/providers/<PROVIDER_NAME>`).
@@ -134,7 +134,7 @@ This project includes a GitHub Actions workflow to automatically build and deplo
 
 > **Note on Naming:** In this project, `<POOL_NAME>` refers to the identity group created for GitHub, and `<PROVIDER_NAME>` refers to the specific authentication link for this repository.
 
-**Configuration:**
+**⚙️ Configuration:**
 
 Update the following environment variables in `.github/workflows/google-cloud-gke-deploy.yml`:
 
@@ -147,7 +147,7 @@ Update the following environment variables in `.github/workflows/google-cloud-gk
 
 Below are the exact commands used to provision and authorize the Google Cloud resources.
 
-### 1. Identity & Access (WIF)
+### 1. 🆔 Identity & Access (WIF)
 ```bash
 # Link the GitHub repository identity to the Service Account
 gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@developer.gserviceaccount.com \
@@ -161,7 +161,7 @@ gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@develope
     --role="roles/iam.serviceAccountTokenCreator" \
     --member="serviceAccount:123456789-compute@developer.gserviceaccount.com"
 ```
-### 2. Artifact Registry
+### 2. 📦 Artifact Registry
 ```bash
 # Create the Docker repository
 gcloud artifacts repositories create samples \
@@ -177,7 +177,7 @@ gcloud artifacts repositories add-iam-policy-binding samples \
 --role="roles/artifactregistry.writer"
 ```
 
-### 3. GKE Cluster Permissions
+### 3. 🛡️ GKE Cluster Permissions
 ```bash
 # Grant GKE nodes permission to pull images from the registry
 gcloud projects add-iam-policy-binding project-123456789 \
@@ -185,18 +185,18 @@ gcloud projects add-iam-policy-binding project-123456789 \
     --role="roles/artifactregistry.reader"
 ```
 
-## 🚀 GKE CI/CD Deployment: Lessons Learned
+## 🎓 GKE CI/CD Deployment: Lessons Learned
 
 This project features a fully automated CI/CD pipeline that deploys a Java (Spring Boot) Hexagonal Architecture API to Google Kubernetes Engine (GKE) Autopilot. Below is a summary of the technical hurdles overcome and the configuration required for success.
 
 ### 🛠 Challenges & Solutions
 
-#### 1. Authentication (Workload Identity Federation)
+#### 1. 🔑 Authentication (Workload Identity Federation)
 * **The Issue:** Initial attempts failed with `HTTP 404` errors.
 * **The Cause:** The GitHub Action incorrectly inferred the project name as "developer" based on the Service Account email suffix (`...-compute@developer.gserviceaccount.com`).
 * **The Fix:** Explicitly defined the `project_id` within the `google-github-actions/auth` step to override the automatic inference.
 
-#### 2. Docker Registry Permissions (`unauthorized`)
+#### 2. 🚫 Docker Registry Permissions (`unauthorized`)
 * **The Issue:** Authentication to Google Cloud was successful, but Docker was rejected when trying to push to the Artifact Registry.
 * **The Cause:** The Service Account lacked the permission to "sign" tokens for itself and did not have explicit "Writer" access to the repository.
 * **The Fix:** Executed the following commands in Google Cloud Shell to grant the necessary permissions:
@@ -215,7 +215,7 @@ gcloud artifacts repositories add-iam-policy-binding samples \
     --member="serviceAccount:123456789-compute@developer.gserviceaccount.com" \
     --role="roles/artifactregistry.writer"
 ```
-#### 3. Infrastructure "Death Loop" (CrashLoopBackOff)
+#### 3. ♾️ Infrastructure "Death Loop" (CrashLoopBackOff)
 * **The Issue:** The API pod would start but immediately crash/restart, causing the GitHub Action to hang during the `kubectl rollout status` step.
 * **The Cause:** The Java application requires MongoDB and Redis to initialize the Spring Boot context. Since these were not running in the GKE cluster, the application context failed, health checks (`/actuator/health`) returned errors, and Kubernetes killed the pod.
 * **The Fix:** * Created a `k8s/databases.yaml` manifest to deploy standalone MongoDB and Redis instances as internal cluster services.
@@ -224,17 +224,17 @@ gcloud artifacts repositories add-iam-policy-binding samples \
 
 ---
 
-### 🏗 Final Architecture Steps
+### 🏗️ Final Architecture Steps
 
 To achieve this automated state, the following architecture was established:
 
-#### 1. Environment Configuration
+#### 1. 🌐 Environment Configuration
 The following **GitHub Secrets** must be configured for the pipeline to connect to GCP:
 * `GKE_PROJECT`: `project-123456789`
 * `WIF_PROVIDER`: `projects/123456789/locations/global/workloadIdentityPools/github-pool/providers/github-provider`
 * `WIF_SERVICE_ACCOUNT`: `123456789-compute@developer.gserviceaccount.com`
 
-#### 2. Kubernetes Manifest Orchestration (`/k8s`)
+#### 2. 🎼 Kubernetes Manifest Orchestration (`/k8s`)
 The deployment is managed by **Kustomize**, which bundles the following:
 * **`databases.yaml`**: Provisions the internal MongoDB and Redis backend.
 * **`deployment.yaml`**: Configures the API container with environment variables pointing to the internal services:
@@ -242,7 +242,7 @@ The deployment is managed by **Kustomize**, which bundles the following:
     * `SPRING_DATA_REDIS_URL`: `redis://redis-challenge:6379`
 * **`kustomization.yaml`**: Differentiates between the generic placeholder image and the real Artifact Registry destination, dynamically injecting the current **Commit SHA** as the image tag.
 
-#### 3. Automated CI/CD Workflow
+#### 3. 🤖 Automated CI/CD Workflow
 Every push to the `main` branch triggers the following automated sequence:
 1.  **Build & Test**: Maven packages the Java application and runs integration tests.
 2.  **Authenticate**: The pipeline logs into GCP using Workload Identity Federation (keyless).
