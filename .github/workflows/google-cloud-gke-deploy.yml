@@ -53,7 +53,7 @@ jobs:
 
     - name: Docker configuration
       run: |-
-        echo "${{ steps.auth.outputs.access_token }}" | docker login -u oauth2access_token --password-stdin https://${{ env.GAR_LOCATION }}-docker.pkg.dev
+        gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
     - name: 'Set up Cloud SDK'
       uses: google-github-actions/setup-gcloud@v2
