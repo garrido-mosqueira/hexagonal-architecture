@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: task-api
-        image: us-central1-docker.pkg.dev/demoproject-487815/samples/task-api:latest
+        image: ghcr.io/garrido-mosqueira/hexagonal-architecture
         ports:
         - containerPort: 8080
         resources:
