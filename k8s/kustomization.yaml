@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
+  - databases.yaml
 images:
   - name: ghcr.io/garrido-mosqueira/hexagonal-architecture
     newName: us-central1-docker.pkg.dev/demoproject-487815/samples/task-api
