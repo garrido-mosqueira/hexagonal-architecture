@@ -36,21 +36,12 @@ jobs:
         service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
         project_id: '${{ env.PROJECT_ID }}'
 
-    - name: Docker configuration
-      run: |-
-        echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2access_token --password-stdin https://$GAR_LOCATION-docker.pkg.dev
-
-    # Get the GKE credentials so we can deploy to the cluster
+      # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
       uses: google-github-actions/get-gke-credentials@v2
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
-
-    - name: 'Set up Cloud SDK'
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: '${{ env.PROJECT_ID }}'
 
     - name: Debug context
       run: |
@@ -59,6 +50,15 @@ jobs:
         echo "repository_owner=${{ github.repository_owner }}"
         echo "project=${{ env.PROJECT_ID }}"
         echo "secret_proj=${{ secrets.GKE_PROJECT }}
+
+    - name: Docker configuration
+      run: |-
+        echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2access_token --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+
+    - name: 'Set up Cloud SDK'
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: '${{ env.PROJECT_ID }}'
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
