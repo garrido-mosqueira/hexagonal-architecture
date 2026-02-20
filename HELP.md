@@ -141,3 +141,79 @@ Update the following environment variables in `.github/workflows/google-cloud-gk
 -   `GKE_ZONE`: Zone or region of your GKE cluster (e.g., `us-central1-c`).
 -   `REPOSITORY`: Name of your Artifact Registry repository.
 
+# 🚀 GKE CI/CD Deployment: Lessons Learned
+
+This project features a fully automated CI/CD pipeline that deploys a Java (Spring Boot) Hexagonal Architecture API to Google Kubernetes Engine (GKE) Autopilot. Below is a summary of the technical hurdles overcome and the configuration required for success.
+
+## 🛠 Challenges & Solutions
+
+### 1. Authentication (Workload Identity Federation)
+* **The Issue:** Initial attempts failed with `HTTP 404` errors.
+* **The Cause:** The GitHub Action incorrectly inferred the project name as "developer" based on the Service Account email suffix (`...-compute@developer.gserviceaccount.com`).
+* **The Fix:** Explicitly defined the `project_id` within the `google-github-actions/auth` step to override the automatic inference.
+
+### 2. Docker Registry Permissions (`unauthorized`)
+* **The Issue:** Authentication to Google Cloud was successful, but Docker was rejected when trying to push to the Artifact Registry.
+* **The Cause:** The Service Account lacked the permission to "sign" tokens for itself and did not have explicit "Writer" access to the repository.
+* **The Fix:** Executed the following commands in Google Cloud Shell to grant the necessary permissions:
+
+```bash
+# 1. Allow the Service Account to create tokens for itself (Crucial for Docker Login)
+gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@developer.gserviceaccount.com \
+    --project="project-123456789" \
+    --role="roles/iam.serviceAccountTokenCreator" \
+    --member="serviceAccount:123456789-compute@developer.gserviceaccount.com"
+
+# 2. Grant explicit Writer access to the Artifact Registry
+gcloud artifacts repositories add-iam-policy-binding samples \
+    --project="project-123456789" \
+    --location="us-central1" \
+    --member="serviceAccount:123456789-compute@developer.gserviceaccount.com" \
+    --role="roles/artifactregistry.writer"
+```
+### 3. Infrastructure "Death Loop" (CrashLoopBackOff)
+* **The Issue:** The API pod would start but immediately crash/restart, causing the GitHub Action to hang during the `kubectl rollout status` step.
+* **The Cause:** The Java application requires MongoDB and Redis to initialize the Spring Boot context. Since these were not running in the GKE cluster, the application context failed, health checks (`/actuator/health`) returned errors, and Kubernetes killed the pod.
+* **The Fix:** * Created a `k8s/databases.yaml` manifest to deploy standalone MongoDB and Redis instances as internal cluster services.
+    * Updated `k8s/kustomization.yaml` to include `databases.yaml` as a resource, ensuring the full stack is applied in a single command.
+    * Increased `initialDelaySeconds` for Liveness and Readiness probes in `deployment.yaml` to 45 seconds to account for database startup time.
+
+---
+
+## 🏗 Final Architecture Steps
+
+To achieve this automated state, the following architecture was established:
+
+### 1. Environment Configuration
+The following **GitHub Secrets** must be configured for the pipeline to connect to GCP:
+* `GKE_PROJECT`: `project-123456789`
+* `WIF_PROVIDER`: `projects/123456789/locations/global/workloadIdentityPools/github-pool/providers/github-provider`
+* `WIF_SERVICE_ACCOUNT`: `123456789-compute@developer.gserviceaccount.com`
+
+### 2. Kubernetes Manifest Orchestration (`/k8s`)
+The deployment is managed by **Kustomize**, which bundles the following:
+* **`databases.yaml`**: Provisions the internal MongoDB and Redis backend.
+* **`deployment.yaml`**: Configures the API container with environment variables pointing to the internal services:
+    * `SPRING_DATA_MONGODB_URI`: `mongodb://mongodb-challenge:27017/test`
+    * `SPRING_DATA_REDIS_URL`: `redis://redis-challenge:6379`
+* **`kustomization.yaml`**: Differentiates between the generic placeholder image and the real Artifact Registry destination, dynamically injecting the current **Commit SHA** as the image tag.
+
+### 3. Automated CI/CD Workflow
+Every push to the `main` branch triggers the following automated sequence:
+1.  **Build & Test**: Maven packages the Java application and runs integration tests.
+2.  **Authenticate**: The pipeline logs into GCP using Workload Identity Federation (keyless).
+3.  **Docker Push**: The image is built and pushed to the Artifact Registry using `gcloud auth configure-docker`.
+4.  **Deploy**: Kustomize builds the final YAML and applies it via `kubectl apply -f -`.
+5.  **Validation**: The workflow monitors the rollout status to ensure all pods are running and healthy.
+
+---
+
+## 🔗 Accessing the API
+Find the public entry point using:
+```bash
+kubectl get service task-api
+```
+
+Public URL: ```http://[EXTERNAL-IP]```
+
+Health Check: ```http://[EXTERNAL-IP]/actuator/health```
