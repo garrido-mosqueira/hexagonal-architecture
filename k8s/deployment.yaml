@@ -19,6 +19,11 @@ spec:
         image: ghcr.io/garrido-mosqueira/hexagonal-architecture
         ports:
         - containerPort: 8080
+        env:
+          - name: SPRING_DATA_MONGODB_URI
+            value: "mongodb://mongodb-challenge:27017/test"
+          - name: SPRING_DATA_REDIS_URL
+            value: "redis://redis-challenge:6379"
         resources:
           requests:
             cpu: 100m
@@ -30,11 +35,11 @@ spec:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 15
+          initialDelaySeconds: 45
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 20
+          initialDelaySeconds: 60
           periodSeconds: 15
