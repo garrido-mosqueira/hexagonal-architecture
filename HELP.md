@@ -1,6 +1,6 @@
-# Getting Started
+# 🚀 Getting Started
 
-## Reference Documentation
+## 📚 Reference Documentation
 For the development of this project the next where used :
 
 * [Hexagonal Architecture - Netflix Tech Blog](https://netflixtechblog.com/ready-for-changes-with-hexagonal-architecture-b315ec967749)
@@ -9,7 +9,7 @@ For the development of this project the next where used :
 * [Spring Boot with Redis](https://spring.io/guides/gs/messaging-redis)
 * [Java Virtual Threads](https://docs.oracle.com/en/java/javase/21/core/virtual-threads.html)
 
-## Project Brief
+## 📋 Project Brief
 The project's structure tried to follow the Hexagonal Architecture (also knows as: Onion, Clean).
 
 The main idea is to take advantage of Dependency Inversion, where high level modules (domain) doesn't depend on low level modules (persistence, web api, etc).
@@ -25,13 +25,13 @@ The modules are:
 Cool thing about using this approach with modules is it's easy to exchange an `infrastructure` dependency.
 For example, the task execution module can be swapped to use different concurrency approaches by changing the dependency in the parent POM.
 
-## Execution
-### Quickstart
+## ⚙️ Execution
+### ⚡ Quickstart
 First check if everything is ok running `mvn clean verify`
 
 This project is using Docker. So it will be necessary to set up a local environment. 
 
-### macOS setup with Homebrew and Colima
+### 🍎 macOS setup with Homebrew and Colima
 If you're on macOS and not using Docker Desktop, you can use Colima to provide a local Docker runtime.
 
 1) Install required tools via Homebrew:
@@ -88,7 +88,7 @@ The next command will up the Spring Boot Application, MongoDB, Redis, Prometheus
 
 A Postman collection (`tasks.postman.json`) is available in the root directory in case you want to test the app with Postman. 
 
-### Considerations
+### 💡 Considerations
 To run/debug the project from your IDE it will be necessary to run MongoDB and Redis separately.
 You can use the following commands to start only the required infrastructure:
 
@@ -103,17 +103,17 @@ spring.data.mongodb.host=localhost
 spring.data.redis.host=localhost
 ```
 
-### Tests
+### 🧪 Tests
 The project has a suite of integration tests. To achieve that we are using Testcontainers to set up MongoDB and Redis with container reuse enabled for optimized performance.
 Docker is required for running the tests. 
 
-### Monitoring
+### 📈 Monitoring
 
 After running `docker-compose up` to monitor the JVM. Grafana will be working on `localhost:3000`
 
-### Deployment
+### 🚢 Deployment
 
-#### GitHub Actions: Build and Deploy to GKE
+#### 🐙 GitHub Actions: Build and Deploy to GKE
 
 This project includes a GitHub Actions workflow to automatically build and deploy the application to a Google Kubernetes Engine (GKE) cluster.
 
@@ -129,8 +129,10 @@ This project includes a GitHub Actions workflow to automatically build and deplo
 **Required GitHub Secrets:**
 
 -   `GKE_PROJECT`: Your Google Cloud Project ID.
--   `WIF_PROVIDER`: Full identifier of the Workload Identity Provider (e.g., `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`).
+-   `WIF_PROVIDER`: Full identifier of the Workload Identity Provider (e.g., `projects/123456789/locations/global/workloadIdentityPools/<POOL_NAME>/providers/<PROVIDER_NAME>`).
 -   `WIF_SERVICE_ACCOUNT`: Email of the Google Cloud Service Account (e.g., `my-service-account@my-project.iam.gserviceaccount.com`).
+
+> **Note on Naming:** In this project, `<POOL_NAME>` refers to the identity group created for GitHub, and `<PROVIDER_NAME>` refers to the specific authentication link for this repository.
 
 **Configuration:**
 

@@ -7,7 +7,7 @@ sequenceDiagram
     participant Worker as Worker Thread (runLoop)
     participant DB as MongoDB
 
-    note over Client, Redis: Part 1: Task Execution Kickoff
+    note over Client, Redis: 🚀 Part 1: Task Execution Kickoff
 
     Client->>UC: executeTask(taskId)
     note right of UC: Includes input validation via DTO
@@ -28,7 +28,7 @@ sequenceDiagram
     UC-->>Client: return (202 Accepted)
     deactivate UC
 
-    note over Redis, Worker: Part 2: The Async Execution Loop
+    note over Redis, Worker: 🔄 Part 2: The Async Execution Loop
 
     activate Worker
     note right of Worker: runLoop starts here
@@ -59,7 +59,7 @@ sequenceDiagram
     note right of Worker: Task Complete
 
 
-    note over Client, Worker: Part 3: Intervening Cancellation Scenario
+    note over Client, Worker: 🛑 Part 3: Intervening Cancellation Scenario
 
     note right of Client: Assume Worker is currently running in the "loop" above
     Client->>UC: cancelTask(taskId)

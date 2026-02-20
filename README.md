@@ -1,4 +1,4 @@
-# Demo Project
+# 🚀 Demo Project
 
 This demo project is using:
 
@@ -11,9 +11,9 @@ This demo project is using:
 - Grafana
 - Docker
 
-### What this service does
+### 🛠️ What this service does
 
-#### Requirements
+#### 📋 Requirements
 The task type is a simple counter which is configured with two input parameters, `begin` and `finish` of type `integer`.
 - **Validation**: `begin` must be less than or equal to `finish`.
 When the task is executed, the counter should start in the background and progress should be monitored.
@@ -23,7 +23,7 @@ The API can be used to create tasks, but the user is not required to execute tho
 The tasks that are not executed after an extended period (e.g. a 5 minutes) should be periodically cleaned up (deleted).
 
 
-#### Provides REST API to:
+### 🔌 Provides REST API to
 - Create tasks with a timer
 - Execute a task already created asynchronously using Java Virtual Threads
 - Show the progress of the task execution (stored in Redis)
@@ -31,7 +31,7 @@ The tasks that are not executed after an extended period (e.g. a 5 minutes) shou
 - Periodically clean up the tasks
 - Also, list all tasks created or running; get, update and delete a task.
 
-### Architecture Highlights
+### 🏗️ Architecture Highlights
 
 - **Hexagonal Architecture**: Strictly follows Hexagonal (Ports & Adapters) principles:
   - **Application Layer (`task-application`)**: Orchestrates business logic via `TaskService` without framework leakage (configured as a Spring Bean in the API module).
@@ -43,7 +43,7 @@ The tasks that are not executed after an extended period (e.g. a 5 minutes) shou
 - **MongoDB**: Task metadata and configuration are persisted in MongoDB
 - **Testcontainers**: Integration tests use reusable TestContainers for MongoDB and Redis, optimizing test performance
 
-### Distributed System Design
+### 🌐 Distributed System Design
 
 This solution is designed to work effectively in a distributed system environment:
 
@@ -68,14 +68,14 @@ This solution is designed to work effectively in a distributed system environmen
   - **Observability**: Complete task lifecycle tracking even after cancellation
 
 
-### Diagrams
+### 📊 Diagrams
 
 Following an asynchronous task execution pattern with polling-based cancellation, using Redis as the shared state registry to coordinate between the main thread and the worker thread.
 
 Here are some diagrams illustrating the complete lifecycle: starting a task, its execution loop, and how an external cancellation request stops it.
 
-#### Worker Thread Process Flowchart
+#### 🔄 Worker Thread Process Flow
 ![process-flow-diagram.png](docs/process-flow-diagram.png)
 
-#### Sequence diagram
+#### ⏱️ Sequence Diagram
 ![sequence-diagram.png](docs/sequence-diagram.png)
