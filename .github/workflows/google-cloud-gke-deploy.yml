@@ -49,7 +49,7 @@ jobs:
         echo "ref=${{ github.ref }}"
         echo "repository_owner=${{ github.repository_owner }}"
         echo "project=${{ env.PROJECT_ID }}"
-        echo "secret_proj=${{ secrets.GKE_PROJECT }}
+        echo "secret_proj=${{ secrets.GKE_PROJECT }}" 
 
     - name: Docker configuration
       run: |-
