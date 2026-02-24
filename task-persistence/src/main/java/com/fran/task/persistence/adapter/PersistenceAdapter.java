@@ -63,7 +63,7 @@ public class PersistenceAdapter implements TaskPersistencePort {
 
     @Override
     public void updateExecution(Task task) {
-        log.info("Updating execution for task {}", task.id());
+        log.info("Updating execution for task {}, status {}, finish {}, progress {}", task.id(), task.status(), task.finish(), task.progress());
         TaskDocument entity = mapper.toEntity(task.withLastExecution(LocalDateTime.now()));
         mapper.toDomain(repository.save(entity));
     }
