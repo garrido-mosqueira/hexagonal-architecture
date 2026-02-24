@@ -83,7 +83,7 @@ public class TaskManagerAdapter implements TaskExecutionPort {
         do {
             Task updated = runningTask.withProgress(i);
             updateTaskInRegister(taskKey, updated);
-            log.info("Progress {} for '{}' in thread {}", updated.progress(), updated.id(), Thread.currentThread());
+            log.debug("Progress {} for '{}' in thread {}", updated.progress(), updated.id(), Thread.currentThread());
 
             try {
                 Thread.sleep(1000);
