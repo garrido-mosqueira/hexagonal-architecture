@@ -41,11 +41,21 @@ jobs:
         run: |
           timeout 60s bash -c 'until curl -s http://localhost:8080/actuator/health | grep "UP"; do sleep 5; done'
 
+      - name: Cache JMeter
+        uses: actions/cache@v4
+        id: jmeter-cache
+        with:
+          path: apache-jmeter-5.6.3
+          key: jmeter-5.6.3
+
       - name: Setup JMeter
+        if: steps.jmeter-cache.outputs.cache-hit != 'true'
         run: |
           wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xzf apache-jmeter-5.6.3.tgz
-          echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+
+      - name: Add JMeter to PATH
+        run: echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
       - name: Run JMeter Tests
         run: |
