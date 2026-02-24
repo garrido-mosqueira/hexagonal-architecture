@@ -73,12 +73,25 @@ jobs:
         run: |
           echo "=== Failed Requests Summary ==="
           if [ -f jmeter/results/results.jtl ]; then
-            grep "success=\"false\"" jmeter/results/results.jtl | head -5 || echo "No failures found"
+            echo "Total requests:"
+            wc -l jmeter/results/results.jtl
+            echo ""
+            echo "Failed requests count:"
+            grep -c 'success="false"' jmeter/results/results.jtl || echo "0"
+            echo ""
+            echo "Sample of failed requests:"
+            grep 'success="false"' jmeter/results/results.jtl | head -3 || echo "No failures found"
           fi
+
+      - name: Check final task list
+        if: always()
+        run: |
+          echo "=== Checking all tasks status ==="
+          curl -s http://localhost:8080/api/tasks | jq -r '.[] | "\(.id) - \(.status)"' || echo "Failed to get tasks"
 
       - name: Show application logs
         if: always()
-        run: docker compose logs challenge-java --tail=100
+        run: docker compose logs challenge-java --tail=200
 
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
