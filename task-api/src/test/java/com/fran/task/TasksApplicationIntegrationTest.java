@@ -87,7 +87,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .get(BASE_URL + taskToSaveThenGet.id()).
+                .get(BASE_URL + "/" + taskToSaveThenGet.id()).
         then()
                 .statusCode(is(200)).
         assertThat()
@@ -111,7 +111,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(taskWithNewName).
         when()
-                .put(BASE_URL + taskToSaveAndThenUpdate.id()).
+                .put(BASE_URL + "/" + taskToSaveAndThenUpdate.id()).
         then()
                 .statusCode(is(200)).
         assertThat()
@@ -127,7 +127,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .delete(BASE_URL + taskToSaveAndThenDelete.id()).
+                .delete(BASE_URL + "/" + taskToSaveAndThenDelete.id()).
         then()
                 .statusCode(is(204));
 
@@ -143,7 +143,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecute.id() + "/execute").
+                .post(BASE_URL + "/" + taskToSaveAndThenExecute.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -151,7 +151,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecute.id() + "/execute").
+                .post(BASE_URL + "/" + taskToSaveAndThenExecute.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -159,7 +159,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
             TaskCounter progress =
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .get(BASE_URL + taskToSaveAndThenExecute.id() + "/progress")
+                            .get(BASE_URL + "/" + taskToSaveAndThenExecute.id() + "/progress")
                     .then()
                         .   statusCode(200)
                     .extract().as(TaskCounter.class);
@@ -177,14 +177,14 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
+                .post(BASE_URL + "/" + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
         then()
                 .statusCode(is(200));
 
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/execute").
+                .post(BASE_URL + "/" + taskToSaveAndThenExecuteThenCancel.id() + "/execute").
         then()
                 .statusCode(is(202));
 
@@ -194,7 +194,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
                     given()
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .when()
-                            .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
+                            .post(BASE_URL + "/" + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
                     then()
                             .statusCode(is(200));
                 });
@@ -203,7 +203,7 @@ class TasksApplicationIntegrationTest extends TestContainerConfiguration {
         given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE).
         when()
-                .post(BASE_URL + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
+                .post(BASE_URL + "/" + taskToSaveAndThenExecuteThenCancel.id() + "/cancel").
         then()
                 .statusCode(is(200));
     }
