@@ -1,0 +1,52 @@
+name: Load Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package -DskipTests --file pom.xml
+
+      - name: Start containers
+        run: docker-compose up -d
+
+      - name: Wait for service to be ready
+        run: |
+          timeout 60s bash -c 'until curl -s http://localhost:8080/actuator/health | grep "UP"; do sleep 5; done'
+
+      - name: Run JMeter Test
+        uses: rbna/jmeter-action@v1
+        with:
+          testFilePath: jmeter/load-test.jmx
+          outputReportsFolder: reports/
+          args: "-Jjmeter.save.saveservice.output_format=csv"
+
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jmeter-results
+          path: |
+            reports/
+
+      - name: Deploy Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: reports/
