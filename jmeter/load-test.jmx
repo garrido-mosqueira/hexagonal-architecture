@@ -49,7 +49,7 @@
   "name": "task_counter",
   "taskType": "VIRTUAL",
   "begin": 1,
-  "finish": 300
+  "finish": 120
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
