@@ -63,6 +63,23 @@ jobs:
       - name: Add JMeter to PATH
         run: echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
+      - name: Test API manually before JMeter
+        run: |
+          echo "Testing task creation..."
+          RESPONSE=$(curl -X POST http://localhost:8080/api/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"name":"task_counter","taskType":"VIRTUAL","begin":1,"finish":10}' \
+            -w "\nHTTP_CODE:%{http_code}" -s)
+          echo "$RESPONSE"
+          TASK_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | cut -d'"' -f4)
+          echo "Task ID: $TASK_ID"
+          if [ -z "$TASK_ID" ]; then
+            echo "ERROR: Failed to create task or extract ID"
+            exit 1
+          fi
+          echo "Testing task execution..."
+          curl -X POST http://localhost:8080/api/tasks/$TASK_ID/execute -w "\nHTTP_CODE:%{http_code}" -s
+
       - name: Run JMeter Tests
         run: |
           mkdir -p jmeter/results
@@ -70,7 +87,7 @@ jobs:
 
       - name: Show application logs
         if: always()
-        run: docker compose logs challenge-java
+        run: docker compose logs challenge-java --tail=100
 
       - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
