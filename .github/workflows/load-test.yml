@@ -68,8 +68,8 @@ jobs:
           mkdir -p jmeter/results
           jmeter -n -t ${{ github.event.inputs.test_plan || 'jmeter/load-test.jmx' }} -l jmeter/results/results.jtl -e -o jmeter/dashboard
 
-      - name: Show application logs on failure
-        if: failure()
+      - name: Show application logs
+        if: always()
         run: docker compose logs challenge-java
 
       - name: Upload JMeter Results
