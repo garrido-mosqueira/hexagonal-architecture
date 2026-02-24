@@ -13,8 +13,10 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb-challenge:27017/test
       - SPRING_DATA_REDIS_URL=redis://redis-challenge:6379
     depends_on:
-      - mongodb-challenge
-      - redis-challenge
+      mongodb-challenge:
+        condition: service_healthy
+      redis-challenge:
+        condition: service_healthy
     container_name: challenge-java
 
   mongodb-challenge:
@@ -22,12 +24,22 @@ services:
     ports:
       - "27017:27017"
     container_name: mongodb-challenge
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis-challenge:
     image: redis:latest
     ports:
       - "6379:6379"
     container_name: redis-challenge
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   prometheus:
     image: "prom/prometheus"
