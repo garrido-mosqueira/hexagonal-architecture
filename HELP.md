@@ -150,13 +150,13 @@ Below are the exact commands used to provision and authorize the Google Cloud re
 ### 1. 🆔 Identity & Access (WIF)
 ```bash
 # Link the GitHub repository identity to the Service Account
-gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@developer.gserviceaccount.com \
+gcloud iam service-accounts add-iam-policy-binding 123456789-compute@developer.gserviceaccount.com \
     --project="project-123456789" \
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://[iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/github-pool/attribute.repository/github-user/repo-name](https://iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/github-pool/attribute.repository/github-user/repo-name)"
 
 # Enable the Service Account to sign its own tokens (Required for Docker Login)
-gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@developer.gserviceaccount.com \
+gcloud iam service-accounts add-iam-policy-binding 123456789-compute@developer.gserviceaccount.com \
     --project="project-123456789" \
     --role="roles/iam.serviceAccountTokenCreator" \
     --member="serviceAccount:123456789-compute@developer.gserviceaccount.com"
@@ -203,7 +203,7 @@ This project features a fully automated CI/CD pipeline that deploys a Java (Spri
 
 ```bash
 # 1. Allow the Service Account to create tokens for itself (Crucial for Docker Login)
-gcloud iam service-accounts add-iam-policy-binding 389945593863-compute@developer.gserviceaccount.com \
+gcloud iam service-accounts add-iam-policy-binding 123456789-compute@developer.gserviceaccount.com \
     --project="project-123456789" \
     --role="roles/iam.serviceAccountTokenCreator" \
     --member="serviceAccount:123456789-compute@developer.gserviceaccount.com"
