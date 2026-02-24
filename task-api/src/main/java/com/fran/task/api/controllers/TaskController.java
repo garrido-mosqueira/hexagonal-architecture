@@ -19,13 +19,13 @@ public class TaskController {
     private final TaskUseCase useCase;
     private final TaskCounterMapper mapper;
 
-    @PostMapping("/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TaskCounter createTask(@Valid @RequestBody TaskCounter taskCounter) {
         return mapper.toDTO(useCase.createTask(mapper.toDomain(taskCounter)));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<TaskCounter> listTasks() {
         return mapper.toDTO(useCase.listTasks());
     }
