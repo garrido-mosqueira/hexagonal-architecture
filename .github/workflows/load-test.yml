@@ -35,7 +35,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for service to be ready
         run: |
