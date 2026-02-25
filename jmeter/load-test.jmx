@@ -124,7 +124,7 @@
         </WhileController>
         <hashTree>
           <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Poll Interval" enabled="true">
-            <stringProp name="ConstantTimer.delay">5000</stringProp>
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
           </ConstantTimer>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Check Task Status" enabled="true">
