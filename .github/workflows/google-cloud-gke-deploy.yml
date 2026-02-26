@@ -8,10 +8,10 @@ permissions:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GAR_LOCATION: us-central1 # TODO: update region of the Artifact Registry
-  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
-  GKE_ZONE: us-central1   # TODO: update to cluster zone
-  REPOSITORY: samples # TODO: update to Artifact Registry repository
+  GAR_LOCATION: us-central1
+  GKE_CLUSTER: cluster-1
+  GKE_ZONE: us-central1
+  REPOSITORY: samples
   IMAGE: task-api
 
 jobs:
