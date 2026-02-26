@@ -1,4 +1,5 @@
 # 🚀 Demo Project
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=garrido-mosqueira_hexagonal-architecture&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=garrido-mosqueira_hexagonal-architecture)
 
 This demo project is using:
 
