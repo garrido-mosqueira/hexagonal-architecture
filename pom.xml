@@ -29,7 +29,7 @@
         <spring-boot.version>2.6.6</spring-boot.version>
         <commons-io.version>2.11.0</commons-io.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <org.lombok.version>1.18.22</org.lombok.version>
+        <org.lombok.version>1.18.30</org.lombok.version>
         <testcontainers.version>1.17.1</testcontainers.version>
         <rest-assured.version>5.0.1</rest-assured.version>
         <micrometer-registry-prometheus.version>1.8.4</micrometer-registry-prometheus.version>
