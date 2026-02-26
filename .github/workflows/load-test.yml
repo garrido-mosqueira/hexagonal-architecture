@@ -1,16 +1,6 @@
 name: JMeter Performance Test
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      test_plan:
-        description: 'Path to the JMeter test plan (.jmx)'
-        required: true
-        default: 'jmeter/load-test.jmx'
+on: [workflow_dispatch]
 
 jobs:
   jmeter-test:
