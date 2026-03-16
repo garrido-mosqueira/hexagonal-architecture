@@ -13,6 +13,7 @@ env:
   GKE_ZONE: us-central1
   REPOSITORY: samples
   IMAGE: task-api
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   setup-build-publish-deploy:
@@ -98,4 +99,3 @@ jobs:
         ../kustomize build . | kubectl apply -f -
         kubectl rollout status deployment/$IMAGE
         kubectl get services -o wide
-
