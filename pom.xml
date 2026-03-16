@@ -33,7 +33,6 @@
         <testcontainers.version>1.20.4</testcontainers.version>
         <micrometer-registry-prometheus.version>1.11.1</micrometer-registry-prometheus.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/task-api/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencyManagement>
