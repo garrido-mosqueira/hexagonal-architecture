@@ -45,8 +45,6 @@ Why: Spring Boot 4 provides Testcontainers ServiceConnection integration to simp
 
 Why: modernizing tests for Spring Boot 4 idioms and removing direct RestAssured coupling in favor of a Spring-provided client for clearer integration testing.
 
-Why: centralizes and standardizes API error responses and logs for easier debugging and consistent client behavior.
-
 6) 🚀 GitHub Actions workflow (.github/workflows/google-cloud-gke-deploy.yml)
 - Workflow builds and deploys `task-api` module, builds Docker image, pushes to Artifact Registry, and deploys to GKE.
 - Uses `actions/setup-java@v4` with `java-version: '25'` in the workflow.
@@ -55,8 +53,5 @@ Why: to align the CI/CD pipeline with the project's Java version.
 
 ### ✅ Notable fixes
 - JaCoCo analysis error: "Unsupported class file major version 69" resolved by upgrading jacoco-maven-plugin to 0.8.14 which understands class files produced by Java 25.
-
-### ▶️ Recommended next steps
-- Run a full build and test: `mvn -B clean package` and validate JaCoCo and tests pass.
 
 ---
