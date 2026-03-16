@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>4.0.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -26,12 +26,11 @@
 
     <properties>
         <task-java.version>1.1-SNAPSHOT</task-java.version>
-        <java.version>21</java.version>
-        <spring-boot.version>3.2.0</spring-boot.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <org.lombok.version>1.18.30</org.lombok.version>
+        <java.version>25</java.version>
+        <spring-boot.version>4.0.3</spring-boot.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <org.lombok.version>1.18.44</org.lombok.version>
         <testcontainers.version>1.20.4</testcontainers.version>
-        <rest-assured.version>5.4.0</rest-assured.version>
         <micrometer-registry-prometheus.version>1.11.1</micrometer-registry-prometheus.version>
         <aspectjrt.version>1.9.7</aspectjrt.version>
     </properties>
@@ -125,12 +124,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>spring-mock-mvc</artifactId>
-                <version>${rest-assured.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
                 <version>${testcontainers.version}</version>
@@ -154,9 +147,36 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${org.lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
