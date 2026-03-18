@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Arrays;
@@ -32,8 +32,8 @@ public class TaskExecutionConfiguration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        Jackson2JsonRedisSerializer<TaskThread> serializer =
-            new Jackson2JsonRedisSerializer<>(objectMapper, TaskThread.class);
+        JacksonJsonRedisSerializer<TaskThread> serializer =
+            new JacksonJsonRedisSerializer<>(TaskThread.class);
 
         template.setValueSerializer(serializer);
         template.setHashValueSerializer(serializer);

@@ -2,6 +2,7 @@ package com.fran.task.persistence.adapter;
 
 import com.fran.task.domain.exceptions.NotFoundException;
 import com.fran.task.domain.model.Task;
+import com.fran.task.domain.model.TaskStatus;
 import com.fran.task.domain.port.TaskPersistencePort;
 import com.fran.task.persistence.entities.TaskDocument;
 import com.fran.task.persistence.mapper.TaskDocumentMapper;
@@ -27,7 +28,7 @@ public class PersistenceAdapter implements TaskPersistencePort {
     @Override
     public Task createTask(Task task) {
         Task newTask = task.withCreationDate(LocalDateTime.now())
-                .withStatus(com.fran.task.domain.model.TaskStatus.CREATED);
+                .withStatus(TaskStatus.CREATED);
         TaskDocument saved = repository.save(mapper.toEntity(newTask));
         log.info("Creating task {}", saved.id());
         return mapper.toDomain(saved);
